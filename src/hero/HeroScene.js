@@ -60,6 +60,7 @@ export class HeroScene {
 
     this.elapsed = 0;
     this.running = false;
+    this._resizeRaf = 0;
     this.isVisible = true;
     this.disposed = false;
     this.width = 0;
@@ -310,14 +311,26 @@ export class HeroScene {
   };
 
   handleResize = () => {
+    if (this.disposed || this._resizeRaf) return;
+    // A mobile URL bar or an orientation flip fires resize in bursts; measure
+    // once per frame instead of reallocating render targets for every event.
+    this._resizeRaf = requestAnimationFrame(() => {
+      this._resizeRaf = 0;
+      this._applyResize();
+    });
+  };
+
+  _applyResize() {
     if (this.disposed) return;
 
     const { width, height } = this._measure();
-    if (width === this.width && height === this.height && this._lastDpr === this.renderer.getPixelRatio()) {
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    // A pixel or two of viewport churn while scrolling is not a layout change;
+    // resizing for it re-quantises the dither grid and shows up as flicker.
+    if (width === this.width && Math.abs(height - this.height) <= 2 && dpr === this._lastDpr) {
       return;
     }
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     this.width = width;
     this.height = height;
     this._lastDpr = dpr;
@@ -437,6 +450,8 @@ export class HeroScene {
     this.disposed = true;
     this._pause();
 
+    if (this._resizeRaf) cancelAnimationFrame(this._resizeRaf);
+    this._resizeRaf = 0;
     if (this._observer) this._observer.disconnect();
     if (this._resizeObserver) this._resizeObserver.disconnect();
     if (this._listeners) this._listeners.abort();

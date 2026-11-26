@@ -191,10 +191,13 @@ ul {
    HERO
    ========================================================================== */
 
+/* svh, not dvh: the hero must keep one height while the mobile URL bar slides
+   away. A dvh hero resizes mid-scroll, which reallocates the render targets and
+   re-quantises the dither grid, and that reads as flicker. */
 .hero {
   position: relative;
+  height: 100vh;
   height: 100svh;
-  height: 100dvh;
   min-height: 38.75rem;
   overflow: clip;
   isolation: isolate;
@@ -1078,6 +1081,14 @@ html[data-phase="night"] .ts__icon--moon {
 }
 
 .project__lens-text {
+  appearance: none;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
   font-family: var(--mono);
   font-size: 0.8125rem;
   line-height: 1.55;
