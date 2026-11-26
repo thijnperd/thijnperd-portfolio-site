@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en" data-phase="ideating">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Thijn Köhne — Locked In</title>
+    <meta
+      name="description"
+      content="Portfolio of Thijn Köhne (thijnperd): developer and AI co-creator. Local-first tools, procedural WebGL, dithered interfaces — built to be used, not just demoed."
+    />
+    <meta name="theme-color" content="#f1efe7" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="./assets/index-BRA2TAK6.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BP2D0qP6.css">
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <main id="main">
+      <!-- ============================================================ -->
+      <!-- HERO — 100vw × 100vh procedural dithered diorama              -->
+      <!-- ============================================================ -->
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero__canvas" data-hero-canvas aria-hidden="true"></div>
+        <div class="hero__scrim" aria-hidden="true"></div>
+
+        <div class="hero__ui">
+          <header class="hero__top">
+            <div class="hero__brand">
+              <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" focusable="false">
+                  <rect width="32" height="32" rx="6" fill="currentColor" />
+                  <g class="brand-mark__dots">
+                    <rect x="5" y="6" width="4" height="4" />
+                    <rect x="10" y="6" width="4" height="4" opacity=".7" />
+                    <rect x="15" y="6" width="4" height="4" opacity=".85" />
+                    <rect x="20" y="6" width="4" height="4" opacity=".55" />
+                    <rect x="25" y="6" width="2" height="4" opacity=".35" />
+                    <rect x="15" y="12" width="4" height="4" />
+                    <rect x="15" y="17" width="4" height="4" opacity=".8" />
+                    <rect x="15" y="22" width="4" height="4" opacity=".65" />
+                    <rect x="10" y="26" width="4" height="3" opacity=".5" />
+                    <rect x="20" y="26" width="4" height="3" opacity=".35" />
+                  </g>
+                </svg>
+              </span>
+              <a class="brand-name" href="#top">thijnperd</a>
+              <span class="status" data-status>
+                <span class="status__icon" data-status-icon aria-hidden="true">
+                  <span class="status-dot"></span>
+                </span>
+                <span class="status__text" data-status-text>ideating</span>
+              </span>
+            </div>
+
+            <nav class="hero__nav" aria-label="Sections">
+              <a href="#work">Work</a>
+              <a href="#about">About</a>
+              <a href="#skills">Skills</a>
+              <a href="#contact">Contact</a>
+            </nav>
+
+            <button
+              class="menu-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls="mobile-menu"
+              aria-label="Open menu"
+              data-menu-toggle
+            >
+              <span class="menu-toggle__label">Menu</span>
+              <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span></span>
+            </button>
+
+            <nav class="mobile-menu" id="mobile-menu" aria-label="Sections" data-mobile-menu hidden>
+              <p class="mobile-menu__label">Index</p>
+              <a href="#work">Work <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+              <a href="#about">About <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+              <a href="#skills">Skills <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+              <a href="#contact">Contact <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+            </nav>
+          </header>
+
+          <div class="hero__copy">
+            <p class="eyebrow">
+              <span>Portfolio / 2026</span>
+              <span class="eyebrow__rule" aria-hidden="true"></span>
+              <span data-phase-long>Daylight — ideating</span>
+            </p>
+
+            <h1 class="hero__title" id="hero-title">
+              <span class="hero__title-line">Thijn</span>
+              <span class="hero__title-line hero__title-line--italic"
+                >Köhne<span class="hero__title-dot">.</span></span
+              >
+            </h1>
+
+            <p class="hero__tagline">
+              Vibe-coding &amp; co-creating with AI —
+              <em>shipping things that actually exist.</em>
+            </p>
+
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="#work">
+                <span>View projects</span>
+                <svg class="btn__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false">
+                  <path d="M3.5 10h12M11 5.5l4.5 4.5-4.5 4.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+              <a class="btn btn--ghost" href="https://github.com/thijnperd" target="_blank" rel="noopener noreferrer">
+                <span>GitHub</span>
+                <span class="btn__arrow" aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="hero__bottom">
+            <a class="scroll-cue" href="#about">
+              <span class="scroll-cue__line" aria-hidden="true"></span>
+              <span>Scroll to explore</span>
+            </a>
+            <p class="hero__hint">Drag the dial <span aria-hidden="true">↕</span> day to night</p>
+          </div>
+        </div>
+
+        <div class="hero__dial" data-time-slider></div>
+      </section>
+
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker__inner">
+          <div class="ticker__group">
+            <span>Vibe-coded</span><span class="ticker__dot">·</span>
+            <span>Human-directed</span><span class="ticker__dot">·</span>
+            <span>Shipped</span><span class="ticker__dot">·</span>
+            <span>Procedural</span><span class="ticker__dot">·</span>
+            <span>Locked in</span><span class="ticker__dot">·</span>
+          </div>
+          <div class="ticker__group">
+            <span>Vibe-coded</span><span class="ticker__dot">·</span>
+            <span>Human-directed</span><span class="ticker__dot">·</span>
+            <span>Shipped</span><span class="ticker__dot">·</span>
+            <span>Procedural</span><span class="ticker__dot">·</span>
+            <span>Locked in</span><span class="ticker__dot">·</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- ABOUT                                                         -->
+      <!-- ============================================================ -->
+      <section class="section" id="about" aria-labelledby="about-title">
+        <div class="section__grid">
+          <p class="section__label"><span>01</span> About</p>
+
+          <div class="section__body">
+            <h2 class="section__title" id="about-title">
+              A developer who treats AI like <em>a studio partner</em>, not a vending machine.
+            </h2>
+
+            <div class="about">
+              <div class="about__text">
+                <p class="lede">
+                  I build software the way I like to think: fast, tactile, and slightly obsessive
+                  about the details nobody asked for. Most of it starts as a prompt and ends as
+                  something you can actually click.
+                </p>
+                <p>
+                  That means local-first tools that respect your files, WebGL that behaves like
+                  print, and interfaces with a point of view. The current obsessions: dithered
+                  graphics, note graphs you can reason with, and agents that do the boring part
+                  properly.
+                </p>
+              </div>
+
+              <dl class="facts">
+                <div class="facts__row">
+                  <dt>Discipline</dt>
+                  <dd>Software, interfaces, AI co-creation</dd>
+                </div>
+                <div class="facts__row">
+                  <dt>Stack</dt>
+                  <dd>JavaScript / TypeScript · Python · Rust · GLSL</dd>
+                </div>
+                <div class="facts__row">
+                  <dt>Shipping</dt>
+                  <dd>Cortex · Dither Studio · PapersPlease</dd>
+                </div>
+                <div class="facts__row">
+                  <dt>Mode</dt>
+                  <dd><span data-phase-long>Daylight — ideating</span></dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- WORK                                                          -->
+      <!-- ============================================================ -->
+      <section class="section" id="work" aria-labelledby="work-title">
+        <div class="section__grid">
+          <p class="section__label"><span>02</span> Selected work</p>
+
+          <div class="section__body">
+            <header class="section__head">
+              <h2 class="section__title" id="work-title">
+                Built to be used, <em>not just demoed.</em>
+              </h2>
+              <p class="section__note">
+                Five repositories from
+                <a href="https://github.com/thijnperd" target="_blank" rel="noopener noreferrer">GitHub</a>
+                — from local-first tools to an offline dithering press.
+              </p>
+            </header>
+
+            <div class="projects">
+              <a
+                class="project project--wide"
+                href="https://thijnperd.github.io/dither-studio/"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-reveal
+              >
+                <div class="project__visual project__visual--dither" aria-hidden="true">
+                  <span class="project__num">01</span>
+                  <span class="project__meta">Live · Web app</span>
+                  <div class="dither-field"></div>
+                </div>
+                <div class="project__body">
+                  <div class="project__head">
+                    <h3>Dither Studio</h3>
+                    <span class="project__arrow" aria-hidden="true">↗</span>
+                  </div>
+                  <p>
+                    An offline dithering press for images and video. 47 algorithms, 30 ink sets,
+                    layered object detection and a 25-effect stack — a zero-dependency app that
+                    never leaves your machine.
+                  </p>
+                  <ul class="tags">
+                    <li>Offline</li>
+                    <li>Canvas</li>
+                    <li>Vanilla JS</li>
+                    <li>Print</li>
+                  </ul>
+                  <span class="project__url">thijnperd.github.io/dither-studio</span>
+                </div>
+              </a>
+
+              <a
+                class="project"
+                href="https://thijnperd.github.io/obsidian-cortex/"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-reveal
+              >
+                <div class="project__visual project__visual--cortex" aria-hidden="true">
+                  <span class="project__num">02</span>
+                  <span class="project__meta">Live · Rust + WebGL2</span>
+                  <div class="dither-field"></div>
+                </div>
+                <div class="project__body">
+                  <div class="project__head">
+                    <h3>Cortex</h3>
+                    <span class="project__arrow" aria-hidden="true">↗</span>
+                  </div>
+                  <p>
+                    A local-first thinking space that turns a folder of Markdown into six ways of
+                    seeing it — graph, brain, timeline, atlas, bento and decisions — and keeps the
+                    reasoning trail behind every choice.
+                  </p>
+                  <ul class="tags">
+                    <li>Local-first</li>
+                    <li>Rust</li>
+                    <li>WebGL2</li>
+                  </ul>
+                  <span class="project__url">thijnperd.github.io/obsidian-cortex</span>
+                </div>
+              </a>
+
+              <a
+                class="project"
+                href="https://github.com/thijnperd/Sci-crawler"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-reveal
+              >
+                <div class="project__visual project__visual--papers" aria-hidden="true">
+                  <span class="project__num">03</span>
+                  <span class="project__meta">Python · MCP</span>
+                  <div class="dither-field"></div>
+                </div>
+                <div class="project__body">
+                  <div class="project__head">
+                    <h3>PapersPlease</h3>
+                    <span class="project__arrow" aria-hidden="true">↗</span>
+                  </div>
+                  <p>
+                    A literature crawler built for AI agents: it searches five sources, reads every
+                    candidate, screens it for genuine relevance, and only then hands over
+                    open-access links. Zero runtime dependencies.
+                  </p>
+                  <ul class="tags">
+                    <li>Python</li>
+                    <li>MCP</li>
+                    <li>Zero deps</li>
+                  </ul>
+                  <span class="project__url">github.com/thijnperd/Sci-crawler</span>
+                </div>
+              </a>
+
+              <a
+                class="project"
+                href="https://thijnperd.github.io/h-AI-pergamy/"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-reveal
+              >
+                <div class="project__visual project__visual--hypergamy" aria-hidden="true">
+                  <span class="project__num">04</span>
+                  <span class="project__meta">Live · Python</span>
+                  <div class="dither-field"></div>
+                </div>
+                <div class="project__body">
+                  <div class="project__head">
+                    <h3>HYPERGAMY</h3>
+                    <span class="project__arrow" aria-hidden="true">↗</span>
+                  </div>
+                  <p>
+                    A neural network trained on 8,378 real speed dates and drawn as a 10×10 map.
+                    Estimates mutual interest, reach and partner fit — every number measured or
+                    explicitly labelled as a prior.
+                  </p>
+                  <ul class="tags">
+                    <li>Python</li>
+                    <li>Neural net</li>
+                    <li>Data</li>
+                  </ul>
+                  <span class="project__url">thijnperd.github.io/h-AI-pergamy</span>
+                </div>
+              </a>
+
+              <a
+                class="project"
+                href="https://github.com/thijnperd/PolyTAS"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-reveal
+              >
+                <div class="project__visual project__visual--polytas" aria-hidden="true">
+                  <span class="project__num">05</span>
+                  <span class="project__meta">Chrome MV3</span>
+                  <div class="dither-field"></div>
+                </div>
+                <div class="project__body">
+                  <div class="project__head">
+                    <h3>PolyTAS</h3>
+                    <span class="project__arrow" aria-hidden="true">↗</span>
+                  </div>
+                  <p>
+                    A tool-assisted-speedrun editor for PolyTrack: per-frame input editing, live
+                    recording from the game tab, JSON imports and exports, and replay scripts
+                    generated from a compressed frame timeline.
+                  </p>
+                  <ul class="tags">
+                    <li>Chrome extension</li>
+                    <li>Tooling</li>
+                    <li>JS</li>
+                  </ul>
+                  <span class="project__url">github.com/thijnperd/PolyTAS</span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SKILLS                                                        -->
+      <!-- ============================================================ -->
+      <section class="section" id="skills" aria-labelledby="skills-title">
+        <div class="section__grid">
+          <p class="section__label"><span>03</span> Toolbelt</p>
+
+          <div class="section__body">
+            <header class="section__head">
+              <h2 class="section__title" id="skills-title">Range over <em>hype.</em></h2>
+              <p class="section__note">
+                Tools I actually reach for, not a logo wall. Each one has shipped in a repository
+                above.
+              </p>
+            </header>
+
+            <div class="skills" data-reveal>
+              <div class="skill">
+                <h3>Languages</h3>
+                <ul>
+                  <li>JavaScript &amp; TypeScript</li>
+                  <li>Python</li>
+                  <li>Rust</li>
+                  <li>HTML &amp; CSS</li>
+                  <li>GLSL</li>
+                </ul>
+              </div>
+              <div class="skill">
+                <h3>Graphics</h3>
+                <ul>
+                  <li>Three.js / WebGL2</li>
+                  <li>Custom shaders</li>
+                  <li>Canvas 2D</li>
+                  <li>Procedural modelling</li>
+                  <li>Ordered dithering</li>
+                </ul>
+              </div>
+              <div class="skill">
+                <h3>Systems</h3>
+                <ul>
+                  <li>Node &amp; Vite</li>
+                  <li>Chrome extensions (MV3)</li>
+                  <li>MCP servers</li>
+                  <li>CLI &amp; TUI tools</li>
+                  <li>Local-first architecture</li>
+                </ul>
+              </div>
+              <div class="skill">
+                <h3>Practice</h3>
+                <ul>
+                  <li>AI co-creation</li>
+                  <li>Interface design</li>
+                  <li>Performance budgets</li>
+                  <li>Honest data</li>
+                  <li>Shipping in public</li>
+                </ul>
+              </div>
+            </div>
+
+            <p class="skills__note">Everything above lives in a repository — this page included.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- CONTACT                                                       -->
+      <!-- ============================================================ -->
+      <section class="contact" id="contact" aria-labelledby="contact-title">
+        <div class="contact__inner">
+          <p class="section__label"><span>04</span> Contact</p>
+
+          <h2 class="contact__title" id="contact-title">
+            Got something<br /><em>worth building?</em>
+          </h2>
+
+          <p class="contact__note">
+            I'm usually somewhere in a terminal. The fastest way in is GitHub — issues, ideas, or a
+            genuinely good bug.
+          </p>
+
+          <a
+            class="contact__link"
+            href="https://github.com/thijnperd"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>github.com/thijnperd</span>
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false">
+              <path d="M5.5 14.5 14.5 5.5M6.5 5.5h8v8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+
+          <footer class="footer">
+            <p>© <span data-year>2026</span> Thijn Köhne</p>
+            <p>Procedural WebGL · no models, no textures</p>
+            <p><a href="#top">Back to top ↑</a></p>
+          </footer>
+        </div>
+      </section>
+    </main>
+
+  </body>
+</html>
