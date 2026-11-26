@@ -18,8 +18,8 @@
   --surface: rgba(18, 22, 20, 0.045);
   --night: 0;
 
-  --display: "Syne", "IBM Plex Sans", ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
-  --sans: "IBM Plex Sans", ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
+  --display: "Cabinet Grotesk", "Satoshi", ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
+  --sans: "Satoshi", ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   --pad: clamp(1.25rem, 4.2vw, 4rem);
@@ -506,7 +506,7 @@ html[data-scheme="night"] .phase-btn__label {
   border-top: 1px solid var(--line);
   font-family: var(--display);
   font-weight: 500;
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   letter-spacing: -0.02em;
   line-height: 1;
   color: var(--ink);
@@ -556,10 +556,10 @@ html[data-scheme="night"] .phase-btn__label {
 
 .hero__title {
   font-family: var(--display);
-  font-weight: 600;
-  font-size: clamp(2.85rem, 1.2rem + 4.6vw, 6.4rem);
-  line-height: 0.96;
-  letter-spacing: -0.035em;
+  font-weight: 700;
+  font-size: clamp(3.5rem, 1.5rem + 5.6vw, 7.6rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
   margin-bottom: clamp(1.25rem, 3.2vh, 2.25rem);
   color: var(--ink);
   text-wrap: balance;
@@ -859,10 +859,10 @@ html[data-phase="night"] .ts__icon--moon {
 .section__title {
   max-width: 22ch;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: clamp(2rem, 1.15rem + 2.5vw, 3.6rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  font-size: clamp(2.25rem, 1.25rem + 2.8vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
@@ -1009,9 +1009,9 @@ html[data-phase="night"] .ts__icon--moon {
 
 .project__head h3 {
   font-family: var(--display);
-  font-weight: 600;
-  font-size: clamp(1.45rem, 1.15rem + 0.8vw, 1.9rem);
-  line-height: 1.08;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 1.25rem + 0.9vw, 2.15rem);
+  line-height: 1.04;
   letter-spacing: -0.025em;
 }
 
@@ -1198,9 +1198,9 @@ html[data-phase="night"] .ts__icon--moon {
 .skill h3 {
   margin-bottom: 1.125rem;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 1.15rem;
-  line-height: 1.1;
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.08;
   letter-spacing: -0.02em;
 }
 
@@ -1242,10 +1242,10 @@ html[data-phase="night"] .ts__icon--moon {
 .contact__title {
   max-width: 18ch;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: clamp(2.25rem, 1.15rem + 3.6vw, 5rem);
-  line-height: 0.98;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  font-size: clamp(2.5rem, 1.25rem + 4.1vw, 5.75rem);
+  line-height: 0.94;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
@@ -1556,7 +1556,7 @@ html[data-phase="night"] .ts__icon--moon {
 
 @media (max-height: 720px) and (min-width: 761px) {
   .hero__title {
-    font-size: clamp(2.6rem, 1.1rem + 4vw, 5.2rem);
+    font-size: clamp(3.1rem, 1.3rem + 4.8vw, 6rem);
   }
 
   .hero__copy {
