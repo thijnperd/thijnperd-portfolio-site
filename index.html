@@ -6,15 +6,15 @@
     <title>Thijn Köhne — Locked In</title>
     <meta
       name="description"
-      content="Portfolio of Thijn Köhne (thijnperd): developer and AI co-creator. Local-first tools, procedural WebGL, dithered interfaces — built to be used, not just demoed."
+      content="Portfolio of Thijn Köhne (thijnperd): local-first tools, procedural WebGL and dithered interfaces, built with AI in the loop."
     />
-    <meta name="theme-color" content="#f1efe7" />
+    <meta name="theme-color" content="#e4e6e1" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/src/styles.css" />
@@ -80,7 +80,6 @@
             </button>
 
             <nav class="mobile-menu" id="mobile-menu" aria-label="Sections" data-mobile-menu hidden>
-              <p class="mobile-menu__label">Index</p>
               <a href="#work">Work <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
               <a href="#about">About <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
               <a href="#skills">Skills <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
@@ -89,22 +88,16 @@
           </header>
 
           <div class="hero__copy">
-            <p class="eyebrow">
-              <span>Portfolio / 2026</span>
-              <span class="eyebrow__rule" aria-hidden="true"></span>
-              <span data-phase-long>Daylight — ideating</span>
-            </p>
-
             <h1 class="hero__title" id="hero-title">
               <span class="hero__title-line">Thijn</span>
-              <span class="hero__title-line hero__title-line--italic"
+              <span class="hero__title-line hero__title-line--alt"
                 >Köhne<span class="hero__title-dot">.</span></span
               >
             </h1>
 
             <p class="hero__tagline">
-              Vibe-coding &amp; co-creating with AI —
-              <em>shipping things that actually exist.</em>
+              Local-first software, procedural graphics, and interfaces that hold up. Built with AI
+              in the loop and reviewed line by line.
             </p>
 
             <div class="hero__actions">
@@ -126,78 +119,58 @@
               <span class="scroll-cue__line" aria-hidden="true"></span>
               <span>Scroll to explore</span>
             </a>
-            <p class="hero__hint">Drag the dial <span aria-hidden="true">↕</span> day to night</p>
+            <p class="hero__hint">Drag the dial to change the light</p>
           </div>
         </div>
 
         <div class="hero__dial" data-time-slider></div>
       </section>
 
-      <div class="ticker" aria-hidden="true">
-        <div class="ticker__inner">
-          <div class="ticker__group">
-            <span>Vibe-coded</span><span class="ticker__dot">·</span>
-            <span>Human-directed</span><span class="ticker__dot">·</span>
-            <span>Shipped</span><span class="ticker__dot">·</span>
-            <span>Procedural</span><span class="ticker__dot">·</span>
-            <span>Locked in</span><span class="ticker__dot">·</span>
-          </div>
-          <div class="ticker__group">
-            <span>Vibe-coded</span><span class="ticker__dot">·</span>
-            <span>Human-directed</span><span class="ticker__dot">·</span>
-            <span>Shipped</span><span class="ticker__dot">·</span>
-            <span>Procedural</span><span class="ticker__dot">·</span>
-            <span>Locked in</span><span class="ticker__dot">·</span>
-          </div>
-        </div>
-      </div>
-
       <!-- ============================================================ -->
       <!-- ABOUT                                                         -->
       <!-- ============================================================ -->
       <section class="section" id="about" aria-labelledby="about-title">
         <div class="section__grid">
-          <p class="section__label"><span>01</span> About</p>
+          <h2 class="section__title" id="about-title">
+            A developer who treats AI like <em>a studio partner.</em>
+          </h2>
 
-          <div class="section__body">
-            <h2 class="section__title" id="about-title">
-              A developer who treats AI like <em>a studio partner</em>, not a vending machine.
-            </h2>
-
-            <div class="about">
-              <div class="about__text">
-                <p class="lede">
-                  I build software the way I like to think: fast, tactile, and slightly obsessive
-                  about the details nobody asked for. Most of it starts as a prompt and ends as
-                  something you can actually click.
-                </p>
-                <p>
-                  That means local-first tools that respect your files, WebGL that behaves like
-                  print, and interfaces with a point of view. The current obsessions: dithered
-                  graphics, note graphs you can reason with, and agents that do the boring part
-                  properly.
-                </p>
-              </div>
-
-              <dl class="facts">
-                <div class="facts__row">
-                  <dt>Discipline</dt>
-                  <dd>Software, interfaces, AI co-creation</dd>
-                </div>
-                <div class="facts__row">
-                  <dt>Stack</dt>
-                  <dd>JavaScript / TypeScript · Python · Rust · GLSL</dd>
-                </div>
-                <div class="facts__row">
-                  <dt>Shipping</dt>
-                  <dd>Cortex · Dither Studio · PapersPlease</dd>
-                </div>
-                <div class="facts__row">
-                  <dt>Mode</dt>
-                  <dd><span data-phase-long>Daylight — ideating</span></dd>
-                </div>
-              </dl>
+          <div class="about">
+            <div class="about__text">
+              <p class="lede">
+                I build software the way I like to think: fast, tactile, and slightly obsessive
+                about the details nobody asked for. Most of it starts as a prompt and ends as
+                something you can click. I read every diff and ship what survives.
+              </p>
+              <p>
+                That means local-first tools that respect your files, WebGL that behaves like print,
+                and interfaces with a point of view. The current obsessions: dithered graphics, note
+                graphs you can reason with, and agents that do the boring part properly.
+              </p>
             </div>
+
+            <dl class="facts">
+              <div class="facts__row">
+                <dt>Discipline</dt>
+                <dd>Software, interfaces, AI co-creation</dd>
+              </div>
+              <div class="facts__row">
+                <dt>Stack</dt>
+                <dd>TypeScript · Python · Rust · GLSL</dd>
+              </div>
+              <div class="facts__row">
+                <dt>Shipping</dt>
+                <dd>Cortex · Dither Studio · PapersPlease</dd>
+              </div>
+              <div class="facts__row">
+                <dt>Process</dt>
+                <dd>AI-assisted, human-directed</dd>
+              </div>
+              <div class="facts__row">
+                <dt>Mode</dt>
+                <dd><span data-phase-long>Daylight, ideating</span></dd>
+              </div>
+            </dl>
           </div>
         </div>
       </section>
@@ -207,177 +180,217 @@
       <!-- ============================================================ -->
       <section class="section" id="work" aria-labelledby="work-title">
         <div class="section__grid">
-          <p class="section__label"><span>02</span> Selected work</p>
+          <header class="section__head">
+            <h2 class="section__title" id="work-title">
+              Five repositories, <em>all shipped.</em>
+            </h2>
+            <p class="section__note">
+              From
+              <a href="https://github.com/thijnperd" target="_blank" rel="noopener noreferrer">GitHub</a>:
+              three run in your browser, two are code you can read.
+            </p>
+          </header>
 
-          <div class="section__body">
-            <header class="section__head">
-              <h2 class="section__title" id="work-title">
-                Built to be used, <em>not just demoed.</em>
-              </h2>
-              <p class="section__note">
-                Five repositories from
-                <a href="https://github.com/thijnperd" target="_blank" rel="noopener noreferrer">GitHub</a>
-                — from local-first tools to an offline dithering press.
-              </p>
-            </header>
+          <div class="projects">
+            <a
+              class="project project--wide"
+              href="https://thijnperd.github.io/dither-studio/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <figure class="project__visual">
+                <img
+                  src="./work/dither.jpg"
+                  srcset="./work/dither-720.jpg 720w, ./work/dither.jpg 1440w"
+                  sizes="(max-width: 900px) 92vw, 1300px"
+                  width="1440"
+                  height="900"
+                  alt="Dither Studio's editor: a black canvas holding a dithered sphinx, with press, palette and effect controls in the left sidebar."
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              <div class="project__body">
+                <div class="project__head">
+                  <h3>Dither Studio</h3>
+                  <span class="project__arrow" aria-hidden="true">↗</span>
+                </div>
+                <p class="project__desc">
+                  An offline dithering press for images and video: 47 algorithms, 30 ink sets and a
+                  25-effect stack in a zero-dependency app that never uploads your files.
+                </p>
+                <p class="project__note">
+                  The image never leaves the tab: files load, process and export locally.
+                </p>
+                <ul class="tags">
+                  <li>Offline</li>
+                  <li>Canvas</li>
+                  <li>Vanilla JS</li>
+                  <li>Print</li>
+                </ul>
+                <span class="project__url">thijnperd.github.io/dither-studio</span>
+              </div>
+            </a>
 
-            <div class="projects">
-              <a
-                class="project project--wide"
-                href="https://thijnperd.github.io/dither-studio/"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-reveal
-              >
-                <div class="project__visual project__visual--dither" aria-hidden="true">
-                  <span class="project__num">01</span>
-                  <span class="project__meta">Live · Web app</span>
-                  <div class="dither-field"></div>
+            <a
+              class="project"
+              href="https://thijnperd.github.io/obsidian-cortex/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <figure class="project__visual">
+                <img
+                  src="./work/cortex.jpg"
+                  srcset="./work/cortex-720.jpg 720w, ./work/cortex.jpg 1440w"
+                  sizes="(max-width: 900px) 92vw, 640px"
+                  width="1440"
+                  height="900"
+                  alt="Cortex's home page: the headline “Your notes, as a brain.” above a demo window showing a 328-note brain view."
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              <div class="project__body">
+                <div class="project__head">
+                  <h3>Cortex</h3>
+                  <span class="project__arrow" aria-hidden="true">↗</span>
                 </div>
-                <div class="project__body">
-                  <div class="project__head">
-                    <h3>Dither Studio</h3>
-                    <span class="project__arrow" aria-hidden="true">↗</span>
-                  </div>
-                  <p>
-                    An offline dithering press for images and video. 47 algorithms, 30 ink sets,
-                    layered object detection and a 25-effect stack — a zero-dependency app that
-                    never leaves your machine.
-                  </p>
-                  <ul class="tags">
-                    <li>Offline</li>
-                    <li>Canvas</li>
-                    <li>Vanilla JS</li>
-                    <li>Print</li>
-                  </ul>
-                  <span class="project__url">thijnperd.github.io/dither-studio</span>
-                </div>
-              </a>
+                <p class="project__desc">
+                  A local-first thinking space that turns a folder of Markdown into six ways of
+                  seeing it (graph, brain, timeline, atlas, bento, decisions) and keeps the reasoning
+                  behind every choice.
+                </p>
+                <p class="project__note">
+                  Your Markdown folder is the database; every change stays on disk.
+                </p>
+                <ul class="tags">
+                  <li>Local-first</li>
+                  <li>Rust</li>
+                  <li>WebGL2</li>
+                </ul>
+                <span class="project__url">thijnperd.github.io/obsidian-cortex</span>
+              </div>
+            </a>
 
-              <a
-                class="project"
-                href="https://thijnperd.github.io/obsidian-cortex/"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-reveal
-              >
-                <div class="project__visual project__visual--cortex" aria-hidden="true">
-                  <span class="project__num">02</span>
-                  <span class="project__meta">Live · Rust + WebGL2</span>
-                  <div class="dither-field"></div>
+            <a
+              class="project"
+              href="https://github.com/thijnperd/Sci-crawler"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <figure class="project__visual">
+                <img
+                  src="./work/papers.jpg"
+                  srcset="./work/papers-720.jpg 720w, ./work/papers.jpg 1440w"
+                  sizes="(max-width: 900px) 92vw, 640px"
+                  width="1440"
+                  height="900"
+                  alt="A PapersPlease run in the terminal: six papers in scope, each scored against the research intent, with the top result's abstract and open-access links in the detail pane."
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              <div class="project__body">
+                <div class="project__head">
+                  <h3>PapersPlease</h3>
+                  <span class="project__arrow" aria-hidden="true">↗</span>
                 </div>
-                <div class="project__body">
-                  <div class="project__head">
-                    <h3>Cortex</h3>
-                    <span class="project__arrow" aria-hidden="true">↗</span>
-                  </div>
-                  <p>
-                    A local-first thinking space that turns a folder of Markdown into six ways of
-                    seeing it — graph, brain, timeline, atlas, bento and decisions — and keeps the
-                    reasoning trail behind every choice.
-                  </p>
-                  <ul class="tags">
-                    <li>Local-first</li>
-                    <li>Rust</li>
-                    <li>WebGL2</li>
-                  </ul>
-                  <span class="project__url">thijnperd.github.io/obsidian-cortex</span>
-                </div>
-              </a>
+                <p class="project__desc">
+                  A literature crawler built for AI agents. It searches five sources, reads every
+                  candidate, screens each paper for genuine relevance, and only then hands over
+                  open-access links.
+                </p>
+                <p class="project__note">
+                  One pipeline behind a CLI, a TUI, a Python library and an MCP server, with zero
+                  runtime dependencies.
+                </p>
+                <ul class="tags">
+                  <li>Python</li>
+                  <li>MCP</li>
+                  <li>Zero deps</li>
+                </ul>
+                <span class="project__url">github.com/thijnperd/Sci-crawler</span>
+              </div>
+            </a>
 
-              <a
-                class="project"
-                href="https://github.com/thijnperd/Sci-crawler"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-reveal
-              >
-                <div class="project__visual project__visual--papers" aria-hidden="true">
-                  <span class="project__num">03</span>
-                  <span class="project__meta">Python · MCP</span>
-                  <div class="dither-field"></div>
+            <a
+              class="project"
+              href="https://thijnperd.github.io/h-AI-pergamy/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <figure class="project__visual">
+                <img
+                  src="./work/hypergamy.jpg"
+                  srcset="./work/hypergamy-720.jpg 720w, ./work/hypergamy.jpg 1440w"
+                  sizes="(max-width: 900px) 92vw, 640px"
+                  width="1440"
+                  height="900"
+                  alt="HYPERGAMY's home page: a 10 by 10 chance map beside the headline “Who says yes. And who you'd end up with.”"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              <div class="project__body">
+                <div class="project__head">
+                  <h3>HYPERGAMY</h3>
+                  <span class="project__arrow" aria-hidden="true">↗</span>
                 </div>
-                <div class="project__body">
-                  <div class="project__head">
-                    <h3>PapersPlease</h3>
-                    <span class="project__arrow" aria-hidden="true">↗</span>
-                  </div>
-                  <p>
-                    A literature crawler built for AI agents: it searches five sources, reads every
-                    candidate, screens it for genuine relevance, and only then hands over
-                    open-access links. Zero runtime dependencies.
-                  </p>
-                  <ul class="tags">
-                    <li>Python</li>
-                    <li>MCP</li>
-                    <li>Zero deps</li>
-                  </ul>
-                  <span class="project__url">github.com/thijnperd/Sci-crawler</span>
-                </div>
-              </a>
+                <p class="project__desc">
+                  A neural network trained on 8,378 real speed dates, drawn as a 10×10 map. Every
+                  number is measured or explicitly labelled as a prior.
+                </p>
+                <p class="project__note">
+                  An always-guess baseline is printed next to every accuracy figure.
+                </p>
+                <ul class="tags">
+                  <li>Python</li>
+                  <li>Neural net</li>
+                  <li>Data</li>
+                </ul>
+                <span class="project__url">thijnperd.github.io/h-AI-pergamy</span>
+              </div>
+            </a>
 
-              <a
-                class="project"
-                href="https://thijnperd.github.io/h-AI-pergamy/"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-reveal
-              >
-                <div class="project__visual project__visual--hypergamy" aria-hidden="true">
-                  <span class="project__num">04</span>
-                  <span class="project__meta">Live · Python</span>
-                  <div class="dither-field"></div>
+            <a
+              class="project project--wide project--split"
+              href="https://github.com/thijnperd/PolyTAS"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <figure class="project__visual">
+                <img
+                  src="./work/polytas.jpg"
+                  srcset="./work/polytas-720.jpg 720w, ./work/polytas.jpg 1440w"
+                  sizes="(max-width: 900px) 92vw, 730px"
+                  width="1440"
+                  height="900"
+                  alt="PolyTAS's editor source: the Timeline class that draws the frame timeline, with its file path above the code."
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              <div class="project__body">
+                <div class="project__head">
+                  <h3>PolyTAS</h3>
+                  <span class="project__arrow" aria-hidden="true">↗</span>
                 </div>
-                <div class="project__body">
-                  <div class="project__head">
-                    <h3>HYPERGAMY</h3>
-                    <span class="project__arrow" aria-hidden="true">↗</span>
-                  </div>
-                  <p>
-                    A neural network trained on 8,378 real speed dates and drawn as a 10×10 map.
-                    Estimates mutual interest, reach and partner fit — every number measured or
-                    explicitly labelled as a prior.
-                  </p>
-                  <ul class="tags">
-                    <li>Python</li>
-                    <li>Neural net</li>
-                    <li>Data</li>
-                  </ul>
-                  <span class="project__url">thijnperd.github.io/h-AI-pergamy</span>
-                </div>
-              </a>
-
-              <a
-                class="project"
-                href="https://github.com/thijnperd/PolyTAS"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-reveal
-              >
-                <div class="project__visual project__visual--polytas" aria-hidden="true">
-                  <span class="project__num">05</span>
-                  <span class="project__meta">Chrome MV3</span>
-                  <div class="dither-field"></div>
-                </div>
-                <div class="project__body">
-                  <div class="project__head">
-                    <h3>PolyTAS</h3>
-                    <span class="project__arrow" aria-hidden="true">↗</span>
-                  </div>
-                  <p>
-                    A tool-assisted-speedrun editor for PolyTrack: per-frame input editing, live
-                    recording from the game tab, JSON imports and exports, and replay scripts
-                    generated from a compressed frame timeline.
-                  </p>
-                  <ul class="tags">
-                    <li>Chrome extension</li>
-                    <li>Tooling</li>
-                    <li>JS</li>
-                  </ul>
-                  <span class="project__url">github.com/thijnperd/PolyTAS</span>
-                </div>
-              </a>
-            </div>
+                <p class="project__desc">
+                  A tool-assisted speedrun editor for PolyTrack: per-frame input editing, live
+                  recording from the game tab, JSON import and export, and replay scripts generated
+                  from a compressed frame timeline.
+                </p>
+                <p class="project__note">
+                  Ships as an unpacked MV3 extension, with runs stored as local JSON files.
+                </p>
+                <ul class="tags">
+                  <li>Chrome extension</li>
+                  <li>Tooling</li>
+                  <li>JS</li>
+                </ul>
+                <span class="project__url">github.com/thijnperd/PolyTAS</span>
+              </div>
+            </a>
           </div>
         </div>
       </section>
@@ -387,62 +400,62 @@
       <!-- ============================================================ -->
       <section class="section" id="skills" aria-labelledby="skills-title">
         <div class="section__grid">
-          <p class="section__label"><span>03</span> Toolbelt</p>
+          <header class="section__head">
+            <h2 class="section__title" id="skills-title">
+              The tools behind <em>the projects above.</em>
+            </h2>
+            <p class="section__note">
+              Every item on this list has shipped in one of those repositories.
+            </p>
+          </header>
 
-          <div class="section__body">
-            <header class="section__head">
-              <h2 class="section__title" id="skills-title">Range over <em>hype.</em></h2>
-              <p class="section__note">
-                Tools I actually reach for, not a logo wall. Each one has shipped in a repository
-                above.
-              </p>
-            </header>
-
-            <div class="skills" data-reveal>
-              <div class="skill">
-                <h3>Languages</h3>
-                <ul>
-                  <li>JavaScript &amp; TypeScript</li>
-                  <li>Python</li>
-                  <li>Rust</li>
-                  <li>HTML &amp; CSS</li>
-                  <li>GLSL</li>
-                </ul>
-              </div>
-              <div class="skill">
-                <h3>Graphics</h3>
-                <ul>
-                  <li>Three.js / WebGL2</li>
-                  <li>Custom shaders</li>
-                  <li>Canvas 2D</li>
-                  <li>Procedural modelling</li>
-                  <li>Ordered dithering</li>
-                </ul>
-              </div>
-              <div class="skill">
-                <h3>Systems</h3>
-                <ul>
-                  <li>Node &amp; Vite</li>
-                  <li>Chrome extensions (MV3)</li>
-                  <li>MCP servers</li>
-                  <li>CLI &amp; TUI tools</li>
-                  <li>Local-first architecture</li>
-                </ul>
-              </div>
-              <div class="skill">
-                <h3>Practice</h3>
-                <ul>
-                  <li>AI co-creation</li>
-                  <li>Interface design</li>
-                  <li>Performance budgets</li>
-                  <li>Honest data</li>
-                  <li>Shipping in public</li>
-                </ul>
-              </div>
+          <div class="skills">
+            <div class="skill">
+              <h3>Languages</h3>
+              <ul>
+                <li>JavaScript &amp; TypeScript</li>
+                <li>Python</li>
+                <li>Rust</li>
+                <li>HTML &amp; CSS</li>
+                <li>GLSL</li>
+              </ul>
             </div>
-
-            <p class="skills__note">Everything above lives in a repository — this page included.</p>
+            <div class="skill">
+              <h3>Graphics</h3>
+              <ul>
+                <li>Three.js / WebGL2</li>
+                <li>Custom shaders</li>
+                <li>Canvas 2D</li>
+                <li>Procedural modelling</li>
+                <li>Ordered dithering</li>
+              </ul>
+            </div>
+            <div class="skill">
+              <h3>Systems</h3>
+              <ul>
+                <li>Node &amp; Vite</li>
+                <li>Chrome extensions (MV3)</li>
+                <li>MCP servers</li>
+                <li>CLI &amp; TUI tools</li>
+                <li>Local-first architecture</li>
+              </ul>
+            </div>
+            <div class="skill">
+              <h3>Practice</h3>
+              <ul>
+                <li>AI co-creation</li>
+                <li>Interface design</li>
+                <li>Performance budgets</li>
+                <li>Honest data</li>
+                <li>Shipping in public</li>
+              </ul>
+            </div>
           </div>
+
+          <p class="skills__note">
+            Hand-written CSS, one Three.js scene, no client framework. The page you are reading is
+            part of the portfolio rather than a template behind it.
+          </p>
         </div>
       </section>
 
@@ -451,14 +464,12 @@
       <!-- ============================================================ -->
       <section class="contact" id="contact" aria-labelledby="contact-title">
         <div class="contact__inner">
-          <p class="section__label"><span>04</span> Contact</p>
-
           <h2 class="contact__title" id="contact-title">
             Got something<br /><em>worth building?</em>
           </h2>
 
           <p class="contact__note">
-            I'm usually somewhere in a terminal. The fastest way in is GitHub — issues, ideas, or a
+            I'm usually somewhere in a terminal. The fastest way in is GitHub: issues, ideas, or a
             genuinely good bug.
           </p>
 
@@ -476,7 +487,7 @@
 
           <footer class="footer">
             <p>© <span data-year>2026</span> Thijn Köhne</p>
-            <p>Procedural WebGL · no models, no textures</p>
+            <p>Procedural WebGL, no models and no textures</p>
             <p><a href="#top">Back to top ↑</a></p>
           </footer>
         </div>

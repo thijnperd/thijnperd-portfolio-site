@@ -27,9 +27,9 @@ const MOON_ICON = `
 const clamp01 = (value) => Math.min(Math.max(value, 0), 1);
 
 export function timeOfDayLabel(value) {
-  if (value < 0.34) return 'Daylight — ideating';
-  if (value < 0.72) return 'Golden hour — flow state';
-  return 'Midnight — locked in';
+  if (value < 0.34) return 'Daylight, ideating';
+  if (value < 0.72) return 'Golden hour, flow state';
+  return 'Midnight, locked in';
 }
 
 export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
@@ -42,7 +42,7 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
          aria-label="Time of day"
          aria-orientation="vertical"
          aria-valuemin="0" aria-valuemax="100"
-         aria-valuenow="0" aria-valuetext="Daylight — ideating"
+         aria-valuenow="0" aria-valuetext="Daylight, ideating"
          title="Drag, or use the arrow keys">
       <span class="ts__icon ts__icon--moon" aria-hidden="true">${MOON_ICON}</span>
       <div class="ts__track">

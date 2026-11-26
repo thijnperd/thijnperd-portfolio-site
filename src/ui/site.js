@@ -57,28 +57,11 @@ function initMobileMenu() {
 }
 
 /**
- * Small page-level behaviours: scroll reveals, year stamp, mobile section menu.
- * Kept deliberately tiny — the hero is the only heavy machinery on the page.
+ * Small page-level behaviours: year stamp and the mobile section menu.
+ * The hero is the only heavy machinery on the page; everything below it renders
+ * immediately, with no scroll-triggered fades.
  */
 export function initSite() {
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const targets = document.querySelectorAll('[data-reveal]');
-  if (!reducedMotion && 'IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        entry.target.classList.add('is-in');
-        observer.unobserve(entry.target);
-      }
-    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-
-    for (const target of targets) {
-      target.classList.add('reveal');
-      observer.observe(target);
-    }
-  }
-
   const year = document.querySelector('[data-year]');
   if (year) year.textContent = String(new Date().getFullYear());
 

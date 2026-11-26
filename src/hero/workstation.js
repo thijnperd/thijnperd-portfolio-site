@@ -14,7 +14,7 @@ import { createGlowSprite } from './sky.js';
  * never cause alignment drift between the screen, its point light and particles.
  */
 
-const MONO = "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace";
+const MONO = "'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace";
 
 const COLORS = {
   deskTop: '#cbb99d',
@@ -69,9 +69,9 @@ function drawTerminal(terminal, elapsed, timeOfDay) {
   const h = canvas.height;
 
   const tier = timeOfDay < 0.4 ? 0 : timeOfDay < 0.78 ? 1 : 2;
-  const accent = ['#6fe0bc', '#ffb27a', '#7cf7d9'][tier];
-  const ink = ['#d8f2e7', '#ffe9d5', '#f2fffb'][tier];
-  const dim = ['rgba(190,230,216,0.42)', 'rgba(255,214,180,0.44)', 'rgba(200,255,244,0.46)'][tier];
+  const accent = ['#5fd2ae', '#ffb27a', '#ff9a63'][tier];
+  const ink = ['#dcf3e8', '#ffe9d5', '#fff2e9'][tier];
+  const dim = ['rgba(190,230,216,0.42)', 'rgba(255,214,180,0.44)', 'rgba(255,214,190,0.46)'][tier];
   const status = ['ideating', 'flow_state', 'locked_in'][tier];
   const dots = '.'.repeat(1 + (Math.floor(elapsed * 2) % 3));
 
@@ -259,7 +259,7 @@ function createLaptop(terminal) {
   laptop.add(trackpad);
 
   // Glowing keyboard / under-screen accent strip.
-  const glowMat = new THREE.MeshBasicMaterial({ color: '#6fe0bc' });
+  const glowMat = new THREE.MeshBasicMaterial({ color: '#5fd2ae' });
   const glowStrip = new THREE.Mesh(new THREE.BoxGeometry(1.06, 0.004, 0.012), glowMat);
   glowStrip.position.set(0, 0.032, -0.335);
   laptop.add(glowStrip);

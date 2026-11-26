@@ -9,9 +9,9 @@
  */
 
 const STOPS = [
-  { ink: '#0e1411', paper: '#f1efe7', accent: '#17694f', muted: '#4c564f' },
-  { ink: '#20150e', paper: '#f3e6d3', accent: '#a2471f', muted: '#5f4a3a' },
-  { ink: '#f2f1ec', paper: '#090d13', accent: '#7cf7d9', muted: '#9daab6' },
+  { ink: '#121614', paper: '#e4e6e1', accent: '#b8402c', muted: '#4d554f' },
+  { ink: '#221609', paper: '#e5d2b0', accent: '#9c3f16', muted: '#5e4a34' },
+  { ink: '#e9eae4', paper: '#0a0d10', accent: '#f0703f', muted: '#9aa3a4' },
 ];
 
 const STATUS_ICONS = {
@@ -22,9 +22,9 @@ const STATUS_ICONS = {
 };
 
 const PHASE_LABELS = {
-  ideating: { short: 'Daylight', long: 'Daylight — ideating', status: 'ideating' },
-  flow: { short: 'Golden hour', long: 'Golden hour — flow state', status: 'flow state' },
-  locked: { short: 'Midnight', long: 'Midnight — locked in', status: 'locked in' },
+  ideating: { short: 'Daylight', long: 'Daylight, ideating', status: 'ideating' },
+  flow: { short: 'Golden hour', long: 'Golden hour, flow state', status: 'flow state' },
+  locked: { short: 'Midnight', long: 'Midnight, locked in', status: 'locked in' },
 };
 
 const smoothstep = (x) => x * x * (3 - 2 * x);
