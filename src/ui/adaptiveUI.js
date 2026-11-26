@@ -1,12 +1,18 @@
 /**
  * Synchronizes page palette tokens and light-phase labels with the 3D hero
- * time-of-day scalar (0 = daylight, 0.5 = dusk, 1 = midnight).
+ * time-of-day scalar (0 = daylight, 0.46 = dusk, 0.66 = twilight, 1 = midnight).
+ * Light and dark text palettes flip cleanly around dusk-to-twilight (0.55) so
+ * foreground typography never passes through a low-contrast grey midpoint.
  */
 
-const STOPS = [
-  { ink: '#121614', paper: '#e4e6e1', accent: '#a93724', muted: '#464e48' },
-  { ink: '#221609', paper: '#e5d2b0', accent: '#8f3610', muted: '#523f2b' },
-  { ink: '#e9eae4', paper: '#0a0d10', accent: '#f07443', muted: '#9aa3a4' },
+const LIGHT_STOPS = [
+  { t: 0.0, ink: '#121614', paper: '#e4e6e1', accent: '#a93724', muted: '#464e48' },
+  { t: 0.55, ink: '#221609', paper: '#e5d2b0', accent: '#8f3610', muted: '#523f2b' },
+];
+
+const DARK_STOPS = [
+  { t: 0.55, ink: '#eceee8', paper: '#161b26', accent: '#f07443', muted: '#a0a8b4' },
+  { t: 1.0, ink: '#e9eae4', paper: '#0a0d10', accent: '#f07443', muted: '#9aa3a4' },
 ];
 
 const STATUS_ICONS = {
@@ -29,19 +35,26 @@ function hexToRgb(hex) {
   return { r: (value >> 16) & 255, g: (value >> 8) & 255, b: value & 255 };
 }
 
-const STOP_RGB = STOPS.map((stop) => ({
-  ink: hexToRgb(stop.ink),
-  paper: hexToRgb(stop.paper),
-  accent: hexToRgb(stop.accent),
-  muted: hexToRgb(stop.muted),
-}));
+function compileStops(stops) {
+  return stops.map((stop) => ({
+    t: stop.t,
+    ink: hexToRgb(stop.ink),
+    paper: hexToRgb(stop.paper),
+    accent: hexToRgb(stop.accent),
+    muted: hexToRgb(stop.muted),
+  }));
+}
 
-function sampleStop(key, t) {
-  const scaled = Math.min(Math.max(t, 0), 1) * 2;
-  const index = Math.min(Math.floor(scaled), 1);
-  const local = smoothstep(scaled - index);
-  const a = STOP_RGB[index][key];
-  const b = STOP_RGB[index + 1][key];
+const LIGHT_RGB = compileStops(LIGHT_STOPS);
+const DARK_RGB = compileStops(DARK_STOPS);
+
+function samplePair(stops, key, t) {
+  const aStop = stops[0];
+  const bStop = stops[1];
+  const span = Math.max(bStop.t - aStop.t, 0.0001);
+  const local = smoothstep(Math.min(Math.max((t - aStop.t) / span, 0), 1));
+  const a = aStop[key];
+  const b = bStop[key];
 
   return {
     r: Math.round(a.r + (b.r - a.r) * local),
@@ -70,10 +83,13 @@ export function createAdaptiveUI() {
 
   function update(t) {
     const value = Math.min(Math.max(Number(t) || 0, 0), 1);
-    const ink = sampleStop('ink', value);
-    const paper = sampleStop('paper', value);
-    const accent = sampleStop('accent', value);
-    const muted = sampleStop('muted', value);
+    const scheme = value < 0.55 ? 'day' : 'night';
+    const stops = scheme === 'day' ? LIGHT_RGB : DARK_RGB;
+
+    const ink = samplePair(stops, 'ink', value);
+    const paper = samplePair(stops, 'paper', value);
+    const accent = samplePair(stops, 'accent', value);
+    const muted = samplePair(stops, 'muted', value);
 
     const phase = value < 0.34 ? 'day' : value < 0.72 ? 'dusk' : 'night';
     const key = [
@@ -82,6 +98,7 @@ export function createAdaptiveUI() {
       accent.r, accent.g, accent.b,
       muted.r, muted.g, muted.b,
       phase,
+      scheme,
     ].join(',');
 
     if (key === lastKey) return;
@@ -98,6 +115,7 @@ export function createAdaptiveUI() {
     root.style.setProperty('--line-strong', rgbaCss(ink, 0.34));
     root.style.setProperty('--surface', rgbaCss(ink, 0.045));
     root.style.setProperty('--night', value.toFixed(3));
+    root.dataset.scheme = scheme;
 
     if (phase !== lastPhase) {
       lastPhase = phase;

@@ -2,17 +2,7 @@ import * as THREE from 'three';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
 /**
- * SECTION 5 — CUSTOM GLSL SCREEN-SPACE ORDERED DITHERING
- *
- * The whole scene (desk, screen, core, particles, water reflections) is rendered
- * normally, tone-mapped and converted to sRGB by OutputPass, then this pass
- * collapses the image to a crisp grid of pixel blocks and quantises it through an
- * 8×8 Bayer threshold matrix. One shared pass guarantees every material picks up
- * the same tactile print texture.
- *
- * Ordered Bayer (not random noise) is essential here: animated ripples would
- * sparkle like TV static if the threshold changed every frame, while Bayer keeps
- * the dot structure stable and lets it crawl with the actual highlights.
+ * Screen-space ordered Bayer 8×8 dithering post-processing pass.
  */
 export const DitherShader = {
   name: 'DitherShader',

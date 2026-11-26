@@ -49,12 +49,11 @@
   }
 }
 
-html[data-phase="day"],
-html[data-phase="dusk"] {
+html[data-scheme="day"] {
   color-scheme: light;
 }
 
-html[data-phase="night"] {
+html[data-scheme="night"] {
   color-scheme: dark;
 }
 
@@ -294,7 +293,8 @@ ul {
   height: 0.6875rem;
 }
 
-html[data-phase="night"] .status {
+html[data-phase="night"] .status,
+html[data-scheme="night"] .status {
   color: var(--accent);
   border-color: rgba(var(--accent-rgb), 0.45);
 }
@@ -599,12 +599,12 @@ html[data-phase="night"] .status {
   font-family: var(--mono);
   font-size: 0.75rem;
   letter-spacing: 0.02em;
-  color: var(--muted);
+  color: var(--ink);
   transition: color 180ms var(--ease-out);
 }
 
 .scroll-cue:hover {
-  color: var(--ink);
+  color: var(--accent);
 }
 
 .scroll-cue__line {
@@ -628,7 +628,8 @@ html[data-phase="night"] .status {
   font-family: var(--mono);
   font-size: 0.75rem;
   letter-spacing: 0.01em;
-  color: var(--muted);
+  color: var(--ink);
+  opacity: 0.85;
   text-align: right;
 }
 

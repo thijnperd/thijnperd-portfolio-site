@@ -6,8 +6,16 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { initRenderer, initCamera, initSceneEnvironment } from './renderer.js';
 import { createDitherPass, updateDitherUniforms } from './dither.js';
 import { createAtmosphereState, sampleAtmosphere, updateLightRig } from './atmosphere.js';
-import { createRipplePlane, updateRipple } from './ripple.js';
-import { createSkyDome, updateSkyDome, createSkyBody, updateSkyBody } from './sky.js';
+import { createRipplePlane, triggerRipple, updateRipple } from './ripple.js';
+import {
+  createSkyDome,
+  updateSkyDome,
+  createCelestialSystem,
+  updateCelestialSystem,
+  createStarfield,
+  updateStarfield,
+  setStarfieldPixelRatio,
+} from './sky.js';
 import {
   createWorkstationGroup,
   updateWorkstation,
@@ -17,15 +25,10 @@ import {
 import { createPromptParticles, createSteamParticles } from './particles.js';
 
 /**
- * SECTION 7 — CAMERA PARALLAX, RESPONSIVENESS & LIFECYCLE
- *
- * HeroScene owns the renderer, the scene, the post-processing chain and the
- * requestAnimationFrame loop. Public surface:
+ * Owns the WebGL renderer, scene graph, post-processing chain, and render loop.
  *   new HeroScene(container, { initialTime })
- *   scene.setTimeOfDay(t)     ← 0 daylight · 0.5 dusk · 1 midnight
- *   scene.start() / stop()
- *   scene.dispose()
- *   scene.onTimeChange = (t) => {}
+ *   scene.setTimeOfDay(t)  // 0 daylight · 0.46 dusk · 0.66 twilight · 1 midnight
+ *   scene.start() / stop() / dispose()
  */
 export class HeroScene {
   constructor(container, { initialTime = 0 } = {}) {
@@ -41,12 +44,19 @@ export class HeroScene {
     this.parallaxStrength = 0.26;
     this.pointerTarget = new THREE.Vector2(0, 0);
     this.pointerCurrent = new THREE.Vector2(0, 0);
+    this.entrance = this.reducedMotion ? 1 : 0;
 
     this.atmosphere = createAtmosphereState();
     this.cameraBase = new THREE.Vector3(1.95, 1.95, 5.6);
     this.cameraLook = new THREE.Vector3(-0.75, 1.35, 0);
+    this.compact = false;
     this.screenWorld = new THREE.Vector3();
     this.coreWorld = new THREE.Vector3();
+
+    this._raycaster = new THREE.Raycaster();
+    this._ndc = new THREE.Vector2();
+    this._waterPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    this._hitPoint = new THREE.Vector3();
 
     this.elapsed = 0;
     this.running = false;
@@ -63,22 +73,16 @@ export class HeroScene {
     this._init();
   }
 
-  /* ---------------------------------------------------------------- */
-  /* Init                                                             */
-  /* ---------------------------------------------------------------- */
-
   _init() {
     const { width, height } = this._measure();
     this.width = width;
     this.height = height;
 
-    // 1. Renderer, scene, camera and fog.
     this.renderer = initRenderer(this.container);
     this.scene = new THREE.Scene();
     this.camera = initCamera(width / height);
     initSceneEnvironment(this.scene);
 
-    // Light rig: sun/moon + ambient fill + two local emissive sources.
     const sun = new THREE.DirectionalLight('#ffffff', 2.4);
     sun.position.set(-6, 9, 4);
     const ambient = new THREE.AmbientLight('#ffffff', 1);
@@ -88,20 +92,21 @@ export class HeroScene {
     this.scene.add(sun, sun.target, ambient, hemi, screen, core);
     this.lights = { sun, ambient, hemi, screen, core };
 
-    // 2. Gradient sky dome + visible sun/moon that follows the dial.
+    const dpr = this.renderer.getPixelRatio();
+
     this.skyDome = createSkyDome();
     this.scene.add(this.skyDome.mesh);
 
-    this.skyBody = createSkyBody();
-    this.scene.add(this.skyBody.sprite);
+    this.starfield = createStarfield({ pixelRatio: dpr });
+    this.scene.add(this.starfield.group);
 
-    // 3. Infinite rippling surface.
+    this.celestial = createCelestialSystem();
+    this.scene.add(this.celestial.group);
+
     const isNarrow = width < 760;
     this.ripple = createRipplePlane({ segments: isNarrow ? 130 : 200 });
     this.scene.add(this.ripple.mesh);
 
-    // 4. Procedural workstation and its particle streams.
-    const dpr = this.renderer.getPixelRatio();
     this.workstation = createWorkstationGroup({ pixelRatio: dpr });
     this.scene.add(this.workstation.group);
 
@@ -128,7 +133,6 @@ export class HeroScene {
     });
     this.workstation.group.add(this.steamParticles.points);
 
-    // 5. Post-processing: scene → tone mapping / sRGB → ordered dither.
     this.composer = new EffectComposer(this.renderer);
     this.composer.setPixelRatio(dpr);
     this.composer.setSize(width, height);
@@ -150,24 +154,13 @@ export class HeroScene {
     return { width: Math.max(width, 1), height: Math.max(height, 1) };
   }
 
-  /* ---------------------------------------------------------------- */
-  /* Atmosphere / time of day                                         */
-  /* ---------------------------------------------------------------- */
-
-  /**
-   * Single source of truth. The slider only ever writes here.
-   */
   setTimeOfDay(normalizedValue) {
     this.targetTimeOfDay = THREE.MathUtils.clamp(Number(normalizedValue) || 0, 0, 1);
   }
 
-  /**
-   * Frame-rate-independent exponential damping: identical feel at 60 Hz and
-   * 144 Hz. Smoothing the scalar (rather than snapping it) is what gives the
-   * lighting transition its tactile weight when the user flicks the dial.
-   */
   updateSmoothTime(deltaTime) {
-    const speed = this.reducedMotion ? 20 : 6.2;
+    const diff = Math.abs(this.targetTimeOfDay - this.currentTimeOfDay);
+    const speed = this.reducedMotion ? 24 : diff > 0.18 ? 3.6 : 7.5;
     const k = 1 - Math.exp(-speed * deltaTime);
     this.currentTimeOfDay += (this.targetTimeOfDay - this.currentTimeOfDay) * k;
 
@@ -183,10 +176,6 @@ export class HeroScene {
     this.renderer.toneMappingExposure = atm.exposure;
   }
 
-  /* ---------------------------------------------------------------- */
-  /* Per-frame updates                                                */
-  /* ---------------------------------------------------------------- */
-
   _updateSmoothPointer(deltaTime) {
     if (this.reducedMotion) {
       this.pointerCurrent.set(0, 0);
@@ -196,11 +185,17 @@ export class HeroScene {
     this.pointerCurrent.lerp(this.pointerTarget, k);
   }
 
-  _updateCamera() {
+  _updateCamera(deltaTime) {
+    if (this.entrance < 1) {
+      this.entrance = Math.min(1, this.entrance + deltaTime / 0.9);
+    }
+    const ease = 1 - Math.pow(1 - this.entrance, 3);
+    const introOffset = 1 - ease;
+
     this.camera.position.set(
       this.cameraBase.x + this.pointerCurrent.x * this.parallaxStrength,
-      this.cameraBase.y - this.pointerCurrent.y * this.parallaxStrength * 0.5,
-      this.cameraBase.z,
+      this.cameraBase.y - this.pointerCurrent.y * this.parallaxStrength * 0.5 + introOffset * 0.12,
+      this.cameraBase.z + introOffset * 0.45,
     );
     this.camera.lookAt(this.cameraLook);
   }
@@ -216,31 +211,48 @@ export class HeroScene {
     const timeOfDay = this.currentTimeOfDay;
     const atm = sampleAtmosphere(timeOfDay, this.atmosphere);
     this._applyAtmosphere(atm);
-    updateSkyDome(this.skyDome, atm);
-    updateSkyBody(this.skyBody, timeOfDay);
 
     this._updateSmoothPointer(deltaTime);
-    this._updateCamera();
+    this._updateCamera(deltaTime);
 
-    // Freeze world motion (but keep lighting responsive) for reduced-motion users.
     const motionTime = this.reducedMotion ? 0 : this.elapsed;
+    const motionDt = this.reducedMotion ? 0 : deltaTime;
 
-    updateWorkstation(this.workstation, motionTime, timeOfDay, atm);
+    updateCelestialSystem(
+      this.celestial,
+      this.camera,
+      this.cameraBase,
+      this.cameraLook,
+      timeOfDay,
+      motionTime,
+      this.compact,
+    );
+    updateSkyDome(this.skyDome, atm, this.celestial, motionTime);
+    updateStarfield(this.starfield, atm, motionTime, timeOfDay, this.reducedMotion);
+
+    updateWorkstation(
+      this.workstation,
+      motionTime,
+      motionDt,
+      timeOfDay,
+      atm,
+      this.reducedMotion ? null : this.pointerCurrent,
+    );
     this.workstation.group.updateMatrixWorld(true);
     this.workstation.screenAnchor.getWorldPosition(this.screenWorld);
     this.workstation.core.coreAnchor.getWorldPosition(this.coreWorld);
 
     this.lights.screen.position.copy(this.screenWorld);
     this.lights.core.position.copy(this.coreWorld);
-    updateLightRig(this.lights, atm);
+    updateLightRig(this.lights, atm, this.celestial);
 
-    updateRipple(this.ripple, atm, this.screenWorld, this.coreWorld);
+    updateRipple(this.ripple, atm, this.screenWorld, this.coreWorld, this.celestial);
     this.ripple.uniforms.uTime.value = motionTime;
 
-    this.promptParticles.update(motionTime, atm);
-    this.steamParticles.update(motionTime, atm);
+    this.promptParticles.update(motionTime, atm, motionDt);
+    this.steamParticles.update(motionTime, atm, motionDt);
 
-    updateContactShadow(this.contactShadow, atm);
+    updateContactShadow(this.contactShadow, atm, this.celestial);
 
     this.ditherPass.uniforms.uTime.value = motionTime;
     this.composer.render(deltaTime);
@@ -257,10 +269,6 @@ export class HeroScene {
     this.onTimeChange(this.currentTimeOfDay);
   }
 
-  /* ---------------------------------------------------------------- */
-  /* Parallax                                                        */
-  /* ---------------------------------------------------------------- */
-
   _onPointerMove = (event) => {
     if (this.reducedMotion || event.pointerType === 'touch') return;
     const nx = (event.clientX / Math.max(window.innerWidth, 1)) * 2 - 1;
@@ -271,13 +279,28 @@ export class HeroScene {
     );
   };
 
+  _onPointerDown = (event) => {
+    if (this.reducedMotion || event.button !== 0) return;
+    if (event.target !== this.renderer.domElement) return;
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
+    this._ndc.set(
+      ((event.clientX - rect.left) / rect.width) * 2 - 1,
+      -((event.clientY - rect.top) / rect.height) * 2 + 1,
+    );
+    this._raycaster.setFromCamera(this._ndc, this.camera);
+    if (this._raycaster.ray.intersectPlane(this._waterPlane, this._hitPoint)) {
+      const len = Math.hypot(this._hitPoint.x, this._hitPoint.z);
+      if (len <= 22) {
+        triggerRipple(this.ripple, this._hitPoint.x, this._hitPoint.z, this.elapsed, 1.0);
+      }
+    }
+  };
+
   _resetPointer = () => {
     this.pointerTarget.set(0, 0);
   };
-
-  /* ---------------------------------------------------------------- */
-  /* Resize                                                           */
-  /* ---------------------------------------------------------------- */
 
   handleResize = () => {
     if (this.disposed) return;
@@ -287,16 +310,14 @@ export class HeroScene {
       return;
     }
 
-    // 1.5 is the sweet spot for the dithered print look: crisp blocks, retina-safe
-    // memory use, and a much lighter fill cost on laptop-class GPUs.
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     this.width = width;
     this.height = height;
     this._lastDpr = dpr;
 
     const narrow = width < 760;
-    // Portrait tablets get the wider phone framing too, so the diorama stays whole.
     const compact = narrow || height > width * 1.05;
+    this.compact = compact;
 
     this.renderer.setPixelRatio(dpr);
     this.renderer.setSize(width, height, false);
@@ -308,13 +329,10 @@ export class HeroScene {
     this.camera.updateProjectionMatrix();
 
     if (compact) {
-      // Pull back and lift the framing on phones so the desk and core stay whole
-      // and the copy can sit underneath without covering the subject.
       this.cameraBase.set(1.8, 2.7, 10.4);
       this.cameraLook.set(0.1, 0.25, 0);
       this.parallaxStrength = 0.1;
     } else {
-      // Slight right-of-centre subject with breathing room for the headline.
       this.cameraBase.set(1.95, 1.95, 5.6);
       this.cameraLook.set(-0.75, 1.35, 0);
       this.parallaxStrength = 0.26;
@@ -325,13 +343,10 @@ export class HeroScene {
 
     this.promptParticles.setPixelRatio(dpr);
     this.steamParticles.setPixelRatio(dpr);
+    setStarfieldPixelRatio(this.starfield, dpr);
 
-    this._updateCamera();
+    this._updateCamera(0);
   };
-
-  /* ---------------------------------------------------------------- */
-  /* Lifecycle                                                        */
-  /* ---------------------------------------------------------------- */
 
   _bind() {
     if (this._listeners) return;
@@ -344,6 +359,7 @@ export class HeroScene {
     document.addEventListener('visibilitychange', this._onVisibilityChange, { signal });
 
     const canvas = this.renderer.domElement;
+    canvas.addEventListener('pointerdown', this._onPointerDown, { passive: true, signal });
     canvas.addEventListener('webglcontextlost', this._onContextLost, { signal });
     canvas.addEventListener('webglcontextrestored', this._onContextRestored, { signal });
   }
@@ -369,7 +385,7 @@ export class HeroScene {
   _resume() {
     if (this.running || this.disposed) return;
     this.running = true;
-    this.clock.getDelta(); // discard the paused interval
+    this.clock.getDelta();
     this._raf = requestAnimationFrame(this._tick);
   }
 
@@ -397,7 +413,6 @@ export class HeroScene {
         const entry = entries[0];
         if (!entry) return;
         this.isVisible = entry.isIntersecting;
-        // Pause rendering entirely once the hero has scrolled out of view.
         if (this.isVisible && !document.hidden) this._resume();
         else this._pause();
       }, { threshold: 0, rootMargin: '80px' });
@@ -423,7 +438,6 @@ export class HeroScene {
     this.promptParticles.dispose();
     this.steamParticles.dispose();
 
-    // De-duplicate shared geometries/materials/textures, then free everything.
     const geometries = new Set();
     const materials = new Set();
     const textures = new Set();

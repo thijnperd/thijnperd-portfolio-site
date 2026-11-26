@@ -144,6 +144,17 @@ function drawTerminal(terminal, elapsed, timeOfDay) {
   ctx.fillText('build', 34, y - 9);
   ctx.fillText(`${Math.round(progress * 100)}%`, 34 + barWidth + 12, y + 5);
 
+  // Subtle live telemetry activity bars on the right side of the terminal.
+  const barX = 324;
+  for (let b = 0; b < 8; b += 1) {
+    const amp = 0.25 + 0.75 * Math.abs(Math.sin(elapsed * 2.1 + b * 0.85));
+    const bh = Math.round(amp * 18);
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.22 + amp * 0.48;
+    ctx.fillRect(barX + b * 11, y + 5 - bh, 6, bh);
+  }
+  ctx.globalAlpha = 1;
+
   y += 42;
   ctx.fillStyle = accent;
   ctx.globalAlpha = Math.floor(elapsed * 1.8) % 2 === 0 ? 0.95 : 0.12;
@@ -381,10 +392,11 @@ function createNotebookAndPen() {
   return group;
 }
 
-export function createAICoPilotCore() {
+export function createGeometricCore() {
   const group = new THREE.Group();
   group.position.set(0.46, 0.94, -0.02);
 
+  const coreGeo = new THREE.IcosahedronGeometry(0.17, 0);
   const coreMat = new THREE.MeshPhongMaterial({
     color: '#146b58',
     emissive: '#5fd2ae',
@@ -393,8 +405,16 @@ export function createAICoPilotCore() {
     shininess: 70,
     flatShading: true,
   });
-  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.17, 0), coreMat);
+  const core = new THREE.Mesh(coreGeo, coreMat);
   group.add(core);
+
+  const edgesMat = new THREE.LineBasicMaterial({
+    color: '#b6ffe9',
+    transparent: true,
+    opacity: 0.34,
+  });
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(coreGeo), edgesMat);
+  core.add(edges);
 
   const innerMat = new THREE.MeshBasicMaterial({ color: '#9ff0d6' });
   const inner = new THREE.Mesh(new THREE.OctahedronGeometry(0.085, 0), innerMat);
@@ -421,10 +441,11 @@ export function createAICoPilotCore() {
   const glow = createGlowSprite({ color: '#7cf7d9', size: 1.5, opacity: 0.16 });
   group.add(glow);
 
-  // Two tiny satellites orbiting the core.
-  const satelliteGeo = new THREE.OctahedronGeometry(0.022, 0);
+  // Three orbiting micro-octahedra around the core.
+  const satelliteGeo = new THREE.OctahedronGeometry(0.021, 0);
   const satelliteMat = new THREE.MeshBasicMaterial({ color: '#c9fff1' });
   const satellites = [
+    new THREE.Mesh(satelliteGeo, satelliteMat),
     new THREE.Mesh(satelliteGeo, satelliteMat),
     new THREE.Mesh(satelliteGeo, satelliteMat),
   ];
@@ -436,10 +457,12 @@ export function createAICoPilotCore() {
   return {
     group,
     core,
+    edgesMat,
     inner,
     ringA,
     ringB,
     satellites,
+    satelliteMat,
     coreMat,
     innerMat,
     ringMatA,
@@ -463,7 +486,7 @@ export function createWorkstationGroup({ pixelRatio = 1 } = {}) {
   const laptopParts = createLaptop(terminal);
   const mugParts = createMug();
   const notebook = createNotebookAndPen();
-  const coreParts = createAICoPilotCore();
+  const coreParts = createGeometricCore();
 
   group.add(desk, laptopParts.laptop, mugParts.mug, notebook, coreParts.group);
 
@@ -486,52 +509,80 @@ export function createWorkstationGroup({ pixelRatio = 1 } = {}) {
       core: coreParts.group.position.clone(),
       steam: steamLocal,
     },
+    anim: {
+      coreAngle: 0,
+      innerAngle: 0,
+      ringAngleA: 0.2,
+      ringAngleB: 0.75,
+      orbitAngle: 0,
+    },
     pixelRatio,
   };
 
   return workstation;
 }
 
-export function updateWorkstation(workstation, elapsed, timeOfDay, atm) {
-  const { group, core, terminal, screenMat, glowMat } = workstation;
+export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, atm, pointer) {
+  const { group, core, terminal, screenMat, glowMat, anim } = workstation;
+  const dt = Math.min(Math.max(deltaTime || 0, 0), 0.05);
 
-  // Gentle damped levitation + micro-tilt. The whole desk moves as one object.
+  // Smooth levitation coupled with subtle pointer-reactive tilt.
+  const px = pointer ? pointer.x : 0;
+  const py = pointer ? pointer.y : 0;
   group.position.y = workstation.baseY + Math.sin(elapsed * 0.85) * 0.045;
-  group.rotation.z = Math.sin(elapsed * 0.5) * 0.0085;
-  group.rotation.x = Math.cos(elapsed * 0.42) * 0.006;
+  group.rotation.z = Math.sin(elapsed * 0.5) * 0.0085 - px * 0.016;
+  group.rotation.x = Math.cos(elapsed * 0.42) * 0.006 + py * 0.012;
 
-  // The co-pilot core gets livelier as the room gets darker.
+  // Integrate rotation angles via deltaTime so time-of-day shifts never jump rotation.
+  anim.coreAngle += dt * (0.34 + timeOfDay * 0.72);
+  anim.innerAngle += dt * (0.78 + timeOfDay * 1.15);
+  anim.ringAngleA += dt * (0.48 + timeOfDay * 0.34);
+  anim.ringAngleB += dt * (0.38 + timeOfDay * 0.28);
+  anim.orbitAngle += dt * (0.68 + timeOfDay * 0.42);
+
   core.group.position.y = core.baseY + Math.sin(elapsed * 1.25 + 0.8) * 0.055;
-  core.core.rotation.y = elapsed * (0.34 + timeOfDay * 0.9);
-  core.core.rotation.x = Math.sin(elapsed * 0.42) * 0.14;
-  core.inner.rotation.y = -elapsed * (0.8 + timeOfDay * 1.4);
-  core.inner.rotation.z = elapsed * 0.35;
+  core.core.rotation.y = anim.coreAngle;
+  core.core.rotation.x = Math.sin(elapsed * 0.42) * 0.16;
+  core.inner.rotation.y = -anim.innerAngle;
+  core.inner.rotation.z = anim.coreAngle * 0.65;
 
-  core.ringA.rotation.set(0.62 + Math.sin(elapsed * 0.32) * 0.12, elapsed * 0.55, 0.25);
-  core.ringB.rotation.set(-0.5, 0.75 - elapsed * 0.42, 0.5);
+  core.ringA.rotation.set(0.62 + Math.sin(elapsed * 0.34) * 0.14, anim.ringAngleA, 0.25);
+  core.ringB.rotation.set(-0.5 + Math.cos(elapsed * 0.28) * 0.1, 0.75 - anim.ringAngleB, 0.5);
 
-  const orbit = elapsed * 0.7;
-  core.satellites[0].position.set(Math.cos(orbit) * 0.46, Math.sin(orbit * 1.4) * 0.24, Math.sin(orbit) * 0.46);
+  const orbit = anim.orbitAngle;
+  core.satellites[0].position.set(
+    Math.cos(orbit) * 0.46,
+    Math.sin(orbit * 1.4) * 0.24,
+    Math.sin(orbit) * 0.46,
+  );
   core.satellites[1].position.set(
-    Math.cos(orbit + Math.PI * 0.8) * 0.38,
-    Math.sin(orbit * 1.1 + 2.1) * 0.3,
-    Math.sin(orbit + Math.PI * 0.8) * 0.38,
+    Math.cos(orbit + Math.PI * 0.68) * 0.39,
+    Math.sin(orbit * 1.1 + 2.1) * 0.29,
+    Math.sin(orbit + Math.PI * 0.68) * 0.39,
+  );
+  core.satellites[2].position.set(
+    Math.cos(-orbit * 0.85 + 4.1) * 0.34,
+    Math.cos(orbit * 1.3 + 0.7) * 0.22,
+    Math.sin(-orbit * 0.85 + 4.1) * 0.34,
   );
 
-  // Material energy follows the atmosphere: almost matte at noon, phosphor at night.
+  // Material energy follows the atmosphere: quiet in daylight, luminous at night.
   core.coreMat.emissive.copy(atm.coreColor);
-  core.coreMat.emissiveIntensity = 0.16 + timeOfDay * 1.6;
+  core.coreMat.emissiveIntensity = 0.18 + timeOfDay * 1.55;
+  core.edgesMat.color.copy(atm.coreTint);
+  core.edgesMat.opacity = 0.24 + timeOfDay * 0.52;
   core.innerMat.color.copy(atm.coreTint).multiplyScalar(0.55 + timeOfDay * 0.55);
+  core.satelliteMat.color.copy(atm.coreTint);
   core.ringMatA.color.copy(atm.coreColor).multiplyScalar(0.9 + timeOfDay * 0.5);
   core.ringMatA.opacity = 0.55 + timeOfDay * 0.35;
   core.ringMatB.color.copy(atm.coreColor).multiplyScalar(0.7 + timeOfDay * 0.45);
-  core.ringMatB.opacity = 0.34 + timeOfDay * 0.25;
+  core.ringMatB.opacity = 0.34 + timeOfDay * 0.28;
 
   core.glow.material.color.copy(atm.coreTint);
   core.glow.material.opacity = 0.04 + timeOfDay * 0.46;
   core.glow.scale.setScalar(1.2 + timeOfDay * 0.5 + Math.sin(elapsed * 1.5) * 0.05);
 
-  // The screen gets physically brighter when it becomes the main light source.
+  // Screen illuminates the desk as daylight drops.
   const screenScalar = 1.08 + timeOfDay * 0.45;
   screenMat.color.setRGB(screenScalar, screenScalar, screenScalar);
   glowMat.color.copy(atm.screenTint).multiplyScalar(0.5 + timeOfDay * 2.4);
@@ -587,14 +638,16 @@ export function createContactShadow() {
   return { mesh, uniforms, material };
 }
 
-export function updateContactShadow(shadow, atm) {
-  // Lower sun = longer, softer shadow; the offset leans away from the light.
-  const elevation = THREE.MathUtils.clamp(atm.sunPosition.y / 9.5, 0.08, 1);
+export function updateContactShadow(shadow, atm, celestial) {
+  const dir = celestial ? celestial.celestialDir : atm.sunPosition;
+  const elevation = celestial
+    ? Math.max(celestial.sunElevation, celestial.moonElevation * 0.85, 0.12)
+    : THREE.MathUtils.clamp(dir.y / 9.5, 0.08, 1);
   const low = 1 - elevation;
   shadow.uniforms.uStrength.value = atm.shadowStrength;
-  shadow.mesh.scale.set(1 + low * 0.75, 1, 1 + low * 0.18);
-  shadow.mesh.position.x = -0.35 - low * 1.15;
-  shadow.mesh.position.z = 0.05 + low * 0.2;
+  shadow.mesh.scale.set(1 + low * 0.72, 1, 1 + low * 0.18);
+  shadow.mesh.position.x = -0.35 - Math.sign(dir.x || -1) * low * 0.85;
+  shadow.mesh.position.z = 0.05 + low * 0.22;
 }
 
 export function disposeWorkstation(workstation) {

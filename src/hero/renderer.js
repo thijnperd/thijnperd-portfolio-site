@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 /**
- * SECTION 1 — CORE WEBGL ENGINE & FRAMING
+ * Core WebGL renderer, perspective camera, and scene fog setup.
  */
 
 /**
