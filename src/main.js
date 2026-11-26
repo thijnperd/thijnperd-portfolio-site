@@ -3,7 +3,7 @@ import { initTimeSlider } from './ui/timeSlider.js';
 import { createAdaptiveUI } from './ui/adaptiveUI.js';
 import { initSite } from './ui/site.js';
 
-const INITIAL_TIME = 0.02;
+const INITIAL_TIME = window.matchMedia('(prefers-color-scheme: dark)').matches ? 0.96 : 0.02;
 
 initSite();
 
@@ -21,7 +21,7 @@ function showFallback(error) {
   document.documentElement.classList.add('no-webgl');
   if (canvasHost) canvasHost.querySelectorAll('canvas').forEach((node) => node.remove());
   if (dialHost) dialHost.hidden = true;
-  adaptiveUI.update(0.02);
+  adaptiveUI.update(INITIAL_TIME);
 }
 
 try {
@@ -51,4 +51,3 @@ window.addEventListener('pagehide', () => {
   if (slider) slider.destroy();
   if (hero) hero.dispose();
 }, { once: true });
-

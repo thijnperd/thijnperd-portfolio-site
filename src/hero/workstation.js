@@ -3,15 +3,8 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { createGlowSprite } from './sky.js';
 
 /**
- * SECTION 2 — 100% PROCEDURAL 3D SUBJECT
- *
- * Everything on the desk is generated in code: a beveled floating slab, an open
- * laptop with a live canvas-texture terminal, a coffee mug with a torus handle, a
- * notebook, a pen and the faceted AI co-pilot core. No .glb, no textures on disk,
- * no image downloads.
- *
- * The whole diorama is parented under one group so levitation and micro-tilt
- * never cause alignment drift between the screen, its point light and particles.
+ * Procedural 3D desk setup: slab, open laptop with live canvas terminal, mug,
+ * notebook, pen, and faceted polyhedron core.
  */
 
 const MONO = "'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace";
@@ -72,7 +65,7 @@ function drawTerminal(terminal, elapsed, timeOfDay) {
   const accent = ['#5fd2ae', '#ffb27a', '#ff9a63'][tier];
   const ink = ['#dcf3e8', '#ffe9d5', '#fff2e9'][tier];
   const dim = ['rgba(190,230,216,0.42)', 'rgba(255,214,180,0.44)', 'rgba(255,214,190,0.46)'][tier];
-  const status = ['ideating', 'flow_state', 'locked_in'][tier];
+  const status = ['daylight', 'dusk', 'midnight'][tier];
   const dots = '.'.repeat(1 + (Math.floor(elapsed * 2) % 3));
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -98,7 +91,7 @@ function drawTerminal(terminal, elapsed, timeOfDay) {
 
   ctx.font = `500 11px ${MONO}`;
   ctx.fillStyle = dim;
-  ctx.fillText('thijn@studio  ~/ship', 72, 20);
+  ctx.fillText('thijn@dev  ~/projects', 72, 20);
 
   const now = new Date();
   const clock = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -116,17 +109,17 @@ function drawTerminal(terminal, elapsed, timeOfDay) {
   ctx.fillStyle = accent;
   ctx.fillText('>', 34, y);
   ctx.fillStyle = ink;
-  ctx.fillText(`shipping things${dots}`, 54, y);
+  ctx.fillText(`building${dots}`, 54, y);
 
   y += 31;
-  ctx.font = `400 12.5px ${MONO}`;
+  ctx.font = `400 12px ${MONO}`;
   ctx.fillStyle = dim;
-  ctx.fillText('cortex · dither-studio · papersplease', 34, y);
+  ctx.fillText('dither-studio · cortex · w3plan · papersplease', 34, y);
 
   y += 52;
   ctx.font = `500 14px ${MONO}`;
   ctx.fillStyle = dim;
-  ctx.fillText('> status:', 34, y);
+  ctx.fillText('> light:', 34, y);
 
   y += 34;
   ctx.font = `600 27px ${MONO}`;
@@ -158,7 +151,7 @@ function drawTerminal(terminal, elapsed, timeOfDay) {
   ctx.globalAlpha = 1;
   ctx.font = `400 11.5px ${MONO}`;
   ctx.fillStyle = dim;
-  ctx.fillText('ready when you are', 52, y);
+  ctx.fillText('local-first · 4 projects', 52, y);
 
   // Print-style scanlines, drawn last so the screen feels physical.
   ctx.fillStyle = 'rgba(0,0,0,0.12)';

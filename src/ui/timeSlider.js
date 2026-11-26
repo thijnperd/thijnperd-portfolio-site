@@ -1,12 +1,7 @@
 /**
- * SECTION 6 — INTERACTIVE VERTICAL DAY-TO-NIGHT SLIDER
- *
- * A real range input would be horizontal by default and awkward to style, so
- * this is an accessible custom slider: pointer drag (mouse + touch), click to
- * jump, and full keyboard support with role="slider" and aria-valuetext.
- *
- * 0.0 sits at the bottom (sun / daylight) and 1.0 at the top (moon / locked in),
- * matching the physical metaphor of dimming a room by pulling darkness upward.
+ * Interactive vertical day-to-night slider with pointer drag and full keyboard
+ * support (`role="slider"` and `aria-valuetext`).
+ * 0.0 sits at the bottom (daylight) and 1.0 at the top (midnight).
  */
 
 const SUN_ICON = `
@@ -27,9 +22,9 @@ const MOON_ICON = `
 const clamp01 = (value) => Math.min(Math.max(value, 0), 1);
 
 export function timeOfDayLabel(value) {
-  if (value < 0.34) return 'Daylight, ideating';
-  if (value < 0.72) return 'Golden hour, flow state';
-  return 'Midnight, locked in';
+  if (value < 0.34) return 'Daylight';
+  if (value < 0.72) return 'Dusk';
+  return 'Midnight';
 }
 
 export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
@@ -42,8 +37,7 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
          aria-label="Time of day"
          aria-orientation="vertical"
          aria-valuemin="0" aria-valuemax="100"
-         aria-valuenow="0" aria-valuetext="Daylight, ideating"
-         title="Drag, or use the arrow keys">
+         aria-valuenow="0" aria-valuetext="Daylight">
       <span class="ts__icon ts__icon--moon" aria-hidden="true">${MOON_ICON}</span>
       <div class="ts__track">
         <div class="ts__fill" aria-hidden="true"></div>

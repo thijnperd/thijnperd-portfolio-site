@@ -1,30 +1,25 @@
 /**
- * SECTION 6 — ADAPTIVE HERO UI / WHOLE-PAGE THEME
- *
- * The same normalized time value that drives the 3D scene also drives the HTML
- * overlay. Ink, paper, accent and rules are interpolated through daylight,
- * golden hour and midnight, so the typography inverts exactly as the room does.
- * The variables live on <html>, which means the portfolio sections below carry
- * the chosen mood with them too.
+ * Synchronizes page palette tokens and light-phase labels with the 3D hero
+ * time-of-day scalar (0 = daylight, 0.5 = dusk, 1 = midnight).
  */
 
 const STOPS = [
-  { ink: '#121614', paper: '#e4e6e1', accent: '#b8402c', muted: '#4d554f' },
-  { ink: '#221609', paper: '#e5d2b0', accent: '#9c3f16', muted: '#5e4a34' },
-  { ink: '#e9eae4', paper: '#0a0d10', accent: '#f0703f', muted: '#9aa3a4' },
+  { ink: '#121614', paper: '#e4e6e1', accent: '#a93724', muted: '#464e48' },
+  { ink: '#221609', paper: '#e5d2b0', accent: '#8f3610', muted: '#523f2b' },
+  { ink: '#e9eae4', paper: '#0a0d10', accent: '#f07443', muted: '#9aa3a4' },
 ];
 
 const STATUS_ICONS = {
-  ideating: '<span class="status-dot"></span>',
-  flow: '<span class="status-dot status-dot--warm"></span>',
-  locked:
-    '<svg class="status-lock" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="1.6" y="6" width="8.8" height="6.5" rx="1.4"/><path d="M3.7 6V4.2a2.3 2.3 0 0 1 4.6 0V6"/></svg>',
+  day: '<span class="status-dot"></span>',
+  dusk: '<span class="status-dot status-dot--warm"></span>',
+  night:
+    '<svg class="status-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 9.8A5.7 5.7 0 0 1 6.2 2.5a5.7 5.7 0 1 0 7.3 7.3Z"/></svg>',
 };
 
 const PHASE_LABELS = {
-  ideating: { short: 'Daylight', long: 'Daylight, ideating', status: 'ideating' },
-  flow: { short: 'Golden hour', long: 'Golden hour, flow state', status: 'flow state' },
-  locked: { short: 'Midnight', long: 'Midnight, locked in', status: 'locked in' },
+  day: { short: 'Daylight', long: 'Daylight', status: 'daylight' },
+  dusk: { short: 'Dusk', long: 'Dusk', status: 'dusk' },
+  night: { short: 'Midnight', long: 'Midnight', status: 'midnight' },
 };
 
 const smoothstep = (x) => x * x * (3 - 2 * x);
@@ -80,7 +75,7 @@ export function createAdaptiveUI() {
     const accent = sampleStop('accent', value);
     const muted = sampleStop('muted', value);
 
-    const phase = value < 0.34 ? 'ideating' : value < 0.72 ? 'flow' : 'locked';
+    const phase = value < 0.34 ? 'day' : value < 0.72 ? 'dusk' : 'night';
     const key = [
       ink.r, ink.g, ink.b,
       paper.r, paper.g, paper.b,
@@ -100,7 +95,7 @@ export function createAdaptiveUI() {
     root.style.setProperty('--accent-rgb', `${accent.r}, ${accent.g}, ${accent.b}`);
     root.style.setProperty('--muted', rgbCss(muted));
     root.style.setProperty('--line', rgbaCss(ink, 0.16));
-    root.style.setProperty('--line-strong', rgbaCss(ink, 0.32));
+    root.style.setProperty('--line-strong', rgbaCss(ink, 0.34));
     root.style.setProperty('--surface', rgbaCss(ink, 0.045));
     root.style.setProperty('--night', value.toFixed(3));
 

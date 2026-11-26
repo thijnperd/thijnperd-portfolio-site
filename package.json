@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Portfolio of Thijn Koehne — dithered 3D hero, selected work, skills.",
+  "description": "Portfolio of Thijn Köhne.",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "vite build",

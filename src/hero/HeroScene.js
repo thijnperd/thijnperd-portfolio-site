@@ -22,7 +22,7 @@ import { createPromptParticles, createSteamParticles } from './particles.js';
  * HeroScene owns the renderer, the scene, the post-processing chain and the
  * requestAnimationFrame loop. Public surface:
  *   new HeroScene(container, { initialTime })
- *   scene.setTimeOfDay(t)     ← 0 daylight · 0.5 golden hour · 1 locked in
+ *   scene.setTimeOfDay(t)     ← 0 daylight · 0.5 dusk · 1 midnight
  *   scene.start() / stop()
  *   scene.dispose()
  *   scene.onTimeChange = (t) => {}

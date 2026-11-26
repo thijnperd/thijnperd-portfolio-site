@@ -1,25 +1,15 @@
 import * as THREE from 'three';
 
 /**
- * SECTION 4 — DAY-TO-NIGHT / "LOCKED IN" ATMOSPHERE STATE MACHINE
- *
- * A single normalized scalar (`t`, 0 → 1) is the one source of truth for every
- * visual in the hero: sun/moon arc, ambient fill, fog, ink colour, water palette,
- * screen glow, AI-core glow and the HTML overlay contrast. Because every value is
- * sampled from the same curve, the copy can never fall out of sync with the scene.
- *
- * Three hand-tuned keyframes sit at 0.0 (Daylight / ideating), 0.5 (Golden Hour /
- * flow state) and 1.0 (Midnight / locked in). Interpolating straight from day to
- * night would pass through muddy grey, so we explicitly interpolate through the
- * warm middle stop and smoothstep each segment. That makes dragging the slider feel
- * cinematic at every position, not just at the ends.
+ * Day-to-night atmosphere state machine driven by normalized scalar `t` (0 to 1).
+ * Keyframes sit at 0.0 (daylight), 0.5 (dusk), and 1.0 (midnight).
  */
 
 const RAW_STOPS = [
   {
-    key: 'ideating',
-    label: 'ideating',
-    status: 'ideating',
+    key: 'day',
+    label: 'daylight',
+    status: 'daylight',
     background: '#c9d8cf',
     fog: '#e2e9e4',
     skyTop: '#6fb39d',
@@ -45,14 +35,14 @@ const RAW_STOPS = [
     exposure: 0.98,
     ink: '#121614',
     paper: '#e4e6e1',
-    accent: '#b8402c',
+    accent: '#a93724',
     accentWarm: '#d9683f',
     night: 0,
   },
   {
-    key: 'flow',
-    label: 'flow state',
-    status: 'flow state',
+    key: 'dusk',
+    label: 'dusk',
+    status: 'dusk',
     background: '#e9bc94',
     fog: '#eec9a4',
     skyTop: '#e39a68',
@@ -78,14 +68,14 @@ const RAW_STOPS = [
     exposure: 1.04,
     ink: '#221609',
     paper: '#e5d2b0',
-    accent: '#9c3f16',
+    accent: '#8f3610',
     accentWarm: '#c25a2e',
     night: 0.22,
   },
   {
-    key: 'locked',
-    label: 'locked in',
-    status: 'locked in',
+    key: 'night',
+    label: 'midnight',
+    status: 'midnight',
     background: '#050810',
     fog: '#070b12',
     skyTop: '#020409',
@@ -111,7 +101,7 @@ const RAW_STOPS = [
     exposure: 1.12,
     ink: '#e9eae4',
     paper: '#0a0d10',
-    accent: '#f0703f',
+    accent: '#f07443',
     accentWarm: '#ffb273',
     night: 1,
   },
@@ -166,9 +156,9 @@ const smoothstep = (x) => x * x * (3 - 2 * x);
  */
 export function createAtmosphereState() {
   const state = {
-    key: 'ideating',
-    label: 'ideating',
-    status: 'ideating',
+    key: 'day',
+    label: 'daylight',
+    status: 'daylight',
     t: 0,
     sunPosition: new THREE.Vector3(),
   };
@@ -179,7 +169,7 @@ export function createAtmosphereState() {
 
 /**
  * Piecewise, three-stop palette sampling.
- * `t = 0` → day, `t = 0.5` → golden hour, `t = 1` → midnight.
+ * `t = 0` → day, `t = 0.5` → dusk, `t = 1` → midnight.
  */
 export function sampleAtmosphere(t, out = createAtmosphereState()) {
   const clamped = THREE.MathUtils.clamp(Number.isFinite(t) ? t : 0, 0, 1);
@@ -197,7 +187,7 @@ export function sampleAtmosphere(t, out = createAtmosphereState()) {
   out.sunPosition.lerpVectors(a.sunPosition, b.sunPosition, eased);
   out.key = b.key;
   out.label = b.label;
-  out.status = clamped < 0.34 ? 'ideating' : clamped < 0.72 ? 'flow state' : 'locked in';
+  out.status = clamped < 0.34 ? 'daylight' : clamped < 0.72 ? 'dusk' : 'midnight';
   out.t = clamped;
 
   return out;
