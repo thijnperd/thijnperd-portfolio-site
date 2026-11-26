@@ -4,8 +4,6 @@
  * 0.0 sits at the bottom (daylight) and 1.0 at the top (midnight).
  */
 
-import { formatSkyClock } from './adaptiveUI.js';
-
 const SUN_ICON = `
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
        stroke-linecap="round" aria-hidden="true" focusable="false">
@@ -24,10 +22,10 @@ const MOON_ICON = `
 const clamp01 = (value) => Math.min(Math.max(value, 0), 1);
 
 export function timeOfDayLabel(value) {
-  const clock = formatSkyClock(value);
-  if (value < 0.34) return `${clock}, Daylight`;
-  if (value < 0.72) return `${clock}, Dusk`;
-  return `${clock}, Midnight`;
+  const pct = Math.round(clamp01(value) * 100);
+  if (value < 0.34) return `Daylight, ${pct}%`;
+  if (value < 0.72) return `Dusk, ${pct}%`;
+  return `Midnight, ${pct}%`;
 }
 
 export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
@@ -40,7 +38,7 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
          aria-label="Time of day"
          aria-orientation="vertical"
          aria-valuemin="0" aria-valuemax="100"
-         aria-valuenow="0" aria-valuetext="12:00, Daylight">
+         aria-valuenow="0" aria-valuetext="Daylight, 0%">
       <span class="ts__icon ts__icon--moon" aria-hidden="true">${MOON_ICON}</span>
       <div class="ts__track">
         <div class="ts__fill" aria-hidden="true"></div>

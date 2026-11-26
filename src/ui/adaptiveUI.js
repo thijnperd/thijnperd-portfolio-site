@@ -1,6 +1,7 @@
 /**
- * Synchronizes page palette tokens, tab favicon, sky clock, phase control,
- * hero hint, and 3-lens project marginalia with the 3D hero time-of-day scalar
+ * Synchronizes page palette tokens, tab favicon, real-time local clock,
+ * phase control, hero hint, and independently clickable 3-lens project
+ * marginalia with the 3D hero time-of-day scalar
  * (0 = daylight, 0.46 = dusk, 0.66 = twilight, 1 = midnight).
  */
 
@@ -55,12 +56,28 @@ const FAVICON_URIS = {
   night: buildFaviconUri(FAVICON_PALETTES.night),
 };
 
-export function formatSkyClock(value) {
-  const clamped = Math.min(Math.max(Number(value) || 0, 0), 1);
-  const totalMinutes = Math.round(clamped * 720);
-  const hour24 = (12 + Math.floor(totalMinutes / 60)) % 24;
-  const minute = totalMinutes % 60;
-  return `${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+const NEXT_LENS = { day: 'dusk', dusk: 'night', night: 'day' };
+
+export function formatLocalClock(date = new Date()) {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+export function getTimeOfDayFromClock(date = new Date()) {
+  const h = date.getHours() + date.getMinutes() / 60;
+  if (h >= 6 && h < 7.5) {
+    return 0.54 - ((h - 6) / 1.5) * 0.16;
+  }
+  if (h >= 7.5 && h < 17) {
+    if (h < 10) return 0.24 - ((h - 7.5) / 2.5) * 0.22;
+    if (h <= 15) return 0.02;
+    return 0.02 + ((h - 15) / 2) * 0.22;
+  }
+  if (h >= 17 && h < 20.5) {
+    return 0.38 + ((h - 17) / 3.5) * 0.24;
+  }
+  return 0.94;
 }
 
 const smoothstep = (x) => x * x * (3 - 2 * x);
@@ -106,7 +123,7 @@ function rgbaCss({ r, g, b }, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export function createAdaptiveUI() {
+export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
   const root = document.documentElement;
   const statusText = document.querySelector('[data-status-text]');
   const statusIcon = document.querySelector('[data-status-icon]');
@@ -120,11 +137,60 @@ export function createAdaptiveUI() {
   const schemeMeta = document.querySelector('meta[name="color-scheme"]');
   const faviconLink = document.querySelector('link[rel="icon"]');
 
+  const controller = new AbortController();
+  const { signal } = controller;
+
+  let activePhase = 'day';
+  let currentClock = formatLocalClock();
   let lastPhase = '';
   let lastScheme = '';
-  let lastClock = '';
   let lastKey = '';
   let switchRaf = 0;
+
+  function syncClockNodes() {
+    for (const node of skyClockNodes) node.textContent = currentClock;
+    const label = PHASE_LABELS[activePhase].status;
+    for (const node of phaseLongNodes) node.textContent = `${label} · ${currentClock}`;
+  }
+
+  function refreshClock() {
+    const next = formatLocalClock();
+    if (next === currentClock) return;
+    currentClock = next;
+    syncClockNodes();
+  }
+
+  function setCardLens(card, lensKey) {
+    const key = lensKey === 'dusk' || lensKey === 'night' ? lensKey : 'day';
+    const text = card.querySelector('[data-lens-text]');
+    const copy = card.dataset[`lens${key[0].toUpperCase()}${key.slice(1)}`];
+    if (text && copy) text.textContent = copy;
+    card.dataset.lensActive = key;
+    for (const btn of card.querySelectorAll('[data-lens-pick]')) {
+      btn.setAttribute('aria-pressed', String(btn.dataset.lensPick === key));
+    }
+  }
+
+  for (const card of lensCards) {
+    for (const btn of card.querySelectorAll('[data-lens-pick]')) {
+      btn.addEventListener('click', () => {
+        setCardLens(card, btn.dataset.lensPick);
+      }, { signal });
+    }
+    const text = card.querySelector('[data-lens-text]');
+    if (text) {
+      text.addEventListener('click', () => {
+        if (window.getSelection()?.toString()) return;
+        const current = card.dataset.lensActive || activePhase;
+        setCardLens(card, NEXT_LENS[current] || 'dusk');
+      }, { signal });
+    }
+  }
+
+  const clockTimer = window.setInterval(refreshClock, 1000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) refreshClock();
+  }, { signal });
 
   function update(t) {
     const value = Math.min(Math.max(Number(t) || 0, 0), 1);
@@ -137,7 +203,6 @@ export function createAdaptiveUI() {
     const muted = samplePair(stops, 'muted', value);
 
     const phase = value < 0.34 ? 'day' : value < 0.72 ? 'dusk' : 'night';
-    const clock = formatSkyClock(value);
     const key = [
       ink.r, ink.g, ink.b,
       paper.r, paper.g, paper.b,
@@ -145,7 +210,6 @@ export function createAdaptiveUI() {
       muted.r, muted.g, muted.b,
       phase,
       scheme,
-      clock,
     ].join(',');
 
     if (key === lastKey) return;
@@ -173,14 +237,9 @@ export function createAdaptiveUI() {
 
     if (schemeMeta) schemeMeta.setAttribute('content', scheme === 'night' ? 'dark' : 'light');
 
-    if (clock !== lastClock) {
-      lastClock = clock;
-      for (const node of skyClockNodes) node.textContent = clock;
-      for (const node of phaseLongNodes) node.textContent = `${PHASE_LABELS[phase].status} · ${clock}`;
-    }
-
     if (phase !== lastPhase) {
       lastPhase = phase;
+      activePhase = phase;
       root.dataset.phase = phase;
 
       const info = PHASE_LABELS[phase];
@@ -190,16 +249,12 @@ export function createAdaptiveUI() {
         phaseCycleBtn.setAttribute('aria-label', `Cycle time of day, currently ${info.status}`);
       }
       if (heroHint) heroHint.textContent = info.hint;
-      for (const node of phaseLongNodes) node.textContent = `${info.status} · ${clock}`;
+      syncClockNodes();
       for (const btn of phaseSetButtons) {
         btn.setAttribute('aria-pressed', String(btn.dataset.phaseSet === phase));
       }
       for (const card of lensCards) {
-        const tag = card.querySelector('[data-lens-tag]');
-        const text = card.querySelector('[data-lens-text]');
-        if (tag) tag.textContent = info.lensTag;
-        const copy = card.dataset[`lens${phase[0].toUpperCase()}${phase.slice(1)}`];
-        if (text && copy) text.textContent = copy;
+        setCardLens(card, phase);
       }
       if (faviconLink) faviconLink.setAttribute('href', FAVICON_URIS[phase]);
     }
@@ -215,7 +270,15 @@ export function createAdaptiveUI() {
     if (themeMeta) themeMeta.setAttribute('content', rgbCss(paper));
   }
 
-  update(0);
+  syncClockNodes();
+  update(initialTime);
 
-  return { update };
+  return {
+    update,
+    destroy() {
+      window.clearInterval(clockTimer);
+      controller.abort();
+      if (switchRaf) cancelAnimationFrame(switchRaf);
+    },
+  };
 }

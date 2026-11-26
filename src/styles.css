@@ -18,7 +18,7 @@
   --surface: rgba(18, 22, 20, 0.045);
   --night: 0;
 
-  --serif: "Bodoni Moda", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --display: "Syne", "IBM Plex Sans", ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
   --sans: "IBM Plex Sans", ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
@@ -58,10 +58,32 @@
 }
 
 html[data-scheme="day"] {
+  --ink: rgb(18, 22, 20);
+  --ink-rgb: 18, 22, 20;
+  --paper: rgb(228, 230, 225);
+  --paper-rgb: 228, 230, 225;
+  --accent: rgb(169, 55, 36);
+  --accent-rgb: 169, 55, 36;
+  --muted: rgb(70, 78, 72);
+  --line: rgba(18, 22, 20, 0.16);
+  --line-strong: rgba(18, 22, 20, 0.34);
+  --surface: rgba(18, 22, 20, 0.045);
+  --night: 0;
   color-scheme: light;
 }
 
 html[data-scheme="night"] {
+  --ink: rgb(233, 234, 228);
+  --ink-rgb: 233, 234, 228;
+  --paper: rgb(10, 13, 16);
+  --paper-rgb: 10, 13, 16;
+  --accent: rgb(240, 116, 67);
+  --accent-rgb: 240, 116, 67;
+  --muted: rgb(154, 163, 164);
+  --line: rgba(233, 234, 228, 0.16);
+  --line-strong: rgba(233, 234, 228, 0.34);
+  --surface: rgba(233, 234, 228, 0.05);
+  --night: 1;
   color-scheme: dark;
 }
 
@@ -482,8 +504,10 @@ html[data-scheme="night"] .phase-btn__label {
   min-block-size: 2.75rem;
   padding: 0.5625rem 0.125rem;
   border-top: 1px solid var(--line);
-  font-family: var(--serif);
-  font-size: 1.35rem;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
   line-height: 1;
   color: var(--ink);
   transition: color 160ms var(--ease-out), padding-left 160ms var(--ease-out);
@@ -531,12 +555,11 @@ html[data-scheme="night"] .phase-btn__label {
 }
 
 .hero__title {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-optical-sizing: auto;
-  font-size: clamp(3.4rem, 1.4rem + 5.6vw, 8.2rem);
-  line-height: 0.94;
-  letter-spacing: -0.02em;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2.85rem, 1.2rem + 4.6vw, 6.4rem);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
   margin-bottom: clamp(1.25rem, 3.2vh, 2.25rem);
   color: var(--ink);
   text-wrap: balance;
@@ -547,7 +570,7 @@ html[data-scheme="night"] .phase-btn__label {
 }
 
 .hero__title-line--alt {
-  padding-left: 0.05em;
+  padding-left: 0;
 }
 
 .hero__title-dot {
@@ -568,10 +591,7 @@ html[data-scheme="night"] .phase-btn__label {
 .section__title em,
 .about__text em,
 .contact__title em {
-  font-family: var(--serif);
   font-style: italic;
-  font-size: 1.08em;
-  letter-spacing: -0.005em;
 }
 
 .hero__actions {
@@ -838,12 +858,11 @@ html[data-phase="night"] .ts__icon--moon {
 
 .section__title {
   max-width: 22ch;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-optical-sizing: auto;
-  font-size: clamp(2.2rem, 1.2rem + 3vw, 4.4rem);
-  line-height: 1.04;
-  letter-spacing: -0.018em;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2rem, 1.15rem + 2.5vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
@@ -989,11 +1008,11 @@ html[data-phase="night"] .ts__icon--moon {
 }
 
 .project__head h3 {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(1.75rem, 1.35rem + 1vw, 2.25rem);
-  line-height: 1.05;
-  letter-spacing: -0.01em;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.45rem, 1.15rem + 0.8vw, 1.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
 }
 
 .project__head h3 a {
@@ -1028,11 +1047,34 @@ html[data-phase="night"] .ts__icon--moon {
   border-top: 1px solid var(--line);
 }
 
-.project__lens-tag {
+.project__lens-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.project__lens-tabs button {
+  appearance: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 0.125rem 0;
+  background: transparent;
   font-family: var(--mono);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 160ms var(--ease-out), border-color 160ms var(--ease-out);
+}
+
+.project__lens-tabs button:hover {
+  color: var(--ink);
+}
+
+.project__lens-tabs button[aria-pressed="true"] {
   color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .project__lens-text {
@@ -1040,6 +1082,7 @@ html[data-phase="night"] .ts__icon--moon {
   font-size: 0.8125rem;
   line-height: 1.55;
   color: var(--muted);
+  cursor: pointer;
   text-wrap: pretty;
 }
 
@@ -1154,11 +1197,11 @@ html[data-phase="night"] .ts__icon--moon {
 
 .skill h3 {
   margin-bottom: 1.125rem;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 1.35rem;
-  line-height: 1.05;
-  letter-spacing: -0.005em;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .skill ul {
@@ -1198,12 +1241,11 @@ html[data-phase="night"] .ts__icon--moon {
 
 .contact__title {
   max-width: 18ch;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-optical-sizing: auto;
-  font-size: clamp(2.6rem, 1.3rem + 4.4vw, 6.4rem);
-  line-height: 0.96;
-  letter-spacing: -0.02em;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2.25rem, 1.15rem + 3.6vw, 5rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
@@ -1302,6 +1344,7 @@ html[data-phase="night"] .ts__icon--moon {
   .hero__nav a,
   .phase-btn,
   .light-switch button,
+  .project__lens-tabs button,
   .project__links a,
   .footer a {
     min-block-size: 2.75rem;
@@ -1332,6 +1375,11 @@ html[data-phase="night"] .ts__icon--moon {
   .light-switch button[aria-pressed="true"] {
     background: Highlight;
     color: HighlightText;
+  }
+
+  .project__lens-tabs button[aria-pressed="true"] {
+    color: Highlight;
+    border-bottom-color: Highlight;
   }
 
   .ts__fill {
@@ -1508,7 +1556,7 @@ html[data-phase="night"] .ts__icon--moon {
 
 @media (max-height: 720px) and (min-width: 761px) {
   .hero__title {
-    font-size: clamp(3.2rem, 1.2rem + 4.8vw, 6.2rem);
+    font-size: clamp(2.6rem, 1.1rem + 4vw, 5.2rem);
   }
 
   .hero__copy {
