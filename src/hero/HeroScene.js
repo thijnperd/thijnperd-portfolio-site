@@ -154,8 +154,13 @@ export class HeroScene {
     return { width: Math.max(width, 1), height: Math.max(height, 1) };
   }
 
-  setTimeOfDay(normalizedValue) {
+  setTimeOfDay(normalizedValue, { immediate = false } = {}) {
     this.targetTimeOfDay = THREE.MathUtils.clamp(Number(normalizedValue) || 0, 0, 1);
+    if (immediate || !this.running) {
+      this.currentTimeOfDay = this.targetTimeOfDay;
+      this._lastPhase = '';
+      if (this.onTimeChange) this.onTimeChange(this.currentTimeOfDay);
+    }
   }
 
   updateSmoothTime(deltaTime) {
@@ -204,10 +209,12 @@ export class HeroScene {
     if (!this.running) return;
     this._raf = requestAnimationFrame(this._tick);
 
-    const deltaTime = Math.min(this.clock.getDelta(), 0.05);
+    const rawDelta = this.clock.getDelta();
+    const deltaTime = Math.min(rawDelta, 0.05);
+    const timeDelta = Math.min(rawDelta, 0.25);
     this.elapsed += deltaTime;
 
-    this.updateSmoothTime(deltaTime);
+    this.updateSmoothTime(timeDelta);
     const timeOfDay = this.currentTimeOfDay;
     const atm = sampleAtmosphere(timeOfDay, this.atmosphere);
     this._applyAtmosphere(atm);
