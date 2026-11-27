@@ -80,23 +80,40 @@
       <div class="page-shell">
         <article class="cv">
           <header class="cv__head">
-            <h1 class="cv__name">Thijn Köhne</h1>
-            <p class="cv__role" data-i18n="cv.role">Curriculum vitae · Student &amp; software developer · Netherlands</p>
-            <p class="cv__intro" data-i18n="cv.intro">
-              I build local-first tools: offline image editors, visual browsers for plain-text notes,
-              school planners and command-line utilities. I prefer software that opens quickly and
-              keeps its files in formats you can inspect, move or back up without an account.
-            </p>
-            <div class="cv__actions">
-              <button type="button" class="btn btn--primary" data-print data-i18n="cv.printBtn">Print / save as PDF</button>
-              <a class="btn btn--ghost" href="/#contact" data-i18n="ui.navContact">Contact</a>
-              <a
-                class="btn btn--ghost"
-                href="https://github.com/thijnperd"
-                target="_blank"
-                rel="noopener noreferrer"
-                >GitHub <span aria-hidden="true">↗</span></a
-              >
+            <div class="cv__head-grid">
+              <div class="cv__head-copy">
+                <h1 class="cv__name">Thijn Köhne</h1>
+                <p class="cv__role" data-i18n="cv.role">Curriculum vitae · Student &amp; software developer · Netherlands</p>
+                <p class="cv__intro" data-i18n="cv.intro">
+                  I build local-first tools: offline image editors, visual browsers for plain-text notes,
+                  school planners and command-line utilities. I prefer software that opens quickly and
+                  keeps its files in formats you can inspect, move or back up without an account.
+                </p>
+                <div class="cv__actions">
+                  <button type="button" class="btn btn--primary" data-print data-i18n="cv.printBtn">Print / save as PDF</button>
+                  <a class="btn btn--ghost" href="/#contact" data-i18n="ui.navContact">Contact</a>
+                  <a
+                    class="btn btn--ghost"
+                    href="https://github.com/thijnperd"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >GitHub <span aria-hidden="true">↗</span></a
+                  >
+                </div>
+              </div>
+              <div class="cv__portrait">
+                <picture>
+                  <source srcset="/portrait.webp" type="image/webp" />
+                  <img
+                    src="/portrait.jpg"
+                    alt="Green-dithered portrait of Thijn Köhne"
+                    data-i18n-attr="alt:home.portraitAlt"
+                    width="460"
+                    height="460"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
             </div>
           </header>
 
