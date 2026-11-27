@@ -1,11 +1,17 @@
 import { track } from '../analytics.js';
 
 /**
- * Mobile bottom tab bar with a sliding indicator pill and real-time Bayer
- * icon dithering (`clip-path` synced on every animation frame with a mirrored
- * dither-masked layer). Supports tap navigation, horizontal thumb-scrubbing,
- * `scroll-target-group: auto` / `IntersectionObserver` scrollspy, and reduced motion.
+ * Floating mobile pill tab bar with an M3 Expressive spring-physics pill selector
+ * (`k = 800, zeta = 0.6` Fast Spatial) and real-time Bayer icon dithering inside
+ * the selector pill. On the home page the bar stays tucked below the viewport
+ * until leaving `.hero` (with focus + `inert` management); on subpages it shows
+ * immediately.
  */
+
+const SPRING_K = 800;
+const SPRING_ZETA = 0.6;
+const SPRING_C = 2 * SPRING_ZETA * Math.sqrt(SPRING_K);
+
 export function initTabBar() {
   const bar = document.querySelector('[data-tabbar]');
   if (!bar) return () => {};
@@ -47,19 +53,28 @@ export function initTabBar() {
   const isHome = document.body?.dataset?.i18nPage === 'home';
 
   let boxes = [];
+  let trackPad = 5;
   let currentX = 0;
   let currentW = 0;
+  let velX = 0;
+  let velW = 0;
   let targetX = 0;
   let targetW = 0;
   let activeIndex = resolveInitialIndex();
   let initialized = false;
   let rafId = 0;
+  let lastTs = 0;
+  let barVisible = !isHome;
+
   let scrubbing = false;
   let scrubStartX = 0;
   let scrubStartLeft = 0;
   let scrubPointerId = -1;
   let suppressClick = false;
   let scrubPreviewIndex = -1;
+  let lastPointerX = 0;
+  let lastPointerTs = 0;
+  let scrubVelX = 0;
 
   function resolveInitialIndex() {
     const preMarked = links.findIndex((a) => a.getAttribute('aria-current') === 'page');
@@ -78,9 +93,27 @@ export function initTabBar() {
     return 0;
   }
 
+  function setBarVisible(next) {
+    const visible = Boolean(next);
+    barVisible = visible;
+    bar.classList.toggle('is-visible', visible);
+    if (visible) {
+      bar.inert = false;
+      requestAnimationFrame(() => {
+        if (mobileQuery.matches) measure();
+      });
+    } else {
+      if (bar.contains(document.activeElement)) {
+        document.getElementById('main')?.focus({ preventScroll: true });
+      }
+      if (isHome) bar.inert = true;
+    }
+  }
+
   function measure() {
     const trackRect = trackEl.getBoundingClientRect();
     if (!trackRect.width) return false;
+    trackPad = parseFloat(getComputedStyle(trackEl).paddingLeft) || 5;
     boxes = links.map((link) => {
       const r = link.getBoundingClientRect();
       return {
@@ -95,6 +128,8 @@ export function initTabBar() {
       if (!initialized) {
         currentX = targetX;
         currentW = targetW;
+        velX = 0;
+        velW = 0;
         initialized = true;
       }
       applyVisual(currentX, currentW, trackRect.width);
@@ -104,36 +139,77 @@ export function initTabBar() {
 
   function applyVisual(x, w, trackWidth = trackEl.getBoundingClientRect().width) {
     if (!trackWidth || !w) return;
-    const clampedX = Math.max(0, Math.min(x, Math.max(0, trackWidth - w)));
-    const rightInset = Math.max(0, trackWidth - (clampedX + w));
-    indicator.style.transform = `translate3d(${clampedX.toFixed(2)}px, 0, 0)`;
-    indicator.style.width = `${w.toFixed(2)}px`;
-    ditherList.style.clipPath = `inset(0px ${rightInset.toFixed(2)}px 0px ${clampedX.toFixed(2)}px round 2px)`;
+    // Allow minor M3 spring overshoot inside middle track while staying cleanly inside outer pill border
+    const minLeft = Math.max(2, trackPad - 2);
+    const maxRight = Math.max(minLeft + w, trackWidth - Math.max(2, trackPad - 2));
+    const stretch = reducedMotion.matches ? 0 : Math.min(8, Math.abs(velX) * 0.011);
+    const stretchedW = Math.min(w + stretch, maxRight - minLeft);
+    const center = x + w / 2;
+    const renderX = Math.max(minLeft, Math.min(center - stretchedW / 2, maxRight - stretchedW));
+    const rightInset = Math.max(0, trackWidth - (renderX + stretchedW));
+
+    indicator.style.transform = `translate3d(${renderX.toFixed(2)}px, 0, 0)`;
+    indicator.style.width = `${stretchedW.toFixed(2)}px`;
+    ditherList.style.clipPath = `inset(${trackPad}px ${rightInset.toFixed(2)}px ${trackPad}px ${renderX.toFixed(2)}px round 9999px)`;
     indicator.style.opacity = '1';
   }
 
-  function stepAnimation() {
+  function stepAnimation(now) {
     rafId = 0;
-    const trackWidth = trackEl.getBoundingClientRect().width;
-    if (scrubbing) return;
+    if (scrubbing) {
+      lastTs = 0;
+      return;
+    }
 
-    const dx = targetX - currentX;
-    const dw = targetW - currentW;
-    if (reducedMotion.matches || (Math.abs(dx) < 0.35 && Math.abs(dw) < 0.35)) {
+    const dtTotal = lastTs ? Math.min(0.05, Math.max(0.001, (now - lastTs) / 1000)) : 1 / 60;
+    lastTs = now;
+
+    const trackWidth = trackEl.getBoundingClientRect().width;
+    if (reducedMotion.matches) {
       currentX = targetX;
       currentW = targetW;
+      velX = 0;
+      velW = 0;
+      lastTs = 0;
       applyVisual(currentX, currentW, trackWidth);
       return;
     }
 
-    currentX += dx * 0.24;
-    currentW += dw * 0.24;
+    // Semi-implicit Euler integration in <= 8ms sub-steps for stable k=800 spring across refresh rates
+    const steps = Math.max(1, Math.ceil(dtTotal / 0.008));
+    const dt = dtTotal / steps;
+    for (let i = 0; i < steps; i += 1) {
+      const ax = SPRING_K * (targetX - currentX) - SPRING_C * velX;
+      const aw = SPRING_K * (targetW - currentW) - SPRING_C * velW;
+      velX += ax * dt;
+      velW += aw * dt;
+      currentX += velX * dt;
+      currentW += velW * dt;
+    }
+
+    const settled =
+      Math.abs(targetX - currentX) < 0.25 &&
+      Math.abs(targetW - currentW) < 0.25 &&
+      Math.abs(velX) < 4 &&
+      Math.abs(velW) < 4;
+
+    if (settled) {
+      currentX = targetX;
+      currentW = targetW;
+      velX = 0;
+      velW = 0;
+      lastTs = 0;
+      applyVisual(currentX, currentW, trackWidth);
+      return;
+    }
+
     applyVisual(currentX, currentW, trackWidth);
     rafId = requestAnimationFrame(stepAnimation);
   }
 
   function startAnimation() {
     if (!rafId && !scrubbing) {
+      lastTs = 0;
       rafId = requestAnimationFrame(stepAnimation);
     }
   }
@@ -161,6 +237,9 @@ export function initTabBar() {
     if (immediate || reducedMotion.matches) {
       currentX = targetX;
       currentW = targetW;
+      velX = 0;
+      velW = 0;
+      lastTs = 0;
       applyVisual(currentX, currentW);
     } else {
       startAnimation();
@@ -180,12 +259,16 @@ export function initTabBar() {
     return best;
   }
 
-  // Horizontal thumb-scrubbing so users can slide the dither lens across icons
+  // Horizontal thumb-scrubbing across the floating pill with momentum handoff into M3 spring
   trackEl.addEventListener('pointerdown', (event) => {
     if (event.button !== undefined && event.button !== 0) return;
+    if (isHome && !barVisible) return;
     if (!boxes.length && !measure()) return;
     scrubPointerId = event.pointerId;
     scrubStartX = event.clientX;
+    lastPointerX = event.clientX;
+    lastPointerTs = performance.now();
+    scrubVelX = 0;
     scrubStartLeft = currentX;
     scrubPreviewIndex = -1;
     suppressClick = false;
@@ -195,6 +278,13 @@ export function initTabBar() {
     if (event.pointerId !== scrubPointerId) return;
     const dx = event.clientX - scrubStartX;
     if (!scrubbing && Math.abs(dx) < 8) return;
+
+    const now = performance.now();
+    const dt = Math.max(0.008, (now - lastPointerTs) / 1000);
+    const instantVel = (event.clientX - lastPointerX) / dt;
+    scrubVelX = Math.max(-1200, Math.min(1200, scrubVelX * 0.4 + instantVel * 0.6));
+    lastPointerX = event.clientX;
+    lastPointerTs = now;
 
     if (!scrubbing) {
       scrubbing = true;
@@ -212,10 +302,12 @@ export function initTabBar() {
 
     const trackWidth = trackEl.getBoundingClientRect().width;
     const w = boxes[activeIndex]?.w || currentW;
-    const maxLeft = Math.max(0, trackWidth - w);
-    const nextX = Math.max(0, Math.min(maxLeft, scrubStartLeft + dx));
+    const minLeft = trackPad;
+    const maxLeft = Math.max(minLeft, trackWidth - trackPad - w);
+    const nextX = Math.max(minLeft, Math.min(maxLeft, scrubStartLeft + dx));
     currentX = nextX;
     currentW = w;
+    velX = scrubVelX * 0.45;
     applyVisual(currentX, currentW, trackWidth);
     scrubPreviewIndex = indexAtCenterX(currentX + w / 2);
   }, { signal });
@@ -224,9 +316,11 @@ export function initTabBar() {
     if (event.pointerId !== scrubPointerId) return;
     const wasScrubbing = scrubbing;
     const chosen = scrubPreviewIndex;
+    const handoffVel = scrubVelX;
     scrubbing = false;
     scrubPointerId = -1;
     scrubPreviewIndex = -1;
+    scrubVelX = 0;
 
     try {
       if (trackEl.hasPointerCapture(event.pointerId)) trackEl.releasePointerCapture(event.pointerId);
@@ -235,11 +329,13 @@ export function initTabBar() {
     }
 
     if (wasScrubbing && chosen >= 0 && links[chosen]) {
+      velX = Math.max(-900, Math.min(900, handoffVel * 0.65));
       setActiveIndex(chosen);
       track(`tab-${links[chosen].dataset.tabId || chosen}`);
       links[chosen].click();
       setTimeout(() => { suppressClick = false; }, 0);
     } else {
+      velX = 0;
       suppressClick = false;
     }
   };
@@ -261,9 +357,33 @@ export function initTabBar() {
     }
   }, { signal });
 
-  // Scrollspy on homepage: prefers native scroll-target-group when supported,
-  // with IntersectionObserver fallback and top-of-page fallback to Work.
+  // Hero-leave reveal & section scrollspy on `/`
   if (isHome) {
+    const heroEl = document.querySelector('#top');
+    const syncHeroVisibility = () => {
+      if (!heroEl) {
+        setBarVisible(true);
+        return;
+      }
+      const rect = heroEl.getBoundingClientRect();
+      const leftHero = rect.bottom <= window.innerHeight * 0.28;
+      if (leftHero !== barVisible) setBarVisible(leftHero);
+    };
+
+    if (heroEl && 'IntersectionObserver' in window) {
+      const heroObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          const leftHero = !entry.isIntersecting || entry.intersectionRatio < 0.2;
+          if (leftHero !== barVisible) setBarVisible(leftHero);
+        }
+      }, { threshold: [0, 0.2, 0.35] });
+      heroObserver.observe(heroEl);
+      signal.addEventListener('abort', () => heroObserver.disconnect(), { once: true });
+    }
+
+    setBarVisible(heroEl ? heroEl.getBoundingClientRect().bottom <= window.innerHeight * 0.28 : true);
+    window.addEventListener('scroll', syncHeroVisibility, { passive: true, signal });
+
     const sections = ['work', 'about', 'contact']
       .map((id) => ({ id, el: document.getElementById(id), idx: links.findIndex((a) => a.dataset.tabId === id) }))
       .filter((s) => s.el && s.idx >= 0);
@@ -312,6 +432,8 @@ export function initTabBar() {
       for (const s of sections) observer.observe(s.el);
       signal.addEventListener('abort', () => observer.disconnect(), { once: true });
     }
+  } else {
+    setBarVisible(true);
   }
 
   window.addEventListener('thijnperd:langchange', () => {
