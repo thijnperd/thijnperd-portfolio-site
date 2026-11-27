@@ -43,7 +43,7 @@ const FAVICON_PALETTES = {
 };
 
 function buildFaviconUri({ bg, stroke, fg, dot }) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="0.75" y="0.75" width="30.5" height="30.5" rx="6" fill="${bg}" stroke="${stroke}" stroke-width="1.5"/><rect x="6.5" y="7" width="16.5" height="3.2" rx="0.5" fill="${fg}"/><rect x="13.1" y="7" width="3.3" height="17.5" rx="0.5" fill="${fg}"/><circle cx="23.2" cy="22.1" r="2.7" fill="${dot}"/><rect x="6.5" y="21.8" width="2.2" height="2.2" fill="${fg}" opacity=".48"/><rect x="9.3" y="21.8" width="2.2" height="2.2" fill="${fg}" opacity=".24"/><rect x="6.5" y="19" width="2.2" height="2.2" fill="${fg}" opacity=".24"/></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="0.75" y="0.75" width="30.5" height="30.5" rx="4" fill="${bg}" stroke="${stroke}" stroke-width="1.5"/><polygon points="16,5.5 25.1,10.75 16,16 6.9,10.75" fill="${dot}"/><polygon points="6.9,10.75 16,16 16,26.5 6.9,21.25" fill="${fg}"/><polygon points="16,16 25.1,10.75 25.1,21.25 16,26.5" fill="${fg}" opacity=".14"/><rect x="16.2" y="16.4" width="2" height="2" fill="${fg}"/><rect x="16.2" y="20.8" width="2" height="2" fill="${fg}"/><rect x="18.4" y="17.3" width="2" height="2" fill="${fg}"/><rect x="18.4" y="21.7" width="2" height="2" fill="${fg}"/><rect x="20.6" y="13.8" width="2" height="2" fill="${fg}"/><rect x="20.6" y="18.2" width="2" height="2" fill="${fg}"/><rect x="22.8" y="14.8" width="2" height="2" fill="${fg}"/><rect x="22.8" y="19.2" width="2" height="2" fill="${fg}"/></svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 

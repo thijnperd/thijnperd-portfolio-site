@@ -1,4 +1,4 @@
-import { initTimeSlider } from './ui/timeSlider.js';
+import { initTimeSlider, initHorizontalTimeSlider } from './ui/timeSlider.js';
 import { createAdaptiveUI, getTimeOfDayFromClock } from './ui/adaptiveUI.js';
 import { initSite } from './ui/site.js';
 import { initAnalytics, track } from './analytics.js';
@@ -13,11 +13,13 @@ const adaptiveUI = createAdaptiveUI(INITIAL_TIME);
 
 const canvasHost = document.querySelector('[data-hero-canvas]');
 const dialHost = document.querySelector('[data-time-slider]');
+const hDialHost = document.querySelector('[data-time-slider-horizontal]');
 const phaseCycleBtn = document.querySelector('[data-phase-cycle]');
 const phaseSetBtns = document.querySelectorAll('[data-phase-set]');
 
 let hero = null;
 let slider = null;
+let hSlider = null;
 let heroRequested = false;
 let currentTarget = INITIAL_TIME;
 
@@ -25,6 +27,7 @@ function setTime(next, { immediate = false } = {}) {
   const clamped = Math.min(Math.max(Number(next) || 0, 0), 1);
   currentTarget = clamped;
   if (slider) slider.setValue(clamped);
+  if (hSlider) hSlider.setValue(clamped);
   if (hero) {
     hero.setTimeOfDay(clamped, { immediate });
   } else {
@@ -75,10 +78,19 @@ async function loadHero() {
 try {
   slider = initTimeSlider(dialHost, {
     value: INITIAL_TIME,
-    onChange: (value) => setTime(value),
+    onChange: (value) => setTime(value, { immediate: true }),
   });
 } catch (error) {
   showFallback(error);
+}
+
+try {
+  hSlider = initHorizontalTimeSlider(hDialHost, {
+    value: INITIAL_TIME,
+    onChange: (value) => setTime(value, { immediate: true }),
+  });
+} catch {
+  /* mobile horizontal slider falls back silently */
 }
 
 const saveData = navigator.connection && navigator.connection.saveData === true;
@@ -115,5 +127,6 @@ for (const btn of phaseSetBtns) {
 window.addEventListener('pagehide', () => {
   adaptiveUI.destroy();
   if (slider) slider.destroy();
+  if (hSlider) hSlider.destroy();
   if (hero) hero.dispose();
 }, { once: true });

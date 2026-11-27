@@ -167,3 +167,88 @@ export function initTimeSlider(host, { value = 0.5, onChange = () => {} } = {}) 
     },
   };
 }
+
+/**
+ * Interactive horizontal 00:00–24:00 day/night range slider for mobile, built
+ * on a native labeled `<input type="range">` synced with CSS custom properties.
+ */
+export function initHorizontalTimeSlider(host, { value = 0.5, onChange = () => {} } = {}) {
+  if (!host) {
+    return { setValue() {}, destroy() {}, element: null };
+  }
+
+  host.innerHTML = `
+    <div class="hts">
+      <div class="hts__header">
+        <label class="hts__label" for="mobile-time-slider">${t('phase.sliderCaption')}</label>
+        <output class="hts__readout" for="mobile-time-slider">${timeOfDayLabel(value)}</output>
+      </div>
+      <div class="hts__track-wrap">
+        <span class="hts__tick hts__tick--dawn" aria-hidden="true"></span>
+        <span class="hts__tick hts__tick--noon" aria-hidden="true"></span>
+        <span class="hts__tick hts__tick--dusk" aria-hidden="true"></span>
+        <input
+          class="hts__input"
+          id="mobile-time-slider"
+          type="range"
+          min="0"
+          max="1"
+          step="0.002"
+          value="${clamp01(value).toFixed(4)}"
+          aria-label="${t('phase.sliderLabel')}"
+          aria-valuetext="${timeOfDayLabel(value)}"
+        />
+      </div>
+      <div class="hts__scale" aria-hidden="true">
+        <span>00</span>
+        <span>06</span>
+        <span>12</span>
+        <span>18</span>
+        <span>24</span>
+      </div>
+    </div>
+  `;
+
+  const input = host.querySelector('.hts__input');
+  const label = host.querySelector('.hts__label');
+  const readout = host.querySelector('.hts__readout');
+  const controller = new AbortController();
+  const { signal } = controller;
+
+  let current = clamp01(value);
+
+  function paint(next, notify) {
+    current = clamp01(next);
+    const fixed = current.toFixed(4);
+    input.value = fixed;
+    input.style.setProperty('--attr-min', input.min || '0');
+    input.style.setProperty('--attr-max', input.max || '1');
+    input.style.setProperty('--control-value', fixed);
+    const labelText = timeOfDayLabel(current);
+    input.setAttribute('aria-valuetext', labelText);
+    if (readout) readout.textContent = labelText;
+    if (notify) onChange(current);
+  }
+
+  input.addEventListener('input', () => {
+    paint(parseFloat(input.value), true);
+  }, { signal });
+
+  paint(current, false);
+
+  window.addEventListener('thijnperd:langchange', () => {
+    input.setAttribute('aria-label', t('phase.sliderLabel'));
+    if (label) label.textContent = t('phase.sliderCaption');
+    paint(current, false);
+  }, { signal });
+
+  return {
+    element: input,
+    setValue(next) {
+      paint(next, false);
+    },
+    destroy() {
+      controller.abort();
+    },
+  };
+}
