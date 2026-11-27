@@ -12,7 +12,9 @@ function writingIndexMeta() {
     transformIndexHtml: {
       order: 'pre',
       handler(html, ctx) {
-        if (!ctx.filename.endsWith('/writing/index.html')) return html;
+        // Windows hands this over with backslashes, so normalise before matching.
+        const filename = String(ctx.filename || '').replace(/\\/g, '/');
+        if (!filename.endsWith('/writing/index.html')) return html;
         const count = (html.match(/<article class="writing-item">/g) || []).length;
         const minutes = [...html.matchAll(/class="writing-item__meta"[^>]*>([^<]*)</g)]
           .map((match) => Number((match[1].match(/(\d+)\s*min/) || [])[1] || 0))
