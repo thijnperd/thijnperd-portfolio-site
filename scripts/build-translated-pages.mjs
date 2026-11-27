@@ -211,7 +211,10 @@ function blockSlots(region, regionOffset) {
     if (match[4] !== undefined) {
       const alt = /alt="([^"]*)"/.exec(match[4]);
       if (alt && !/data-i18n/.test(match[4])) {
-        const offset = regionOffset + match.index + alt[0].indexOf('"') + 1;
+        // Offset within the whole tag, not within the alt attribute alone: missing this
+        // wrote the translated caption over src="…" and left the figure image broken.
+        const altAt = match[0].indexOf(alt[0]);
+        const offset = regionOffset + match.index + altAt + alt[0].indexOf('"') + 1;
         slots.push({ start: offset, end: offset + alt[1].length, kind: 'alt', inner: alt[1], match: null });
       }
       continue;
@@ -438,6 +441,19 @@ for (const [lang, mdFile] of Object.entries(LANGS)) {
     for (const other of DOCS) {
       const url = `/${other.replace(/index\.html$/, '')}`;
       html = html.split(`href="${url}"`).join(`href="/${lang}${url}"`);
+    }
+
+    // An image tag must survive substitution with its src and a single alt.
+    let brokenImages = 0;
+    for (const tag of html.matchAll(/<img\b[^>]*>/g)) {
+      const src = /\ssrc="/.test(tag[0]);
+      const alts = tag[0].match(/\salt="/g)?.length ?? 0;
+      if (!src || alts !== 1) brokenImages += 1;
+    }
+    if (brokenImages) {
+      report.push(`${lang} ${doc}: ${brokenImages} image tag(s) lost src or gained a duplicate alt`);
+      failures += 1;
+      continue;
     }
 
     const out = `/${lang}/${doc}`;
