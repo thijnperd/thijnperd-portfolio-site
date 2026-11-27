@@ -1,26 +1,24 @@
 /**
- * Synchronizes page palette tokens, tab favicon, real-time local clock,
- * phase control, hero hint, and independently clickable 3-lens project
- * marginalia with the 3D hero time-of-day scalar
- * (0 = daylight, 0.46 = dusk, 0.66 = twilight, 1 = midnight).
+ * Synchronizes page palette tokens, portrait duotone colors, tab favicon, real-time
+ * local clock, phase control, and hero hint with the 3D hero time-of-day scalar.
  */
 
 import { t } from './i18n.js';
 
 const LIGHT_STOPS = [
-  { t: 0.24, ink: '#181c22', paper: '#e2e5ea', accent: '#a63a35', muted: '#4c5563' },
-  { t: 0.5, ink: '#121614', paper: '#e4e6e1', accent: '#a93724', muted: '#464e48' },
-  { t: 0.8, ink: '#221609', paper: '#e5d2b0', accent: '#8f3610', muted: '#523f2b' },
+  { t: 0.24, ink: '#181c22', paper: '#e2e5ea', accent: '#a63a35', muted: '#4c5563', portraitHi: '#f0c8bd', portraitLo: '#3a4b66' },
+  { t: 0.5, ink: '#121614', paper: '#e4e6e1', accent: '#a93724', muted: '#464e48', portraitHi: '#c8e6d8', portraitLo: '#113c33' },
+  { t: 0.8, ink: '#221609', paper: '#e5d2b0', accent: '#8f3610', muted: '#523f2b', portraitHi: '#f2c494', portraitLo: '#45221a' },
 ];
 
 const DARK_MORNING_STOPS = [
-  { t: 0.0, ink: '#e9eae4', paper: '#0a0d10', accent: '#f07443', muted: '#9aa3a4' },
-  { t: 0.24, ink: '#eceee8', paper: '#141925', accent: '#f07443', muted: '#a0a8b4' },
+  { t: 0.0, ink: '#e9eae4', paper: '#0a0d10', accent: '#f07443', muted: '#9aa3a4', portraitHi: '#ffd0a6', portraitLo: '#101f33' },
+  { t: 0.24, ink: '#eceee8', paper: '#141925', accent: '#f07443', muted: '#a0a8b4', portraitHi: '#f3c6ae', portraitLo: '#222b44' },
 ];
 
 const DARK_EVENING_STOPS = [
-  { t: 0.8, ink: '#eceee8', paper: '#161b26', accent: '#f07443', muted: '#a0a8b4' },
-  { t: 1.0, ink: '#e9eae4', paper: '#0a0d10', accent: '#f07443', muted: '#9aa3a4' },
+  { t: 0.8, ink: '#eceee8', paper: '#161b26', accent: '#f07443', muted: '#a0a8b4', portraitHi: '#f3c6ae', portraitLo: '#222b44' },
+  { t: 1.0, ink: '#e9eae4', paper: '#0a0d10', accent: '#f07443', muted: '#9aa3a4', portraitHi: '#ffd0a6', portraitLo: '#101f33' },
 ];
 
 const STATUS_ICONS = {
@@ -56,8 +54,6 @@ const FAVICON_URIS = {
   night: buildFaviconUri(FAVICON_PALETTES.night),
 };
 
-const NEXT_LENS = { day: 'dusk', dusk: 'night', night: 'day' };
-
 export function formatLocalClock(date = new Date()) {
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -82,6 +78,8 @@ function compileStops(stops) {
     paper: hexToRgb(stop.paper),
     accent: hexToRgb(stop.accent),
     muted: hexToRgb(stop.muted),
+    portraitHi: hexToRgb(stop.portraitHi),
+    portraitLo: hexToRgb(stop.portraitLo),
   }));
 }
 
@@ -125,7 +123,6 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
   const phaseCycleBtn = document.querySelector('[data-phase-cycle]');
   const phaseSetButtons = document.querySelectorAll('[data-phase-set]');
   const heroHint = document.querySelector('[data-hero-hint]');
-  const lensCards = document.querySelectorAll('[data-lens-card]');
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   const schemeMeta = document.querySelector('meta[name="color-scheme"]');
   const faviconLink = document.querySelector('link[rel="icon"]');
@@ -157,20 +154,6 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
     syncClockNodes();
   }
 
-  function setCardLens(card, lensKey) {
-    const key = lensKey === 'dusk' || lensKey === 'night' ? lensKey : 'day';
-    const text = card.querySelector('[data-lens-text]');
-    const projectKey = card.dataset.lensKey;
-    const translated = projectKey ? t(`lens.${projectKey}.${key}`) : null;
-    const fallback = card.dataset[`lens${key[0].toUpperCase()}${key.slice(1)}`];
-    const copy = translated && translated !== `lens.${projectKey}.${key}` ? translated : fallback;
-    if (text && copy) text.textContent = copy;
-    card.dataset.lensActive = key;
-    for (const btn of card.querySelectorAll('[data-lens-pick]')) {
-      btn.setAttribute('aria-pressed', String(btn.dataset.lensPick === key));
-    }
-  }
-
   function syncPhaseCopy(phase) {
     const keys = PHASE_KEYS[phase] || PHASE_KEYS.day;
     const statusLabel = t(keys.status);
@@ -182,31 +165,12 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
     syncClockNodes();
   }
 
-  for (const card of lensCards) {
-    for (const btn of card.querySelectorAll('[data-lens-pick]')) {
-      btn.addEventListener('click', () => {
-        setCardLens(card, btn.dataset.lensPick);
-      }, { signal });
-    }
-    const text = card.querySelector('[data-lens-text]');
-    if (text) {
-      text.addEventListener('click', () => {
-        if (window.getSelection()?.toString()) return;
-        const current = card.dataset.lensActive || activePhase;
-        setCardLens(card, NEXT_LENS[current] || 'dusk');
-      }, { signal });
-    }
-  }
-
   const clockTimer = window.setInterval(refreshClock, 1000);
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) refreshClock();
   }, { signal });
   window.addEventListener('thijnperd:langchange', () => {
     syncPhaseCopy(activePhase);
-    for (const card of lensCards) {
-      setCardLens(card, card.dataset.lensActive || activePhase);
-    }
   }, { signal });
 
   function update(t) {
@@ -222,6 +186,8 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
     const paper = samplePair(stops, 'paper', value);
     const accent = samplePair(stops, 'accent', value);
     const muted = samplePair(stops, 'muted', value);
+    const portraitHi = samplePair(stops, 'portraitHi', value);
+    const portraitLo = samplePair(stops, 'portraitLo', value);
 
     const phase = (value < 0.21 || value >= 0.855)
       ? 'night'
@@ -239,6 +205,8 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
       paper.r, paper.g, paper.b,
       accent.r, accent.g, accent.b,
       muted.r, muted.g, muted.b,
+      portraitHi.r, portraitHi.g, portraitHi.b,
+      portraitLo.r, portraitLo.g, portraitLo.b,
       phase,
       scheme,
     ].join(',');
@@ -260,6 +228,8 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
     root.style.setProperty('--accent', rgbCss(accent));
     root.style.setProperty('--accent-rgb', `${accent.r}, ${accent.g}, ${accent.b}`);
     root.style.setProperty('--muted', rgbCss(muted));
+    root.style.setProperty('--portrait-hi', rgbCss(portraitHi));
+    root.style.setProperty('--portrait-lo', rgbCss(portraitLo));
     root.style.setProperty('--line', rgbaCss(ink, 0.16));
     root.style.setProperty('--line-strong', rgbaCss(ink, 0.34));
     root.style.setProperty('--surface', rgbaCss(ink, 0.045));
@@ -277,10 +247,6 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
       syncPhaseCopy(phase);
       for (const btn of phaseSetButtons) {
         btn.setAttribute('aria-pressed', String(btn.dataset.phaseSet === phase));
-      }
-      const cardLens = phase === 'dawn' ? 'day' : phase;
-      for (const card of lensCards) {
-        setCardLens(card, cardLens);
       }
       if (faviconLink) faviconLink.setAttribute('href', FAVICON_URIS[phase] || FAVICON_URIS.day);
     }

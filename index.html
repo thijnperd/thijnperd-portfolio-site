@@ -211,7 +211,7 @@
                 Four projects across desktop, browser, and terminal. Source code and releases are on
                 <a href="https://github.com/thijnperd" target="_blank" rel="noopener noreferrer">GitHub</a>.
               </p>
-              <div class="light-switch" role="group" data-i18n-attr="aria-label:phase.lightGroup" aria-label="Reading light and project notes">
+              <div class="light-switch" role="group" data-i18n-attr="aria-label:phase.lightGroup" aria-label="Time of day">
                 <button type="button" data-phase-set="dawn" aria-pressed="false" data-i18n="phase.dawn">Dawn</button>
                 <button type="button" data-phase-set="day" aria-pressed="true" data-i18n="phase.day">Daylight</button>
                 <button type="button" data-phase-set="dusk" aria-pressed="false" data-i18n="phase.dusk">Dusk</button>
@@ -266,36 +266,6 @@
                   <li><strong>46</strong><span data-i18n="home.ditherStat0">algorithms</span></li>
                   <li><strong>25</strong><span data-i18n="home.ditherStat1">effects</span></li>
                   <li><strong>0</strong><span data-i18n="home.ditherStat2">runtime deps</span></li>
-                </ul>
-                <div
-                  class="project__lens"
-                  data-lens-card
-                  data-lens-key="dither"
-                  data-lens-day="Everything runs locally in the browser or desktop app; exports PNG up to 8×, text grids, WebM video, and JSON recipes."
-                  data-lens-dusk="46 dither algorithms, 30 ink sets + 25 palettes across five packs, desktop-only object layers, 25-effect stack — zero runtime dependencies in the web builds."
-                  data-lens-night="Opens straight from index.html with no build step; the launch film renders 40s at 1080p/24fps directly from real engine exports."
-                >
-                  <div class="project__lens-tabs" role="group" data-i18n-attr="aria-label:home.ditherNotesLabel" aria-label="Dither Studio notes">
-                    <button type="button" data-lens-pick="day" aria-pressed="true" data-i18n="lensTabs.day">Overview</button>
-                    <button type="button" data-lens-pick="dusk" aria-pressed="false" data-i18n="lensTabs.dusk">Specs</button>
-                    <button type="button" data-lens-pick="night" aria-pressed="false" data-i18n="lensTabs.night">After-hours</button>
-                  </div>
-                  <button
-                    type="button"
-                    class="project__lens-text"
-                    data-lens-text
-                    data-i18n-attr="title:lensTabs.nextNoteTitle"
-                    title="Show the next note"
-                  >
-                    Everything runs locally in the browser or desktop app; exports PNG up to 8×, text
-                    grids, WebM video, and JSON recipes.
-                  </button>
-                </div>
-                <ul class="tags">
-                  <li data-i18n="home.tagOffline">Offline</li>
-                  <li>Canvas 2D</li>
-                  <li>Vanilla JS</li>
-                  <li data-i18n="home.tagImageVideo">Image &amp; Video</li>
                 </ul>
                 <div class="project__links">
                   <a href="/work/dither-studio/" data-track="case-dither-studio"
@@ -379,36 +349,6 @@
                   <li><strong>5,523</strong><span data-i18n="home.cortexStat1">notes benchmarked</span></li>
                   <li><strong>100%</strong><span data-i18n="home.cortexStat2">local-first</span></li>
                 </ul>
-                <div
-                  class="project__lens"
-                  data-lens-card
-                  data-lens-key="cortex"
-                  data-lens-day="Local-first with no account, cloud, or external database; a local Rust server with a WebGL2 interface, plus a Windows installer."
-                  data-lens-dusk="Rust backend + axum server · hand-written WebGL2 interface · deterministic layout benchmarked at 5,523 notes."
-                  data-lens-night="cargo run -p cortex -- serve ./vault — reads your existing Markdown folder directly as a folded 3D cortical surface."
-                >
-                  <div class="project__lens-tabs" role="group" data-i18n-attr="aria-label:home.cortexNotesLabel" aria-label="Cortex notes">
-                    <button type="button" data-lens-pick="day" aria-pressed="true" data-i18n="lensTabs.day">Overview</button>
-                    <button type="button" data-lens-pick="dusk" aria-pressed="false" data-i18n="lensTabs.dusk">Specs</button>
-                    <button type="button" data-lens-pick="night" aria-pressed="false" data-i18n="lensTabs.night">After-hours</button>
-                  </div>
-                  <button
-                    type="button"
-                    class="project__lens-text"
-                    data-lens-text
-                    data-i18n-attr="title:lensTabs.nextNoteTitle"
-                    title="Show the next note"
-                  >
-                    Local-first with no account, cloud, or external database; a local Rust server with
-                    a WebGL2 interface, plus a Windows installer.
-                  </button>
-                </div>
-                <ul class="tags">
-                  <li data-i18n="home.tagLocalFirst">Local-first</li>
-                  <li>Rust</li>
-                  <li>WebGL2</li>
-                  <li>Markdown</li>
-                </ul>
                 <div class="project__links">
                   <a href="/work/cortex/" data-track="case-cortex"
                     ><span data-i18n="home.linkCaseStudy">Case study</span> <span aria-hidden="true">→</span></a
@@ -485,36 +425,6 @@
                   <li><strong>29</strong><span data-i18n="home.w3planStat1">subjects</span></li>
                   <li><strong>8+</strong><span data-i18n="home.w3planStat2">final-year students</span></li>
                 </ul>
-                <div
-                  class="project__lens"
-                  data-lens-card
-                  data-lens-key="w3plan"
-                  data-lens-day="School PTA data loads read-only from Supabase or local JSON while student schedules stay on device; includes auto-updating desktop builds."
-                  data-lens-dusk="643 PTA components across 29 subjects · React 19, TypeScript &amp; Supabase · Windows installer + macOS DMG/ZIP auto-updater."
-                  data-lens-night="No student accounts or server sync; ships with a local MCP bridge so students can review weekly study proposals in the calendar."
-                >
-                  <div class="project__lens-tabs" role="group" data-i18n-attr="aria-label:home.w3planNotesLabel" aria-label="W3Plan notes">
-                    <button type="button" data-lens-pick="day" aria-pressed="true" data-i18n="lensTabs.day">Overview</button>
-                    <button type="button" data-lens-pick="dusk" aria-pressed="false" data-i18n="lensTabs.dusk">Specs</button>
-                    <button type="button" data-lens-pick="night" aria-pressed="false" data-i18n="lensTabs.night">After-hours</button>
-                  </div>
-                  <button
-                    type="button"
-                    class="project__lens-text"
-                    data-lens-text
-                    data-i18n-attr="title:lensTabs.nextNoteTitle"
-                    title="Show the next note"
-                  >
-                    School PTA data loads read-only from Supabase or local JSON while student schedules
-                    stay on device; includes auto-updating desktop builds.
-                  </button>
-                </div>
-                <ul class="tags">
-                  <li>TypeScript</li>
-                  <li>React</li>
-                  <li>Vite</li>
-                  <li>Supabase</li>
-                </ul>
                 <div class="project__links">
                   <a href="/work/w3plan/" data-track="case-w3plan"
                     ><span data-i18n="home.linkCaseStudy">Case study</span> <span aria-hidden="true">→</span></a
@@ -588,36 +498,6 @@
                   <li><strong>5</strong><span data-i18n="home.papersStat0">academic APIs</span></li>
                   <li><strong>4</strong><span data-i18n="home.papersStat1">surfaces</span></li>
                   <li><strong>0</strong><span data-i18n="home.papersStat2">runtime deps</span></li>
-                </ul>
-                <div
-                  class="project__lens"
-                  data-lens-card
-                  data-lens-key="papers"
-                  data-lens-day="One Python pipeline with no runtime dependencies behind a CLI, an interactive terminal browser, a Python library, and an MCP server."
-                  data-lens-dusk="Searches Europe PMC, Crossref, arXiv, Semantic Scholar &amp; OpenAlex · causal-direction &amp; domain-sense screening · verified %PDF downloads."
-                  data-lens-night="papersplease find &quot;muscle strength in older adults since 2015&quot; -i — screens abstracts against intent before surfacing open-access links."
-                >
-                  <div class="project__lens-tabs" role="group" data-i18n-attr="aria-label:home.papersNotesLabel" aria-label="PapersPlease notes">
-                    <button type="button" data-lens-pick="day" aria-pressed="true" data-i18n="lensTabs.day">Overview</button>
-                    <button type="button" data-lens-pick="dusk" aria-pressed="false" data-i18n="lensTabs.dusk">Specs</button>
-                    <button type="button" data-lens-pick="night" aria-pressed="false" data-i18n="lensTabs.night">After-hours</button>
-                  </div>
-                  <button
-                    type="button"
-                    class="project__lens-text"
-                    data-lens-text
-                    data-i18n-attr="title:lensTabs.nextNoteTitle"
-                    title="Show the next note"
-                  >
-                    One Python pipeline with no runtime dependencies behind a CLI, an interactive
-                    terminal browser, a Python library, and an MCP server.
-                  </button>
-                </div>
-                <ul class="tags">
-                  <li>Python</li>
-                  <li>TUI</li>
-                  <li>MCP</li>
-                  <li data-i18n="home.tagZeroRuntimeDeps">Zero runtime deps</li>
                 </ul>
                 <div class="project__links">
                   <a href="/work/papersplease/" data-track="case-papersplease"
@@ -718,7 +598,7 @@
                 <source srcset="/portrait.webp" type="image/webp" />
                 <img
                   src="/portrait.jpg"
-                  alt="Green-dithered portrait of Thijn Köhne"
+                  alt="Dithered portrait of Thijn Köhne"
                   data-i18n-attr="alt:home.portraitAlt"
                   width="460"
                   height="460"
