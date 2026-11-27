@@ -230,7 +230,13 @@ ul {
   min-height: 38.75rem;
   overflow: clip;
   isolation: isolate;
-  background: var(--paper);
+  /* Something is in the frame before the scene's first render arrives: on a slow
+     connection the canvas stays empty for a couple of seconds, and flat paper there
+     reads as a broken page. The canvas is opaque, so this disappears behind it. */
+  background:
+    radial-gradient(115% 70% at 50% 8%, rgba(var(--accent-rgb), 0.16), transparent 62%),
+    repeating-linear-gradient(0deg, rgba(var(--accent-rgb), 0.05) 0 2px, transparent 2px 4px),
+    var(--paper);
 }
 
 .hero__canvas {

@@ -94,10 +94,11 @@ const saveData = navigator.connection && navigator.connection.saveData === true;
 if (saveData) {
   document.documentElement.classList.add('no-webgl');
   if (dialHost) dialHost.hidden = true;
-} else if ('requestIdleCallback' in window) {
-  requestIdleCallback(() => loadHero(), { timeout: 800 });
 } else {
-  setTimeout(loadHero, 120);
+  // Start on the next frame rather than on idle: this module already runs after the
+  // stylesheet and the copy are in place, and the scene chunk is the long pole on a
+  // slow connection. Waiting for idle only pushed it back.
+  requestAnimationFrame(() => loadHero());
 }
 
 if (phaseCycleBtn) {
