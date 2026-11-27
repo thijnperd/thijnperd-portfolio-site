@@ -160,7 +160,7 @@ export const TRANSLATIONS = {
       statusCortex: 'Independent · daily driver',
       descCortex: 'A local-first Markdown browser with six views over one parsed model, built on a Rust/axum core and a hand-written WebGL2 interface. Used daily on a 500-note, 5,000-link vault; benchmarked at 5,523 notes.',
       statusW3Plan: 'Team project',
-      descW3Plan: "A school planner that starts from the school's PTA data: 643 components across 29 subjects, weekly study blocks, per-test checklists and grade calculators. Adopted by 8+ final-year students and endorsed by teachers.",
+      descW3Plan: "A school planner that starts from the school's PTA data: 643 components across 29 subjects, weekly study blocks, per-test checklists and grade calculators. Adopted by 8+ final-year students and praised by teachers.",
       statusPapers: 'Open source',
       descPapers: 'A literature screening pipeline over five academic APIs, with CLI, TUI, Python library and MCP server surfaces; the core runs on the Python standard library.',
       caseStudyLink: 'Case study',
