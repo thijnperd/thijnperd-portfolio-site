@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>PapersPlease — a literature crawler that reads before it links · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="PapersPlease searches five academic APIs, screens titles and abstracts for scope and causal direction, and resolves open-access links — as a CLI, TUI, library and MCP server."
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/work/papersplease/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="PapersPlease — a literature crawler that reads before it links" />
+    <meta
+      property="og:description"
+      content="Five academic APIs, abstract-level screening for scope and causal direction, and verified open-access downloads in one zero-dependency pipeline."
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/work/papersplease/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/papersplease.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PapersPlease — a literature crawler that reads before it links" />
+    <meta
+      name="twitter:description"
+      content="Five academic APIs, abstract-level screening for scope and causal direction, and verified open-access downloads in one zero-dependency pipeline."
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/papersplease.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var h = new Date().getHours() + new Date().getMinutes() / 60;
+        var night = h < 6.5 || h >= 19.5;
+        document.documentElement.dataset.scheme = night ? 'night' : 'day';
+        document.documentElement.dataset.phase = night ? 'night' : 'day';
+        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar">
+      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
+            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
+            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
+            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
+            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
+            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+          </svg>
+        </span>
+        <span class="page-bar__name">thijnperd</span>
+      </a>
+      <nav class="page-nav" aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/writing/">Writing</a>
+        <a href="/colophon/" data-hide-mobile>Colophon</a>
+      </nav>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="page-shell">
+        <article>
+          <p class="kicker">Selected work · 04</p>
+          <h1 class="article__title">PapersPlease</h1>
+          <p class="article__lede">
+            A literature crawler that searches five academic APIs, reads the abstracts, and keeps the
+            papers that actually answer the question — for people and for coding agents.
+          </p>
+
+          <dl class="article__meta">
+            <div><dt>Role</dt><dd>Independent project</dd></div>
+            <div><dt>Stack</dt><dd>Python 3.10+, standard library</dd></div>
+            <div><dt>Status</dt><dd>Open source</dd></div>
+            <div>
+              <dt>Links</dt>
+              <dd>
+                <a href="https://github.com/thijnperd/PapersPlease" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </dd>
+            </div>
+          </dl>
+
+          <figure class="article__figure">
+            <img
+              src="/work/papers.webp"
+              width="1440"
+              height="900"
+              alt="PapersPlease terminal UI showing six in-scope research papers, relevance scores, open-access and Sci-Hub links, and the abstract detail pane."
+            />
+            <figcaption>
+              The terminal browser: in-scope papers with relevance scores, access links, and the
+              abstract kept in view while deciding.
+            </figcaption>
+          </figure>
+
+          <div class="article__body">
+            <h2>Search is not screening</h2>
+            <p>
+              Academic search is good at finding papers that share vocabulary with a query and bad at
+              knowing what the query meant. A search for strength training in older adults returns
+              work on strength in children, work where strength is an outcome rather than an
+              intervention, and reviews that cite the papers you actually wanted.
+            </p>
+            <p>
+              PapersPlease adds the step that usually happens by hand: read the title and abstract,
+              decide whether the paper is in scope, adjacent or irrelevant, and only then follow the
+              link.
+            </p>
+
+            <h2>One pipeline, four surfaces</h2>
+            <p>
+              The same core sits behind four ways to use it:
+            </p>
+            <ul>
+              <li>A <strong>CLI</strong> for a single query, with flags for count and interactivity.</li>
+              <li>A <strong>TUI</strong> for moving through results and abstracts without leaving the terminal.</li>
+              <li>A <strong>Python library</strong> for putting the pipeline inside another script.</li>
+              <li>An <strong>MCP server</strong> so a coding agent can search literature as a tool call.</li>
+            </ul>
+            <p>
+              Four surfaces is a constraint on the design: the screening logic cannot live in the
+              CLI's output formatting or the TUI's widgets, so it sits in one place and every surface
+              renders the same verdicts.
+            </p>
+
+            <h2>Reading before downloading</h2>
+            <p>
+              PapersPlease queries Europe PMC, Crossref, arXiv, Semantic Scholar and OpenAlex, then
+              screens each candidate's title and abstract for scope: does it study the population,
+              intervention and outcome the query asked about, and does the causal direction match?
+              Results are grouped as in-scope, adjacent or rejected, with a relevance score.
+            </p>
+            <p>
+              For the papers that survive, it resolves open-access links and verifies that a download
+              is actually a PDF rather than a landing page. A link that 404s is worse than no link,
+              because it costs the same attention and returns nothing.
+            </p>
+            <pre><code>papersplease find "muscle strength in older adults since 2015" -i</code></pre>
+
+            <h2>Zero dependencies</h2>
+            <p>
+              The core runs on the Python standard library: HTTP, JSON, the CLI and the terminal
+              interface. The only optional extra is PDF text extraction. That makes it installable
+              anywhere Python exists, with no lockfile to rot and no transitive surprises. The
+              trade-off is real — HTTP retries, terminal
+              layout and argument parsing are written rather than imported — but it keeps the tool
+              small enough to read in an afternoon.
+            </p>
+
+            <h2>What it cannot do</h2>
+            <p>
+              This is a screening aid, not a systematic review. Abstracts omit methods, overstate
+              findings and sometimes lie; the heuristics will put a relevant paper in the rejected
+              group. Coverage is limited to the five sources it queries, and the final judgement is
+              still reading the paper. The tool's job is to make that pile smaller and better
+              labelled, not to replace it.
+            </p>
+
+            <h2>Try it</h2>
+            <p>
+              The <a href="https://github.com/thijnperd/PapersPlease" target="_blank" rel="noopener noreferrer">repository</a>
+              has the install line, the CLI and TUI usage, and the MCP configuration.
+            </p>
+          </div>
+
+          <nav class="article__end" aria-label="Project pagination">
+            <a href="/work/w3plan/">← W3Plan</a>
+            <a href="/writing/dithering-the-hero/">Next: How the hero is dithered →</a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/">Writing</a> · <a href="/colophon/">Colophon</a> ·
+          <a href="/">Home</a>
+        </p>
+      </div>
+    </footer>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

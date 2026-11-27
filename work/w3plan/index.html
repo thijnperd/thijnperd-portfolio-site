@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>W3Plan — a planner that knows the school calendar · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="W3Plan combines PTA exams, weekly study hours, per-test checklists and grade calculators in one app for students at Were Di Drie."
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/work/w3plan/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="W3Plan — a planner that knows the school calendar" />
+    <meta
+      property="og:description"
+      content="643 PTA components across 29 subjects, weekly study blocks and auto-updating desktop builds for Windows and macOS."
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/work/w3plan/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/w3plan.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="W3Plan — a planner that knows the school calendar" />
+    <meta
+      name="twitter:description"
+      content="643 PTA components across 29 subjects, weekly study blocks and auto-updating desktop builds for Windows and macOS."
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/w3plan.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var h = new Date().getHours() + new Date().getMinutes() / 60;
+        var night = h < 6.5 || h >= 19.5;
+        document.documentElement.dataset.scheme = night ? 'night' : 'day';
+        document.documentElement.dataset.phase = night ? 'night' : 'day';
+        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar">
+      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
+            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
+            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
+            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
+            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
+            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+          </svg>
+        </span>
+        <span class="page-bar__name">thijnperd</span>
+      </a>
+      <nav class="page-nav" aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/writing/">Writing</a>
+        <a href="/colophon/" data-hide-mobile>Colophon</a>
+      </nav>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="page-shell">
+        <article>
+          <p class="kicker">Selected work · 03</p>
+          <h1 class="article__title">W3Plan</h1>
+          <p class="article__lede">
+            A study and exam planner that starts from the school's actual test calendar instead of a
+            blank week, built with Yannis Raijmakers and Billie for students at Were Di Drie.
+          </p>
+
+          <dl class="article__meta">
+            <div><dt>Role</dt><dd>Team project with Yannis Raijmakers and Billie</dd></div>
+            <div><dt>Stack</dt><dd>React 19, TypeScript, Supabase</dd></div>
+            <div><dt>Status</dt><dd>Built for Were Di Drie students</dd></div>
+            <div>
+              <dt>Links</dt>
+              <dd>
+                <a href="https://yannis-raijmakers.github.io/W3Plan-desktop/" target="_blank" rel="noopener noreferrer">Walkthrough ↗</a>
+                · <a href="https://github.com/Yannis-Raijmakers/W3Plan-desktop" target="_blank" rel="noopener noreferrer">Installers ↗</a>
+              </dd>
+            </div>
+          </dl>
+
+          <figure class="article__figure">
+            <img
+              src="/work/w3plan.webp"
+              width="1440"
+              height="900"
+              alt="W3Plan weekly calendar showing scheduled school exams, domain study blocks and upcoming test cards in the left sidebar."
+            />
+            <figcaption>
+              A week with the school's exams already on it: domain study blocks on the calendar,
+              tests and how many study hours are already planned in the sidebar.
+            </figcaption>
+          </figure>
+
+          <div class="article__body">
+            <h2>Generic planners start too late</h2>
+            <p>
+              A planner app assumes you already know what has to be done. At school, the hardest part
+              comes earlier: the test calendar is published by the school, the study hours are
+              supposed to be divided across subjects, and the two live in different places. Most
+              students resolve this with a paper agenda and a screenshot.
+            </p>
+            <p>
+              W3Plan starts from the school's PTA data and builds the week around it: exams, domain
+              hours, per-test checklists and grade calculators in one place.
+            </p>
+
+            <h2>Public school data, private student data</h2>
+            <p>
+              The split is deliberate. PTA data is published by the school, so it is loaded read-only
+              from Supabase or from a local JSON file. A student's own schedule never leaves the
+              device and there are no student accounts, which removes both the login flow and the
+              reason to store anyone's data centrally.
+            </p>
+            <p>
+              The import covers 643 PTA components across 29 subjects, 291 of which carry a date; a
+              separate SE overview adds 133 test moments. That is small enough to ship as a
+              read-only dataset and large enough that manual entry was never realistic.
+            </p>
+
+            <h2>What a week looks like</h2>
+            <ul>
+              <li>A weekly calendar with school exams and study blocks side by side.</li>
+              <li>Domain hours, so time is divided across subjects rather than by mood.</li>
+              <li>Per-test checklists for what actually has to be learned.</li>
+              <li>Grade calculators, because the next question after a test is what it did to the average.</li>
+            </ul>
+
+            <h2>Shipping to real students</h2>
+            <p>
+              The desktop builds auto-update, and ship as a Windows installer and as a DMG or ZIP on
+              macOS (the ZIP is what the updater uses). Distribution is the least glamorous and most
+              fragile part of a desktop app: installers, update channels and two platforms that fail
+              in different ways. It is also the part that turns a project into something classmates
+              can actually use.
+            </p>
+
+            <h2>The MCP bridge</h2>
+            <p>
+              W3Plan ships with a local MCP bridge so an assistant can read the week and propose study
+              blocks. The proposals land in the calendar, where a student can review them like any
+              other entry — the planner stays the place where the decision is made.
+            </p>
+
+            <h2>Built with two others</h2>
+            <p>
+              W3Plan is a team project. Yannis Raijmakers, Billie and I built it for senior secondary
+              students at Were Di Drie, which meant the data model had to survive contact with a real
+              school calendar rather than a sample one. The walkthrough linked above shows the app with
+              that data.
+            </p>
+
+            <h2>Try it</h2>
+            <p>
+              Watch the <a href="https://yannis-raijmakers.github.io/W3Plan-desktop/" target="_blank" rel="noopener noreferrer">walkthrough</a>
+              or get the builds from the
+              <a href="https://github.com/Yannis-Raijmakers/W3Plan-desktop" target="_blank" rel="noopener noreferrer">installers repository</a>.
+            </p>
+          </div>
+
+          <nav class="article__end" aria-label="Project pagination">
+            <a href="/work/cortex/">← Cortex</a>
+            <a href="/work/papersplease/">Next: PapersPlease →</a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/">Writing</a> · <a href="/colophon/">Colophon</a> ·
+          <a href="/">Home</a>
+        </p>
+      </div>
+    </footer>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

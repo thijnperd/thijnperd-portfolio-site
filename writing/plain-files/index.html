@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Plain files, no accounts · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="Four local-first projects, one rule: the data belongs in a folder the person can inspect. What that buys, what it costs, and where a database still earns its keep."
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/writing/plain-files/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="Plain files, no accounts" />
+    <meta
+      property="og:description"
+      content="What local-first software buys, what it costs, and the one place a database still earns its keep."
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/writing/plain-files/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/writing-plain-files.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Plain files, no accounts" />
+    <meta
+      name="twitter:description"
+      content="What local-first software buys, what it costs, and the one place a database still earns its keep."
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/writing-plain-files.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var h = new Date().getHours() + new Date().getMinutes() / 60;
+        var night = h < 6.5 || h >= 19.5;
+        document.documentElement.dataset.scheme = night ? 'night' : 'day';
+        document.documentElement.dataset.phase = night ? 'night' : 'day';
+        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar">
+      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
+            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
+            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
+            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
+            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
+            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+          </svg>
+        </span>
+        <span class="page-bar__name">thijnperd</span>
+      </a>
+      <nav class="page-nav" aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/writing/" aria-current="page">Writing</a>
+        <a href="/colophon/" data-hide-mobile>Colophon</a>
+      </nav>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="page-shell">
+        <article>
+          <p class="kicker">Local-first</p>
+          <h1 class="article__title">Plain files, no accounts</h1>
+          <p class="article__lede">
+            Four projects, one rule: the data belongs in a folder the person can inspect, move and
+            back up without asking a server for permission.
+          </p>
+
+          <dl class="article__meta">
+            <div><dt>Published</dt><dd>27 Nov 2026</dd></div>
+            <div><dt>Reading</dt><dd>7 minutes</dd></div>
+            <div><dt>Topics</dt><dd>Local-first, file formats</dd></div>
+            <div><dt>Projects</dt><dd><a href="/#work">Four</a></dd></div>
+          </dl>
+
+          <div class="article__body">
+            <h2>The default is somebody else's computer</h2>
+            <p>
+              Most software now assumes an account. Notes, images, plans and research live in a
+              service, in a format the service defines, reachable while the service is reachable. It
+              is a good deal for synchronisation, and a bad one for everything else: the tool can
+              disappear, the format can change, the price can move, and the data cannot be opened
+              without the app that wrote it.
+            </p>
+            <p>
+              The four projects on this site point the other way. Not because the cloud is evil, but
+              because for these particular tools the local version is simpler, faster and easier to
+              trust. The file is the interface.
+            </p>
+
+            <h2>What that looks like in practice</h2>
+            <ul>
+              <li>
+                <strong>Dither Studio</strong>'s web build opens from its own folder with no build
+                step and no runtime dependencies. A finished piece exports as PNG, text, WebM or a
+                JSON recipe;
+                the recipe is the whole setup, readable in any editor.
+              </li>
+              <li>
+                <strong>Cortex</strong> reads a vault of Markdown where it already lives. There is no
+                import, no database and no copy. If the app is deleted, the notes are untouched.
+              </li>
+              <li>
+                <strong>W3Plan</strong> keeps a student's schedule on the device. The school's PTA
+                data is the one thing fetched from outside, and it is read-only.
+              </li>
+              <li>
+                <strong>PapersPlease</strong> writes nothing to a service at all. It queries public
+                APIs, links to open-access papers, and leaves the reading to you.
+              </li>
+            </ul>
+
+            <h2>What it buys</h2>
+            <p>
+              <strong>It opens.</strong> No session check, no loading state, no "contact your
+              administrator". A folder of static files is the fastest kind of app there is.
+            </p>
+            <p>
+              <strong>It works offline.</strong> On a train, in a basement, on a school network that
+              blocks everything. The tool does not care, because nothing essential is remote.
+            </p>
+            <p>
+              <strong>The files outlive the app.</strong> Markdown, PNG, WebM and JSON are readable
+              without this codebase. That is the real exit plan: not a data export feature, but data
+              that never needed exporting.
+            </p>
+            <p>
+              <strong>Backups are boring.</strong> A folder can be copied, zipped, put in git or
+              dropped on a USB stick. There is no restore flow to test and no account recovery to
+              lose.
+            </p>
+            <p>
+              <strong>There is no permission model.</strong> No sharing settings, no roles, no link
+              that is accidentally public. Access is whatever the filesystem says it is.
+            </p>
+
+            <h2>What it costs</h2>
+            <p>
+              <strong>No sync.</strong> Two machines mean two copies, and merging them is the user's
+              problem. This is the biggest cost and the one that rules out some products entirely.
+            </p>
+            <p>
+              <strong>No collaboration.</strong> Two people editing the same file at the same time is
+              a hard problem, and "put it in a shared folder" is not a solution. A tool that needs
+              real-time collaboration needs a server; pretending otherwise just moves the conflict.
+            </p>
+            <p>
+              <strong>You own the backups.</strong> Local-first means the failure mode is local too.
+              A deleted folder is gone unless the person made a copy.
+            </p>
+            <p>
+              <strong>Distribution is on you.</strong> Installers, updates and code signing are the
+              unglamorous tax on desktop software. W3Plan ships auto-updating builds for Windows and
+              macOS, and that machinery took more care than some of the features.
+            </p>
+            <p>
+              <strong>Local compute has a ceiling.</strong> Anything that needs a large model or a lot
+              of CPU is harder without a server, and sometimes not worth doing locally at all.
+            </p>
+
+            <h2>Where the cloud earns its place</h2>
+            <p>
+              W3Plan is the useful counterexample. The school's PTA calendar is published data that
+              every student needs and no student should edit. Fetching it read-only from Supabase —
+              with a local JSON fallback — is better than shipping a copy that goes stale. The
+              division is clean because the data has an owner and a direction: published by the
+              school, consumed by the app, never written back.
+            </p>
+            <p>
+              That is a reasonable rule of thumb. Data a person creates stays local. Data an
+              institution publishes can be fetched. Data two people must edit at once needs a real
+              sync model, and the product should say so rather than pretend a folder is one.
+            </p>
+
+            <h2>The test</h2>
+            <p>
+              A simple question decides most of these cases: if the service disappeared tomorrow,
+              what would the user still have? If the answer is "a folder of files that open in
+              anything", the design is probably right. If the answer is "a login screen", it is worth
+              asking what the account is actually buying.
+            </p>
+            <p>
+              The projects are linked from the <a href="/#work">work section</a>; each has a longer
+              write-up, including the parts where local-first was the harder choice.
+            </p>
+          </div>
+
+          <nav class="article__end" aria-label="Article pagination">
+            <a href="/writing/dithering-the-hero/">← The hero is dithered</a>
+            <a href="/writing/">All writing →</a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/">Writing</a> · <a href="/colophon/">Colophon</a> ·
+          <a href="/">Home</a>
+        </p>
+      </div>
+    </footer>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

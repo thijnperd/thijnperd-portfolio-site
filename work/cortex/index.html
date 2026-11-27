@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Cortex — six views over a folder of Markdown · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="Cortex reads a Markdown vault in place and renders six views over it — graph, brain, timeline, atlas, bento and decisions — with no database and no account."
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/work/cortex/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="Cortex — six views over a folder of Markdown" />
+    <meta
+      property="og:description"
+      content="A local-first browser for plain-text notes: six projections over one parsed vault, benchmarked at 5,523 notes."
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/work/cortex/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/cortex.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cortex — six views over a folder of Markdown" />
+    <meta
+      name="twitter:description"
+      content="A local-first browser for plain-text notes: six projections over one parsed vault, benchmarked at 5,523 notes."
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/cortex.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var h = new Date().getHours() + new Date().getMinutes() / 60;
+        var night = h < 6.5 || h >= 19.5;
+        document.documentElement.dataset.scheme = night ? 'night' : 'day';
+        document.documentElement.dataset.phase = night ? 'night' : 'day';
+        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar">
+      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
+            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
+            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
+            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
+            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
+            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+          </svg>
+        </span>
+        <span class="page-bar__name">thijnperd</span>
+      </a>
+      <nav class="page-nav" aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/writing/">Writing</a>
+        <a href="/colophon/" data-hide-mobile>Colophon</a>
+      </nav>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="page-shell">
+        <article>
+          <p class="kicker">Selected work · 02</p>
+          <h1 class="article__title">Cortex</h1>
+          <p class="article__lede">
+            A local-first browser that reads a folder of Markdown in place and shows six different
+            views of the same notes. No database, no import, no account.
+          </p>
+
+          <dl class="article__meta">
+            <div><dt>Role</dt><dd>Independent project</dd></div>
+            <div><dt>Stack</dt><dd>Rust, axum, WebGL2</dd></div>
+            <div><dt>Status</dt><dd>Windows desktop app, static web demo</dd></div>
+            <div>
+              <dt>Links</dt>
+              <dd>
+                <a href="https://thijnperd.github.io/obsidian-cortex/" target="_blank" rel="noopener noreferrer">Live demo ↗</a>
+                · <a href="https://github.com/thijnperd/obsidian-cortex" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </dd>
+            </div>
+          </dl>
+
+          <figure class="article__figure">
+            <img
+              src="/work/cortex.webp"
+              width="1440"
+              height="900"
+              alt="Cortex Brain view showing a 328-note vault rendered as a 3D cortical surface with folder clusters and wikilink tracts."
+            />
+            <figcaption>
+              The Brain view: a 328-note vault folded into a cortical surface, with folders as
+              clusters and wikilinks as tracts between them.
+            </figcaption>
+          </figure>
+
+          <div class="article__body">
+            <h2>Notes outgrow folders</h2>
+            <p>
+              A vault of a few hundred Markdown files has structure, but not the structure the folder
+              tree suggests. Notes written months apart connect; folders are just where they happened
+              to be filed. Most tools answer this with search, or with a graph that is either a
+              decorative hairball or a feature of a paid cloud service.
+            </p>
+            <p>
+              Cortex takes the third option: read the folder as it is, parse the links, and give the
+              same data several shapes. Nothing is imported and nothing is copied. If you delete the
+              app, the notes are still exactly where they were.
+            </p>
+
+            <h2>Read in place, build once</h2>
+            <p>
+              Cortex points at a vault and parses it directly: Markdown files, frontmatter, wikilinks.
+              That becomes one in-memory model for the session. There is no database to migrate and
+              no index to rebuild — the folder is the source of truth.
+            </p>
+            <p>
+              Layout is deterministic. The same vault produces the same map, which matters more than
+              it sounds: a map that reshuffles every launch is a screensaver, not a way to remember
+              where something lives.               The stress-test vault is 5,523 notes across 41 folders, with 24,151 links.
+            </p>
+
+            <h2>Six views, one model</h2>
+            <p>
+              Graph, brain, timeline, atlas, bento and decisions are projections of the same parsed
+              vault, not six separate tools:
+            </p>
+            <ul>
+              <li><strong>Graph</strong> — what links to what, without the folder tree in the way.</li>
+              <li><strong>Brain</strong> — the vault as a folded surface, folders as regions.</li>
+              <li><strong>Timeline</strong> — when the notes were written, and what clusters in time.</li>
+              <li>
+                <strong>Atlas</strong> — folders as countries, notes as places, links as roads, on a
+                map that grows the same way every time.
+              </li>
+              <li>
+                <strong>Bento</strong> — every folder as a box, sized by how much of the vault it
+                holds, with its strongest notes inside.
+              </li>
+              <li><strong>Decisions</strong> — the reasoning trail behind a choice, kept next to the choice.</li>
+            </ul>
+            <p>
+              The decisions view is the one that changes how the vault gets used. A note that records
+              a decision is only useful if the alternatives and the reason survive with it, and that
+              is a data-shape problem before it is a visual one.
+            </p>
+
+            <h2>Rust, WebGL2, and a local server</h2>
+            <p>
+              The Rust core does the expensive part: scanning, parsing, link resolution and layout.
+              An axum server exposes that to a hand-written WebGL2 interface, which is what makes
+              thousands of nodes interactive rather than a static image. The app is a local server
+              opened in your browser, bound to loopback by default, and the Windows build wraps it in
+              an installer.
+            </p>
+            <pre><code>cargo run -p cortex -- serve ./vault</code></pre>
+            <p>
+              The GitHub Pages build is a static export of a seeded vault, so the views can be tried
+              without installing anything.
+            </p>
+
+            <h2>What local-only costs</h2>
+            <p>
+              The installer is Windows-only, there is no mobile app, and there is no sync between
+              machines: iCloud, Dropbox, Syncthing or git have to do that job. Those are real
+              limits. They are also the reason the app opens in a second and never asks for an
+              account, and the reason a vault can be moved, backed up or versioned like any other
+              folder.
+            </p>
+
+            <h2>Try it</h2>
+            <p>
+              Open the <a href="https://thijnperd.github.io/obsidian-cortex/" target="_blank" rel="noopener noreferrer">live demo</a>
+              to move through the six views with the sample vault, or read the
+              <a href="https://github.com/thijnperd/obsidian-cortex" target="_blank" rel="noopener noreferrer">source</a>.
+            </p>
+          </div>
+
+          <nav class="article__end" aria-label="Project pagination">
+            <a href="/work/dither-studio/">← Dither Studio</a>
+            <a href="/work/w3plan/">Next: W3Plan →</a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/">Writing</a> · <a href="/colophon/">Colophon</a> ·
+          <a href="/">Home</a>
+        </p>
+      </div>
+    </footer>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

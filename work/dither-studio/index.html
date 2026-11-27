@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Dither Studio — an offline dithering press · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="How Dither Studio fits 46 dither algorithms, a 25-effect stack, video and a JSON recipe into a zero-dependency web app that opens from its own folder."
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/work/dither-studio/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="Dither Studio — an offline dithering press" />
+    <meta
+      property="og:description"
+      content="46 algorithms, 25 effects, video and JSON recipes in a zero-dependency app that opens from its own folder."
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/work/dither-studio/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/dither-studio.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dither Studio — an offline dithering press" />
+    <meta
+      name="twitter:description"
+      content="46 algorithms, 25 effects, video and JSON recipes in a zero-dependency app that opens from its own folder."
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/dither-studio.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var h = new Date().getHours() + new Date().getMinutes() / 60;
+        var night = h < 6.5 || h >= 19.5;
+        document.documentElement.dataset.scheme = night ? 'night' : 'day';
+        document.documentElement.dataset.phase = night ? 'night' : 'day';
+        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar">
+      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
+            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
+            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
+            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
+            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
+            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+          </svg>
+        </span>
+        <span class="page-bar__name">thijnperd</span>
+      </a>
+      <nav class="page-nav" aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/writing/">Writing</a>
+        <a href="/colophon/" data-hide-mobile>Colophon</a>
+      </nav>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="page-shell">
+        <article>
+          <p class="kicker">Selected work · 01</p>
+          <h1 class="article__title">Dither Studio</h1>
+          <p class="article__lede">
+            A dithering press for images and video that runs entirely on the machine it opens on:
+            no account, no upload, no build step.
+          </p>
+
+          <dl class="article__meta">
+            <div><dt>Role</dt><dd>Independent project</dd></div>
+            <div><dt>Stack</dt><dd>Vanilla JS, Canvas 2D</dd></div>
+            <div><dt>Status</dt><dd>Shipped, web and desktop</dd></div>
+            <div>
+              <dt>Links</dt>
+              <dd>
+                <a href="https://thijnperd.github.io/dither-studio/" target="_blank" rel="noopener noreferrer">Web app ↗</a>
+                · <a href="https://github.com/thijnperd/dither-studio" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </dd>
+            </div>
+          </dl>
+
+          <figure class="article__figure">
+            <img
+              src="/work/dither.jpg"
+              width="1440"
+              height="900"
+              alt="Dither Studio editor showing a dithered artwork on a dark canvas with algorithm, palette and effect controls in the left panel."
+            />
+            <figcaption>
+              The editor at rest: an ordered dither on the canvas, with the algorithm, palette and
+              effect stack in the left rail.
+            </figcaption>
+          </figure>
+
+          <div class="article__body">
+            <h2>The brief</h2>
+            <p>
+              Dithering is the step between an image and the machine that prints it: reduce the
+              palette, then decide which pixels get to keep which tone. It is the look of newsprint,
+              early Macintosh screens, pixel art and a lot of album covers. The tools that do it are
+              usually either a plugin inside a larger editor or a web converter that uploads your
+              file and hands back a JPEG.
+            </p>
+            <p>
+              Dither Studio is the opposite arrangement. You open a folder, drop in an image or a
+              video, tune the result, and export. Nothing leaves the machine, and the dither is the
+              product rather than an effect buried three menus deep.
+            </p>
+
+            <h2>Two rules that shaped everything</h2>
+            <ul>
+              <li>
+                <strong>No build step.</strong> The web build opens straight from
+                <code>index.html</code>: plain scripts loaded from the folder, no bundler, no
+                framework runtime to boot before the first pixel appears.
+              </li>
+              <li>
+                <strong>No runtime dependencies in the web builds.</strong> Every algorithm, palette
+                and export path is code in the folder. Nothing breaks because a package disappeared.
+                The desktop build's only runtime dependency is Electron.
+              </li>
+            </ul>
+            <p>
+              Those rules are why the app can be handed over as a folder. They also set the ceiling:
+              anything the app needs has to be written, not installed.
+            </p>
+
+            <h2>What is actually in it</h2>
+            <ul>
+              <li>46 dither algorithms, from ordered patterns to error diffusion.</li>
+              <li>30 built-in ink sets, plus five installable palette packs that add 25 palettes.</li>
+              <li>
+                Per-object layers on the desktop build, so a subject and a background can dither
+                differently.
+              </li>
+              <li>A stack of up to 25 effects, each with its own amount and mode.</li>
+              <li>Text mode, for turning an image into a grid of characters.</li>
+              <li>Video in, WebM out, with the same stack applied per frame.</li>
+              <li>Exports: PNG up to 8×, text grids, WebM, and a JSON recipe of the whole setup.</li>
+            </ul>
+
+            <h2>Three decisions</h2>
+
+            <h3>Canvas 2D, not WebGL</h3>
+            <p>
+              The engine is plain JavaScript working on pixel buffers: <code>process()</code> takes a
+              source image and settings and returns the dithered result as data. Canvas 2D is only
+              the surface it is drawn onto — one canvas pixel per working pixel, with
+              <code>putImageData</code>, and zoom handled in CSS so a render is a single paste. No
+              shader, no GPU-specific path. That is what lets the same engine file run unchanged in
+              the web demo, the launcher and the desktop app.
+            </p>
+
+            <h3>A recipe is a file</h3>
+            <p>
+              The settings serialise into a plain JSON recipe: algorithm, palette, layer geometry
+              and the effect stack. That makes a result reproducible without
+              screenshots or notes, and it means the app's state is inspectable with a text editor.
+              Recipes are also the closest thing the app has to a preset format — there is no account
+              or cloud library to sync them through.
+            </p>
+
+            <h3>Three builds, one engine</h3>
+            <p>
+              The web demo, the launcher and the desktop app share the engine, the sample table and
+              the video clock byte for byte, and a sync script fails the build if a copy drifts. The
+              shells are separate: the demo is tuned for a browser and ships six recipes with no
+              plugins or custom palette import, while the desktop app adds native menus and dialogs,
+              the full catalogue and the tutorial. Same engine, different amounts of app around it.
+            </p>
+
+            <h2>What local-only costs</h2>
+            <p>
+              No sync, no shared preset library, no collaborative editing. Those are features I chose
+              not to have, but they are not free: every one of them is something a user has to do by
+              hand, usually by sending a file. The compensation is that the app opens instantly,
+              works on a train, and cannot lose your work to a session expiry.
+            </p>
+            <p>
+              The launch film was the best test of that promise: 40 seconds at 1080p and 24 fps,
+              rendered directly from real engine exports rather than a mock-up. If the export path
+              had a weak frame, it would be in the film.
+            </p>
+
+            <h2>Try it</h2>
+            <p>
+              The <a href="https://thijnperd.github.io/dither-studio/" target="_blank" rel="noopener noreferrer">web app</a>
+              opens with a sample image and no sign-in. The
+              <a href="https://github.com/thijnperd/dither-studio" target="_blank" rel="noopener noreferrer">source</a>
+              is public, and the
+              <a href="https://thijnperd.github.io/Dither-studio_publicity/" target="_blank" rel="noopener noreferrer">launch film</a>
+              shows the video path end to end.
+            </p>
+          </div>
+
+          <nav class="article__end" aria-label="Project pagination">
+            <a href="/#work">← All work</a>
+            <a href="/work/cortex/">Next: Cortex →</a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/">Writing</a> · <a href="/colophon/">Colophon</a> ·
+          <a href="/">Home</a>
+        </p>
+      </div>
+    </footer>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Thijn Köhne — writing</title>
+    <link>https://thijnperd.github.io/writing/</link>
+    <description>Notes on rendering, local-first software and how the projects are built.</description>
+    <language>en</language>
+    <lastBuildDate>Fri, 27 Nov 2026 09:00:00 +0100</lastBuildDate>
+    <atom:link href="https://thijnperd.github.io/writing/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The hero is dithered, not blurred</title>
+      <link>https://thijnperd.github.io/writing/dithering-the-hero/</link>
+      <guid isPermaLink="true">https://thijnperd.github.io/writing/dithering-the-hero/</guid>
+      <pubDate>Fri, 27 Nov 2026 09:00:00 +0100</pubDate>
+      <description>A full-screen 8×8 Bayer dither in one GLSL pass, and why the blocks stay two CSS pixels wide.</description>
+    </item>
+    <item>
+      <title>Plain files, no accounts</title>
+      <link>https://thijnperd.github.io/writing/plain-files/</link>
+      <guid isPermaLink="true">https://thijnperd.github.io/writing/plain-files/</guid>
+      <pubDate>Fri, 27 Nov 2026 09:00:00 +0100</pubDate>
+      <description>What local-first software buys, what it costs, and the one place a database still earns its keep.</description>
+    </item>
+  </channel>
+</rss>

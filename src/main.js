@@ -1,12 +1,13 @@
-import { HeroScene } from './hero/HeroScene.js';
 import { initTimeSlider } from './ui/timeSlider.js';
 import { createAdaptiveUI, getTimeOfDayFromClock } from './ui/adaptiveUI.js';
 import { initSite } from './ui/site.js';
+import { initAnalytics, track } from './analytics.js';
 
 const PHASE_PRESETS = { day: 0.02, dusk: 0.47, night: 0.94 };
 const INITIAL_TIME = getTimeOfDayFromClock();
 
 initSite();
+initAnalytics();
 
 const adaptiveUI = createAdaptiveUI(INITIAL_TIME);
 
@@ -17,6 +18,7 @@ const phaseSetBtns = document.querySelectorAll('[data-phase-set]');
 
 let hero = null;
 let slider = null;
+let heroRequested = false;
 let currentTarget = INITIAL_TIME;
 
 function setTime(next, { immediate = false } = {}) {
@@ -30,41 +32,71 @@ function setTime(next, { immediate = false } = {}) {
   }
 }
 
-function showFallback(error) {
-  console.warn('[hero] Falling back to the static background:', error);
+function showFallback(error, { warn = true } = {}) {
+  if (warn) console.warn('[hero] Falling back to the static background:', error);
   document.documentElement.classList.add('no-webgl');
   if (canvasHost) canvasHost.querySelectorAll('canvas').forEach((node) => node.remove());
   if (dialHost) dialHost.hidden = true;
   adaptiveUI.update(currentTarget);
 }
 
-try {
-  hero = new HeroScene(canvasHost, { initialTime: INITIAL_TIME });
-  hero.onTimeChange = (value) => adaptiveUI.update(value);
+/**
+ * Three.js and the scene graph are the heaviest thing on the page, and the
+ * above-the-fold content is text. The hero module is loaded on idle so the name
+ * and tagline paint first; the scene fades in when it is ready. Save-Data
+ * visitors get the static background instead.
+ */
+async function loadHero() {
+  if (heroRequested || hero) return;
+  heroRequested = true;
 
+  try {
+    const { HeroScene } = await import('./hero/HeroScene.js');
+    if (!canvasHost) throw new Error('Missing hero canvas host.');
+
+    hero = new HeroScene(canvasHost, { initialTime: currentTarget });
+    hero.onTimeChange = (value) => adaptiveUI.update(value);
+    hero.setTimeOfDay(currentTarget, { immediate: true });
+    hero.start();
+    document.documentElement.classList.add('has-webgl');
+  } catch (error) {
+    if (hero) {
+      try {
+        hero.dispose();
+      } catch {
+        /* best effort */
+      }
+      hero = null;
+    }
+    showFallback(error);
+  }
+}
+
+try {
   slider = initTimeSlider(dialHost, {
     value: INITIAL_TIME,
     onChange: (value) => setTime(value),
   });
-
-  hero.start();
-  document.documentElement.classList.add('has-webgl');
 } catch (error) {
-  if (hero) {
-    try {
-      hero.dispose();
-    } catch {
-      /* best effort */
-    }
-    hero = null;
-  }
   showFallback(error);
+}
+
+const saveData = navigator.connection && navigator.connection.saveData === true;
+
+if (saveData) {
+  document.documentElement.classList.add('no-webgl');
+  if (dialHost) dialHost.hidden = true;
+} else if ('requestIdleCallback' in window) {
+  requestIdleCallback(() => loadHero(), { timeout: 800 });
+} else {
+  setTimeout(loadHero, 120);
 }
 
 if (phaseCycleBtn) {
   phaseCycleBtn.addEventListener('click', () => {
     const phase = document.documentElement.dataset.phase || 'day';
     const nextPhase = phase === 'day' ? 'dusk' : phase === 'dusk' ? 'night' : 'day';
+    track(`phase-${nextPhase}`);
     setTime(PHASE_PRESETS[nextPhase]);
   });
 }
@@ -72,7 +104,10 @@ if (phaseCycleBtn) {
 for (const btn of phaseSetBtns) {
   btn.addEventListener('click', () => {
     const target = PHASE_PRESETS[btn.dataset.phaseSet];
-    if (target !== undefined) setTime(target, { immediate: true });
+    if (target !== undefined) {
+      track(`phase-${btn.dataset.phaseSet}`);
+      setTime(target, { immediate: true });
+    }
   });
 }
 

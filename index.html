@@ -6,7 +6,7 @@
     <title>Thijn Köhne</title>
     <meta
       name="description"
-      content="Portfolio of Thijn Köhne (thijnperd). Local-first software, graphics tools, and desktop apps."
+      content="Portfolio of Thijn Köhne (thijnperd): local-first software, graphics tools and desktop apps, plus case studies and notes on how they are built."
     />
     <link rel="canonical" href="https://thijnperd.github.io/" />
     <meta property="og:type" content="website" />
@@ -14,7 +14,7 @@
     <meta property="og:title" content="Thijn Köhne" />
     <meta
       property="og:description"
-      content="Local-first software, graphics tools, desktop apps, and web experiments by Thijn Köhne (thijnperd)."
+      content="Local-first software, graphics tools and desktop apps by Thijn Köhne (thijnperd), with case studies and notes on how they are built."
     />
     <meta property="og:url" content="https://thijnperd.github.io/" />
     <meta property="og:image" content="https://thijnperd.github.io/og-card.png" />
@@ -28,7 +28,7 @@
     <meta name="twitter:title" content="Thijn Köhne" />
     <meta
       name="twitter:description"
-      content="Local-first software, graphics tools, desktop apps, and web experiments by Thijn Köhne (thijnperd)."
+      content="Local-first software, graphics tools and desktop apps by Thijn Köhne (thijnperd), with case studies and notes on how they are built."
     />
     <meta name="twitter:image" content="https://thijnperd.github.io/og-card.png" />
     <meta name="theme-color" content="#e4e6e1" />
@@ -51,27 +51,32 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
     <link
-      href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
+      rel="alternate"
+      type="application/rss+xml"
+      title="Thijn Köhne — writing"
+      href="/writing/feed.xml"
     />
     <link rel="stylesheet" href="/src/styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Thijn Köhne",
+        "alternateName": "thijnperd",
+        "url": "https://thijnperd.github.io/",
+        "jobTitle": "Software developer",
+        "address": { "@type": "PostalAddress", "addressCountry": "NL" },
+        "sameAs": ["https://github.com/thijnperd"],
+        "knowsAbout": [
+          "Local-first software",
+          "WebGL and Three.js",
+          "Rust",
+          "TypeScript",
+          "Python"
+        ]
+      }
+    </script>
   </head>
 
   <body>
@@ -120,6 +125,7 @@
 
             <nav class="hero__nav" aria-label="Primary">
               <a href="#work">Work</a>
+              <a href="/writing/" data-track="nav-writing">Writing</a>
               <a href="#about">About</a>
               <a href="#skills">Stack</a>
               <a href="#contact">Contact</a>
@@ -139,6 +145,7 @@
 
             <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile menu" data-mobile-menu hidden>
               <a href="#work">Work <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+              <a href="/writing/">Writing <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
               <a href="#about">About <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
               <a href="#skills">Stack <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
               <a href="#contact">Contact <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
@@ -242,14 +249,20 @@
                 </div>
                 <p class="project__desc">
                   An offline dithering press for images and video. Supports 46 dither algorithms,
-                  built-in and custom palettes, per-object layers, an effects stack, text mode, and
-                  video in a zero-dependency app that opens from its own folder.
+                  built-in and custom palettes, per-object layers on the desktop build, an effects
+                  stack, text mode, and video in a zero-dependency web app that opens from its own
+                  folder.
                 </p>
+                <ul class="project__stats">
+                  <li><strong>46</strong><span>algorithms</span></li>
+                  <li><strong>25</strong><span>effects</span></li>
+                  <li><strong>0</strong><span>runtime deps</span></li>
+                </ul>
                 <div
                   class="project__lens"
                   data-lens-card
                   data-lens-day="Everything runs locally in the browser or desktop app; exports PNG up to 8×, text grids, WebM video, and JSON recipes."
-                  data-lens-dusk="46 dither algorithms, 30 ink sets + 25 palette-pack presets, per-object layers, 25-effect stack — zero npm runtime dependencies."
+                  data-lens-dusk="46 dither algorithms, 30 ink sets + 25 palettes across five packs, desktop-only object layers, 25-effect stack — zero runtime dependencies in the web builds."
                   data-lens-night="Opens straight from index.html with no build step; the launch film renders 40s at 1080p/24fps directly from real engine exports."
                 >
                   <div class="project__lens-tabs" role="group" aria-label="Dither Studio notes">
@@ -274,6 +287,9 @@
                   <li>Image &amp; Video</li>
                 </ul>
                 <div class="project__links">
+                  <a href="/work/dither-studio/" data-track="case-dither-studio"
+                    >Case study <span aria-hidden="true">→</span></a
+                  >
                   <a
                     href="https://thijnperd.github.io/dither-studio/"
                     target="_blank"
@@ -346,11 +362,16 @@
                   Turns a folder of Markdown into six views — graph, brain, timeline, atlas, bento,
                   and decisions — and keeps the reasoning trail behind every choice.
                 </p>
+                <ul class="project__stats">
+                  <li><strong>6</strong><span>views</span></li>
+                  <li><strong>5,523</strong><span>notes benchmarked</span></li>
+                  <li><strong>0</strong><span>accounts</span></li>
+                </ul>
                 <div
                   class="project__lens"
                   data-lens-card
-                  data-lens-day="Local-first with no account, cloud, or external database; runs as a native WebView desktop app on Windows and macOS."
-                  data-lens-dusk="Rust backend + WebGL2 renderer · WebView2 / WKWebView native shell · deterministic layout benchmarked at ~5,600 notes."
+                  data-lens-day="Local-first with no account, cloud, or external database; a local Rust server with a WebGL2 interface, plus a Windows installer."
+                  data-lens-dusk="Rust backend + axum server · hand-written WebGL2 interface · deterministic layout benchmarked at 5,523 notes."
                   data-lens-night="cargo run -p cortex -- serve ./vault — reads your existing Markdown folder directly as a folded 3D cortical surface."
                 >
                   <div class="project__lens-tabs" role="group" aria-label="Cortex notes">
@@ -364,8 +385,8 @@
                     data-lens-text
                     title="Show the next note"
                   >
-                    Local-first with no account, cloud, or external database; runs as a native WebView
-                    desktop app on Windows and macOS.
+                    Local-first with no account, cloud, or external database; a local Rust server with
+                    a WebGL2 interface, plus a Windows installer.
                   </button>
                 </div>
                 <ul class="tags">
@@ -375,6 +396,9 @@
                   <li>Markdown</li>
                 </ul>
                 <div class="project__links">
+                  <a href="/work/cortex/" data-track="case-cortex"
+                    >Case study <span aria-hidden="true">→</span></a
+                  >
                   <a
                     href="https://thijnperd.github.io/obsidian-cortex/"
                     target="_blank"
@@ -440,11 +464,16 @@
                   secondary students at Were Di Drie. Combines school PTA exams, weekly domain hours,
                   per-test checklists, and grade calculators.
                 </p>
+                <ul class="project__stats">
+                  <li><strong>643</strong><span>PTA components</span></li>
+                  <li><strong>29</strong><span>subjects</span></li>
+                  <li><strong>3</strong><span>makers</span></li>
+                </ul>
                 <div
                   class="project__lens"
                   data-lens-card
-                  data-lens-day="School PTA data loads read-only from Supabase or local JSON while student schedules stay on device; includes auto-updating Electron builds."
-                  data-lens-dusk="643 PTA entries across 29 subjects · React 19, TypeScript &amp; Electron 45 · NSIS Windows &amp; macOS DMG/ZIP auto-updater."
+                  data-lens-day="School PTA data loads read-only from Supabase or local JSON while student schedules stay on device; includes auto-updating desktop builds."
+                  data-lens-dusk="643 PTA components across 29 subjects · React 19, TypeScript &amp; Supabase · Windows installer + macOS DMG/ZIP auto-updater."
                   data-lens-night="No student accounts or server sync; ships with a local MCP bridge so students can review weekly study proposals in the calendar."
                 >
                   <div class="project__lens-tabs" role="group" aria-label="W3Plan notes">
@@ -459,16 +488,19 @@
                     title="Show the next note"
                   >
                     School PTA data loads read-only from Supabase or local JSON while student schedules
-                    stay on device; includes auto-updating Electron builds.
+                    stay on device; includes auto-updating desktop builds.
                   </button>
                 </div>
                 <ul class="tags">
                   <li>TypeScript</li>
                   <li>React</li>
-                  <li>Electron</li>
+                  <li>Vite</li>
                   <li>Supabase</li>
                 </ul>
                 <div class="project__links">
+                  <a href="/work/w3plan/" data-track="case-w3plan"
+                    >Case study <span aria-hidden="true">→</span></a
+                  >
                   <a
                     href="https://yannis-raijmakers.github.io/W3Plan-desktop/"
                     target="_blank"
@@ -533,10 +565,15 @@
                   APIs, reads titles and abstracts to separate in-scope papers from adjacent or
                   rejected results, and resolves open-access links.
                 </p>
+                <ul class="project__stats">
+                  <li><strong>5</strong><span>academic APIs</span></li>
+                  <li><strong>4</strong><span>surfaces</span></li>
+                  <li><strong>0</strong><span>runtime deps</span></li>
+                </ul>
                 <div
                   class="project__lens"
                   data-lens-card
-                  data-lens-day="One zero-dependency Python pipeline behind a CLI, an interactive terminal browser, a Python library, and an MCP server."
+                  data-lens-day="One Python pipeline with no runtime dependencies behind a CLI, an interactive terminal browser, a Python library, and an MCP server."
                   data-lens-dusk="Searches Europe PMC, Crossref, arXiv, Semantic Scholar &amp; OpenAlex · causal-direction &amp; domain-sense screening · verified %PDF downloads."
                   data-lens-night="papersplease find &quot;muscle strength in older adults since 2015&quot; -i — screens abstracts against intent before surfacing open-access links."
                 >
@@ -551,17 +588,20 @@
                     data-lens-text
                     title="Show the next note"
                   >
-                    One zero-dependency Python pipeline behind a CLI, an interactive terminal browser,
-                    a Python library, and an MCP server.
+                    One Python pipeline with no runtime dependencies behind a CLI, an interactive
+                    terminal browser, a Python library, and an MCP server.
                   </button>
                 </div>
                 <ul class="tags">
                   <li>Python</li>
                   <li>TUI</li>
                   <li>MCP</li>
-                  <li>Zero dependencies</li>
+                  <li>Zero runtime deps</li>
                 </ul>
                 <div class="project__links">
+                  <a href="/work/papersplease/" data-track="case-papersplease"
+                    >Case study <span aria-hidden="true">→</span></a
+                  >
                   <a
                     href="https://github.com/thijnperd/PapersPlease"
                     target="_blank"
@@ -681,6 +721,11 @@
                 I prefer software that stays local, opens quickly, and keeps files in plain formats
                 you can inspect or back up without an account.
               </p>
+              <p>
+                I also write about how these tools are built: the dithering pass behind this page,
+                and the case for <a href="/writing/plain-files/">plain files over accounts</a>. The
+                longer project write-ups live under <a href="/writing/">writing</a>.
+              </p>
             </div>
 
             <dl class="facts">
@@ -691,6 +736,10 @@
               <div class="facts__row">
                 <dt>Focus</dt>
                 <dd>Local-first apps, graphics, tooling</dd>
+              </div>
+              <div class="facts__row">
+                <dt>Now</dt>
+                <dd>Writing up the long version of these four projects</dd>
               </div>
               <div class="facts__row">
                 <dt>Projects</dt>
@@ -742,7 +791,6 @@
               <h3>Desktop &amp; Systems</h3>
               <ul>
                 <li>Electron</li>
-                <li>Native WebView (WebView2 / WKWebView)</li>
                 <li>Node &amp; Vite</li>
                 <li>CLI &amp; TUI apps</li>
                 <li>MCP servers &amp; Supabase</li>
@@ -768,6 +816,7 @@
             href="https://github.com/thijnperd"
             target="_blank"
             rel="noopener noreferrer"
+            data-track="contact-github"
           >
             <span>github.com/thijnperd</span>
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false">
@@ -781,7 +830,10 @@
     <footer class="site-footer">
       <div class="footer">
         <p>© <span data-year>2026</span> Thijn Köhne</p>
-        <p>Three.js, custom GLSL dithering, plain CSS</p>
+        <p>
+          <a href="/writing/">Writing</a> · <a href="/colophon/">Colophon</a> ·
+          <a href="/writing/feed.xml">RSS</a>
+        </p>
         <p><a href="#top">Back to top ↑</a></p>
       </div>
     </footer>

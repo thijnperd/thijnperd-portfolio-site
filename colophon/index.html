@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Colophon · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="How this site is built: Vite, Three.js and a custom dither pass, self-hosted type, no framework, no cookies."
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/colophon/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="Colophon — Thijn Köhne" />
+    <meta
+      property="og:description"
+      content="Vite, Three.js and a custom dither pass, self-hosted type, no framework, no cookies."
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/colophon/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Colophon — Thijn Köhne" />
+    <meta
+      name="twitter:description"
+      content="Vite, Three.js and a custom dither pass, self-hosted type, no framework, no cookies."
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og-card.png" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var h = new Date().getHours() + new Date().getMinutes() / 60;
+        var night = h < 6.5 || h >= 19.5;
+        document.documentElement.dataset.scheme = night ? 'night' : 'day';
+        document.documentElement.dataset.phase = night ? 'night' : 'day';
+        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar">
+      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
+            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
+            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
+            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
+            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
+            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+          </svg>
+        </span>
+        <span class="page-bar__name">thijnperd</span>
+      </a>
+      <nav class="page-nav" aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/writing/">Writing</a>
+        <a href="/colophon/" aria-current="page" data-hide-mobile>Colophon</a>
+      </nav>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="page-shell">
+        <article>
+          <p class="kicker">Colophon</p>
+          <h1 class="article__title">How this site is built</h1>
+          <p class="article__lede">
+            A static portfolio with one procedural scene, a small hand-written design system and no
+            runtime framework.
+          </p>
+
+          <div class="article__body">
+            <h2>The build</h2>
+            <p>
+              Vite handles the build and serves the development version. The pages are plain HTML
+              with one shared stylesheet; the interactive parts are small ES modules. The home page,
+              four case studies, two articles, the writing index, the colophon and the 404 are
+              separate build entries, which keeps each page statically renderable and directly
+              linkable.
+            </p>
+            <p>
+              There is no UI framework. The page-level behaviour — the mobile menu, the day/night
+              dial, the lens notes, the year stamp — is a few hundred lines in total, and the
+              sections below the hero render immediately with no scroll-triggered animation.
+            </p>
+
+            <h2>By the numbers</h2>
+            <ul>
+              <li>Initial JavaScript for the page: about 15 kB, or 6 kB gzipped.</li>
+              <li>The scene chunk: 626 kB, 158 kB gzipped, requested after the page is usable.</li>
+              <li>One stylesheet: 34 kB, 7 kB gzipped.</li>
+              <li>Seven font files: 136 kB in total, served from this origin.</li>
+              <li>Third-party font, script or style requests: none.</li>
+            </ul>
+
+            <h2>The hero</h2>
+            <p>
+              Three.js renders a single scene: a workstation, water, sky, particles and a day-to-night
+              atmosphere. A custom screen-space pass quantises the frame with an 8×8 Bayer pattern;
+              the <a href="/writing/dithering-the-hero/">write-up</a> covers the shader. The scene
+              module is loaded on idle instead of in the first payload, which keeps the initial
+              JavaScript to the site's own UI code. The render loop pauses when the hero is offscreen
+              or the tab is hidden, and Save-Data visitors get the static background.
+            </p>
+
+            <h2>Type</h2>
+            <p>
+              Cabinet Grotesk, Satoshi and Clash Display are free Fontshare faces; IBM Plex Mono is
+              under the SIL Open Font License. All of them are <strong>self-hosted</strong> — no
+              requests to a font CDN at runtime. That removes a third party from the critical path,
+              avoids a cache dependency that had already broken once, and means the site works the
+              same behind a strict network.
+            </p>
+
+            <h2>Images</h2>
+            <p>
+              Project screenshots are served as WebP with a JPEG fallback and a two-width
+              <code>srcset</code>, so a phone does not download a 1440-pixel image. They are lazy
+              loaded below the hero, and every one carries a description of what it actually shows.
+            </p>
+
+            <h2>Accessibility and motion</h2>
+            <p>
+              The page has a skip link, a visible focus ring, keyboard-operable dial and lens notes,
+              and a full forced-colors treatment. The time-of-day dial is a real slider with arrow,
+              page, home and end keys. With <code>prefers-reduced-motion</code>, the scene's clock
+              stops and the interface drops its transitions; when the tab is hidden, rendering stops
+              entirely.
+            </p>
+
+            <h2>Analytics and privacy</h2>
+            <p>
+              No cookies, no fingerprinting, no consent banner. The site is wired for cookieless
+              GoatCounter events (project and case-study opens, phase changes) and loads no analytics
+              script until an endpoint is configured.
+            </p>
+
+            <h2>Hosting</h2>
+            <p>
+              GitHub Pages serves the site, and a GitHub Actions workflow builds it on every push to
+              <code>main</code>. Only source is committed; the build output is never pushed to the
+              branch. The canonical URL is <a href="/">thijnperd.github.io</a>.
+            </p>
+
+            <h2>Elsewhere</h2>
+            <p>
+              <a href="https://github.com/thijnperd" target="_blank" rel="noopener noreferrer">GitHub</a>
+              · <a href="/writing/feed.xml">RSS</a> · <a href="/writing/">Writing</a>
+            </p>
+          </div>
+
+          <nav class="article__end" aria-label="Page navigation">
+            <a href="/">← Home</a>
+            <a href="/writing/">Writing →</a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/">Writing</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/">Home</a>
+        </p>
+      </div>
+    </footer>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>
