@@ -715,6 +715,24 @@
           <h2 class="section__title" id="about-title" data-i18n="home.aboutTitle">About</h2>
 
           <div class="about">
+            <figure class="about__portrait">
+              <picture>
+                <source srcset="/portrait.webp" type="image/webp" />
+                <img
+                  src="/portrait.jpg"
+                  alt="Green-dithered portrait of Thijn Köhne"
+                  data-i18n-attr="alt:home.portraitAlt"
+                  width="460"
+                  height="460"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <figcaption class="about__caption" data-i18n="home.portraitCaption">
+                Dithered self-portrait
+              </figcaption>
+            </figure>
+
             <div class="about__text">
               <p class="lede" data-i18n="home.aboutLede">
                 I'm Thijn Köhne, a student and software developer in the Netherlands. I mostly build
@@ -735,52 +753,32 @@
               </p>
             </div>
 
-            <aside class="about__aside">
-              <figure class="about__portrait">
-                <picture>
-                  <source srcset="/portrait.webp" type="image/webp" />
-                  <img
-                    src="/portrait.jpg"
-                    alt="Green-dithered portrait of Thijn Köhne"
-                    data-i18n-attr="alt:home.portraitAlt"
-                    width="460"
-                    height="460"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </picture>
-                <figcaption class="about__caption" data-i18n="home.portraitCaption">
-                  Thijn Köhne · dithered portrait
-                </figcaption>
-              </figure>
-
-              <dl class="facts">
-                <div class="facts__row">
-                  <dt data-i18n="home.factLocationDt">Location</dt>
-                  <dd data-i18n="home.factLocationDd">Netherlands</dd>
-                </div>
-                <div class="facts__row">
-                  <dt data-i18n="home.factFocusDt">Focus</dt>
-                  <dd data-i18n="home.factFocusDd">Local-first apps, graphics, tooling</dd>
-                </div>
-                <div class="facts__row">
-                  <dt data-i18n="home.factNowDt">Now</dt>
-                  <dd data-i18n="home.factNowDd">Building local-first tools and writing the notes behind them</dd>
-                </div>
-                <div class="facts__row">
-                  <dt data-i18n="home.factProjectsDt">Projects</dt>
-                  <dd>Dither Studio, Cortex, W3Plan, PapersPlease</dd>
-                </div>
-                <div class="facts__row">
-                  <dt>CV</dt>
-                  <dd><a href="/cv/" data-i18n="home.factCvDd">One page, print-ready →</a></dd>
-                </div>
-                <div class="facts__row">
-                  <dt data-i18n="home.factLightDt">Light</dt>
-                  <dd><span data-phase-long>Daylight · 12:00</span></dd>
-                </div>
-              </dl>
-            </aside>
+            <dl class="facts">
+              <div class="facts__row">
+                <dt data-i18n="home.factLocationDt">Location</dt>
+                <dd data-i18n="home.factLocationDd">Netherlands</dd>
+              </div>
+              <div class="facts__row">
+                <dt data-i18n="home.factFocusDt">Focus</dt>
+                <dd data-i18n="home.factFocusDd">Local-first apps, graphics, tooling</dd>
+              </div>
+              <div class="facts__row">
+                <dt data-i18n="home.factNowDt">Now</dt>
+                <dd data-i18n="home.factNowDd">Building local-first tools and writing the notes behind them</dd>
+              </div>
+              <div class="facts__row">
+                <dt data-i18n="home.factProjectsDt">Projects</dt>
+                <dd>Dither Studio, Cortex, W3Plan, PapersPlease</dd>
+              </div>
+              <div class="facts__row">
+                <dt>CV</dt>
+                <dd><a href="/cv/" data-i18n="home.factCvDd">One page, print-ready →</a></dd>
+              </div>
+              <div class="facts__row">
+                <dt data-i18n="home.factLightDt">Light</dt>
+                <dd><span data-phase-long>Daylight · 12:00</span></dd>
+              </div>
+            </dl>
           </div>
         </div>
       </section>

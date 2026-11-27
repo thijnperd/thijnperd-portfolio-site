@@ -1287,8 +1287,9 @@ html[data-phase="night"] .ts__icon--moon {
 
 .about {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-  gap: clamp(1.75rem, 5vw, 5rem);
+  grid-template-columns: clamp(10.5rem, 17vw, 13.5rem) minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(1.75rem, 3.5vw, 3.25rem);
+  align-items: start;
   margin-top: clamp(2rem, 4vw, 3.5rem);
 }
 
@@ -1309,16 +1310,9 @@ html[data-phase="night"] .ts__icon--moon {
   line-height: 1.52;
 }
 
-.about__aside {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  min-inline-size: 0;
-}
-
 .about__portrait {
   margin: 0;
-  max-width: 14.5rem;
+  width: 100%;
 }
 
 .about__portrait picture {
@@ -1353,7 +1347,7 @@ html[data-phase="night"] .ts__icon--moon {
   display: grid;
   grid-template-columns: 5.75rem minmax(0, 1fr);
   gap: 0.75rem;
-  padding: 0.875rem 0;
+  padding: 0.75rem 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -1643,8 +1637,12 @@ html[data-phase="night"] .ts__icon--moon {
   }
 
   .about {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 1.75rem 2.25rem;
+  }
+
+  .about .facts {
+    grid-column: 1 / -1;
   }
 
   .projects {
@@ -1726,8 +1724,13 @@ html[data-phase="night"] .ts__icon--moon {
     padding-block: 4rem;
   }
 
+  .about {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+
   .about__portrait {
-    max-width: 12.5rem;
+    max-width: 10.5rem;
   }
 
   .facts__row {
