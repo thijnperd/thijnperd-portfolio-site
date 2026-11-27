@@ -8,6 +8,13 @@
     <lastBuildDate>Fri, 27 Nov 2026 09:00:00 +0100</lastBuildDate>
     <atom:link href="https://thijnperd.github.io/writing/feed.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>A school planner is a distribution problem</title>
+      <link>https://thijnperd.github.io/writing/school-planner-distribution/</link>
+      <guid isPermaLink="true">https://thijnperd.github.io/writing/school-planner-distribution/</guid>
+      <pubDate>Fri, 27 Nov 2026 09:00:00 +0100</pubDate>
+      <description>The calendar is the visible part; the import, the installer and the local data boundary are what made W3Plan usable.</description>
+    </item>
+    <item>
       <title>The hero is dithered, not blurred</title>
       <link>https://thijnperd.github.io/writing/dithering-the-hero/</link>
       <guid isPermaLink="true">https://thijnperd.github.io/writing/dithering-the-hero/</guid>

@@ -29,6 +29,10 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Build
         run: npm run build
+        env:
+          VITE_GOATCOUNTER_ENDPOINT: ${{ vars.GOATCOUNTER_ENDPOINT }}
+      - name: Check internal links
+        run: npm run check:links
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

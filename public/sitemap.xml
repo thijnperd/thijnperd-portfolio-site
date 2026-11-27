@@ -37,6 +37,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://thijnperd.github.io/writing/school-planner-distribution/</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://thijnperd.github.io/writing/dithering-the-hero/</loc>
     <lastmod>2026-11-27</lastmod>
     <changefreq>yearly</changefreq>
@@ -47,6 +53,12 @@
     <lastmod>2026-11-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thijnperd.github.io/cv/</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://thijnperd.github.io/colophon/</loc>

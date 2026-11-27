@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>CV · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="Thijn Köhne — student and software developer in the Netherlands. Selected work: Dither Studio, Cortex, W3Plan and PapersPlease; retail experience at Jumbo Supermarkten."
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/cv/" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="CV — Thijn Köhne" />
+    <meta
+      property="og:description"
+      content="Student and software developer in the Netherlands. Local-first tools, graphics and plain files."
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/cv/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CV — Thijn Köhne" />
+    <meta
+      name="twitter:description"
+      content="Student and software developer in the Netherlands. Local-first tools, graphics and plain files."
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og-card.png" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var h = new Date().getHours() + new Date().getMinutes() / 60;
+        var night = h < 6.5 || h >= 19.5;
+        document.documentElement.dataset.scheme = night ? 'night' : 'day';
+        document.documentElement.dataset.phase = night ? 'night' : 'day';
+        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar">
+      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
+            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
+            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
+            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
+            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
+            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+          </svg>
+        </span>
+        <span class="page-bar__name">thijnperd</span>
+      </a>
+      <nav class="page-nav" aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/writing/">Writing</a>
+        <a href="/cv/" aria-current="page">CV</a>
+        <a href="/colophon/" data-hide-mobile>Colophon</a>
+      </nav>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="page-shell">
+        <article class="cv">
+          <header class="cv__head">
+            <p class="kicker">Curriculum vitae</p>
+            <h1 class="cv__name">Thijn Köhne</h1>
+            <p class="cv__role">Student &amp; software developer · Netherlands</p>
+            <p class="cv__intro">
+              I build local-first tools: offline image editors, visual browsers for plain-text notes,
+              school planners and command-line utilities. I prefer software that opens quickly and
+              keeps its files in formats you can inspect, move or back up without an account.
+            </p>
+            <div class="cv__actions">
+              <button type="button" class="btn btn--primary" data-print>Print / save as PDF</button>
+              <a class="btn btn--ghost" href="/#contact">Contact</a>
+              <a
+                class="btn btn--ghost"
+                href="https://github.com/thijnperd"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          </header>
+
+          <section class="cv__section" aria-labelledby="cv-work">
+            <h2 id="cv-work">Selected work</h2>
+            <div class="cv__items">
+              <article class="cv__item">
+                <div class="cv__item-head">
+                  <h3>Dither Studio</h3>
+                  <span>Independent · shipped</span>
+                </div>
+                <p>
+                  An offline dithering press for images and video: 46 algorithms, a 25-effect stack
+                  and JSON recipes, in a zero-dependency web build and a desktop app.
+                </p>
+                <p class="cv__item-meta">
+                  Vanilla JS, Canvas 2D, Electron ·
+                  <a href="/work/dither-studio/">Case study</a>
+                </p>
+              </article>
+
+              <article class="cv__item">
+                <div class="cv__item-head">
+                  <h3>Cortex</h3>
+                  <span>Independent · daily driver</span>
+                </div>
+                <p>
+                  A local-first Markdown browser with six views over one parsed model, built on a
+                  Rust/axum core and a hand-written WebGL2 interface. Used daily on a 500-note,
+                  5,000-link vault; benchmarked at 5,523 notes.
+                </p>
+                <p class="cv__item-meta">
+                  Rust, axum, WebGL2, Three.js ·
+                  <a href="/work/cortex/">Case study</a>
+                </p>
+              </article>
+
+              <article class="cv__item">
+                <div class="cv__item-head">
+                  <h3>W3Plan</h3>
+                  <span>Team project</span>
+                </div>
+                <p>
+                  A school planner that starts from the school's PTA data: 643 components across 29
+                  subjects, weekly study blocks, per-test checklists and grade calculators. Adopted by
+                  8+ final-year students and endorsed by teachers.
+                </p>
+                <p class="cv__item-meta">
+                  React, TypeScript, Supabase ·
+                  <a href="/work/w3plan/">Case study</a>
+                </p>
+              </article>
+
+              <article class="cv__item">
+                <div class="cv__item-head">
+                  <h3>PapersPlease</h3>
+                  <span>Open source</span>
+                </div>
+                <p>
+                  A literature screening pipeline over five academic APIs, with CLI, TUI, Python
+                  library and MCP server surfaces; the core runs on the Python standard library.
+                </p>
+                <p class="cv__item-meta">
+                  Python, CLI/TUI, MCP ·
+                  <a href="/work/papersplease/">Case study</a>
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section class="cv__section" aria-labelledby="cv-experience">
+            <h2 id="cv-experience">Experience</h2>
+            <div class="cv__items">
+              <article class="cv__item">
+                <div class="cv__item-head">
+                  <h3>Vakkenvuller — Jumbo Supermarkten</h3>
+                  <span>July 2023 — present</span>
+                </div>
+                <p>Stock replenishment and shop-floor work, alongside school.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="cv__section" aria-labelledby="cv-skills">
+            <h2 id="cv-skills">Skills</h2>
+            <div class="cv__skills">
+              <div>
+                <h3>Languages</h3>
+                <p>TypeScript, JavaScript, Python, Rust, HTML/CSS, GLSL</p>
+              </div>
+              <div>
+                <h3>Graphics</h3>
+                <p>Three.js, WebGL2, Canvas 2D, custom shaders, dithering</p>
+              </div>
+              <div>
+                <h3>Tools</h3>
+                <p>React, Vite, Node, Electron, Supabase, MCP, Git</p>
+              </div>
+            </div>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/">Writing</a> · <a href="/cv/">CV</a> ·
+          <a href="/colophon/">Colophon</a> · <a href="/">Home</a>
+        </p>
+      </div>
+    </footer>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

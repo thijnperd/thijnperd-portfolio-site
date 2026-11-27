@@ -40,25 +40,37 @@
       <nav class="page-nav" aria-label="Primary">
         <a href="/#work">Work</a>
         <a href="/writing/">Writing</a>
+        <a href="/cv/">CV</a>
         <a href="/colophon/" data-hide-mobile>Colophon</a>
       </nav>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
-      <div class="page-shell">
-        <div class="notfound">
-          <p class="notfound__code">404 · NOT FOUND</p>
-          <h1 class="notfound__title">Off the map.</h1>
-          <p class="notfound__note">
-            This page does not exist, or it moved. The work and the writing are both one click away.
-          </p>
-          <div class="notfound__links">
-            <a href="/">Home</a>
-            <a href="/#work">Selected work</a>
-            <a href="/writing/">Writing</a>
-            <a href="/colophon/">Colophon</a>
-          </div>
-        </div>
+      <div class="page-shell page-shell--wide">
+        <article class="notfound">
+          <header class="notfound__head">
+            <p class="notfound__code">404 · Signal lost</p>
+            <h1 class="notfound__title">Off the map.</h1>
+            <p class="notfound__note">
+              This page does not exist, or it moved. The work, the writing and the colophon are
+              one click away.
+            </p>
+            <nav class="notfound__links" aria-label="Where to go instead">
+              <a href="/">Home</a>
+              <a href="/#work">Selected work</a>
+              <a href="/writing/">Writing</a>
+              <a href="/colophon/">Colophon</a>
+            </nav>
+          </header>
+
+          <figure class="notfound__signal">
+            <canvas class="notfound__canvas" data-notfound-canvas aria-hidden="true"></canvas>
+            <figcaption class="notfound__caption">
+              <span>Request · /404</span>
+              <span>Bayer 8×8 · live</span>
+            </figcaption>
+          </figure>
+        </article>
       </div>
     </main>
 
@@ -71,6 +83,7 @@
         </p>
       </div>
     </footer>
+    <script type="module" src="/src/notfound.js"></script>
     <script type="module" src="/src/page.js"></script>
   </body>
 </html>

@@ -1,10 +1,11 @@
 /**
  * Cookieless analytics. Nothing loads and no request is made until an endpoint
- * is set: create a free GoatCounter account, add this site, then paste its
- * count endpoint below (for example "https://thijn.goatcounter.com/count").
- * No cookies, no fingerprinting, no banner.
+ * is set. Create a free GoatCounter account, add this site, then set the
+ * VITE_GOATCOUNTER_ENDPOINT build variable to its count endpoint (for example
+ * "https://thijn.goatcounter.com/count"). The deploy workflow reads the
+ * GOATCOUNTER_ENDPOINT repository variable. No cookies, no banner.
  */
-const GOATCOUNTER_ENDPOINT = "";
+const GOATCOUNTER_ENDPOINT = import.meta.env.VITE_GOATCOUNTER_ENDPOINT ?? "";
 
 let ready = false;
 
