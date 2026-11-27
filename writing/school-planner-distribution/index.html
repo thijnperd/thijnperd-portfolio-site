@@ -31,12 +31,18 @@
     <meta name="color-scheme" content="light dark" />
     <script>
       (function () {
-        var h = new Date().getHours() + new Date().getMinutes() / 60;
-        var night = h < 6 || h >= 19.5;
-        document.documentElement.dataset.scheme = night ? 'night' : 'day';
-        document.documentElement.dataset.phase = night ? 'night' : 'day';
-        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
-        document.querySelector('meta[name="theme-color"]').content = night ? '#0a0d10' : '#e4e6e1';
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -44,153 +50,247 @@
     <link rel="alternate" type="application/rss+xml" title="Thijn Köhne — writing" href="/writing/feed.xml" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
+  <body class="wide-page">
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="page-bar">
-      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
-            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
-            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
-            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
-            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
-            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
-          </svg>
-        </span>
-        <span class="page-bar__name">thijnperd</span>
-      </a>
-      <div class="page-bar__right">
-        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
-          <a href="/#work" data-i18n="ui.navWork">Work</a>
-          <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
-          <a href="/cv/" data-i18n="ui.navCv">CV</a>
-          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
-        </nav>
-        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
-          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
-          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
-          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a
+            class="page-bar__brand"
+            href="/"
+            data-i18n-attr="aria-label:ui.homeAria"
+            aria-label="Thijn Köhne, home"
+          >
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
         </div>
       </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
-      <div class="page-shell">
+      <div class="case-shell">
         <article>
-          <nav class="crumb" aria-label="Breadcrumb">
-            <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Desktop · W3Plan</span>
-          </nav>
-          <h1 class="article__title">A school planner is a distribution problem</h1>
-          <p class="article__lede">
-            The calendar is the part you see. What made W3Plan usable was the school's data, an
-            installer that updates itself, and a boundary that keeps student schedules on the device.
-          </p>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Desktop · W3Plan</span>
+              </nav>
+              <span class="project__kind">Essay</span>
+            </div>
 
-          <dl class="article__meta">
-            <div><dt data-i18n="article.published">Published</dt><dd>27 Nov 2026</dd></div>
-            <div><dt data-i18n="article.reading">Reading</dt><dd>4 minutes</dd></div>
-            <div><dt data-i18n="article.topics">Topics</dt><dd>Desktop, distribution</dd></div>
-            <div><dt data-i18n="article.project">Project</dt><dd><a href="/work/w3plan/">W3Plan</a></dd></div>
-          </dl>
-          <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyEssay" hidden></p>
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">A school planner is a distribution problem</h1>
+                <p class="case-hero__lede">
+                  The calendar is the part you see. What made W3Plan usable was the school's data, an
+                              installer that updates itself, and a boundary that keeps student schedules on the device.
+                </p>
+              </div>
 
-          <div class="article__body">
-            <h2>The calendar is the easy part</h2>
-            <p>
-              A planner app assumes you already know what has to be done. At school, the hardest
-              question comes earlier: which tests are coming, which subjects they belong to, and how
-              many study hours each one deserves. The school publishes a test calendar, the study
-              hours are supposed to be divided across subjects, and the two live in different places.
-              Most students resolve this with a paper agenda and a screenshot.
-            </p>
-            <p>
-              W3Plan starts from the school's PTA export instead. Exams, domain hours, per-test
-              checklists and grade calculators all sit on one calendar, because the calendar is
-              already the shape the week has. The interface is the visible part. It is not the part
-              that took the most care.
-            </p>
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.published">Published</dt>
+                      <dd>27 Nov 2026</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.reading">Reading</dt>
+                      <dd>4 minutes</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.topics">Topics</dt>
+                      <dd>Desktop, distribution</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.project">Project</dt>
+                      <dd><a href="/work/w3plan/">W3Plan</a></dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
 
-            <h2>Import is the product</h2>
-            <p>
-              The current import covers 643 PTA components across 29 subjects. 291 of those carry a
-              date; a separate SE overview adds 133 test moments. That is too much to enter by hand
-              and small enough to ship as a read-only dataset. The app loads it directly from a
-              bundled local JSON dataset.
-            </p>
-            <p>
-              This is the difference between a demo week and a real one. Once the school's exams are
-              on the calendar, a study block has something to divide. Without the import, the planner
-              is a nicer-looking blank page; with it, the first screen already knows the week.
-            </p>
+            <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyEssay" hidden></p>
+          </header>
 
-            <h2>The privacy boundary simplifies the architecture</h2>
-            <p>
-              PTA data is published by the school, so it is treated as public and read-only. A
-              student's own schedule is not. It stays on the device, and there are no student
-              accounts. That one decision removes the login flow, the session expiry, the password
-              reset and the reason to keep a copy of anyone's week on a server.
-            </p>
-            <p>
-              It also removes a feature: there is no account sync between machines, so the schedule
-              lives with the device it was made on. That is a real cost, but it is the kind of cost
-              that can be explained in a sentence. A planner for a school week does not need a
-              multi-tenant backend to be useful.
-            </p>
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">The calendar is the easy part</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  A planner app assumes you already know what has to be done. At school, the hardest
+                  question comes earlier: which tests are coming, which subjects they belong to, and how
+                  many study hours each one deserves. The school publishes a test calendar, the study
+                  hours are supposed to be divided across subjects, and the two live in different places.
+                  Most students resolve this with a paper agenda and a screenshot.
+                </p>
+                <p>
+                  W3Plan starts from the school's PTA export instead. Exams, domain hours, per-test
+                  checklists and grade calculators all sit on one calendar, because the calendar is
+                  already the shape the week has. The interface is the visible part. It is not the part
+                  that took the most care.
+                </p>
+              </div>
+            </section>
 
-            <h2>Distribution is the feature</h2>
-            <p>
-              The desktop builds auto-update. They ship as a Windows installer and as a DMG or ZIP on
-              macOS; the ZIP is what the updater uses. Installing and updating turn out to be the
-              least glamorous and most fragile part of the app: two platforms, two sets of failure
-              modes, and no way to fix a bad release by editing a server.
-            </p>
-            <p>
-              A web build avoids installers, but it does not remove the data boundary: the schedule
-              still has to stay on the device rather than becoming a server session. The desktop build
-              is the version that reaches a classroom laptop and keeps its files there. The cost is
-              that distribution becomes the product.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Import is the product</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The current import covers 643 PTA components across 29 subjects. 291 of those carry a
+                  date; a separate SE overview adds 133 test moments. That is too much to enter by hand
+                  and small enough to ship as a read-only dataset. The app loads it directly from a
+                  bundled local JSON dataset.
+                </p>
+                <p>
+                  This is the difference between a demo week and a real one. Once the school's exams are
+                  on the calendar, a study block has something to divide. Without the import, the planner
+                  is a nicer-looking blank page; with it, the first screen already knows the week.
+                </p>
+              </div>
+            </section>
 
-            <h2>Eight students is a real test</h2>
-            <p>
-              W3Plan was built for senior secondary students at Were Di Drie. It has been adopted by
-              8+ final-year students and praised by teachers. That is not a mass market, but it is
-              enough to test the parts a sample week never does: a real PTA export, a real exam
-              period, and a real student deciding whether to trust the plan.
-            </p>
-            <p>
-              The project is a team effort. Billie, Yannis Raijmakers and I built the initial base
-              app together, and Yannis and I kept developing it out for the school. The division
-              mattered less than the shared constraint: the data model had to survive contact with a
-              real school calendar.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">The privacy boundary simplifies the architecture</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  PTA data is published by the school, so it is treated as public and read-only. A
+                  student's own schedule is not. It stays on the device, and there are no student
+                  accounts. That one decision removes the login flow, the session expiry, the password
+                  reset and the reason to keep a copy of anyone's week on a server.
+                </p>
+                <p>
+                  It also removes a feature: there is no account sync between machines, so the schedule
+                  lives with the device it was made on. That is a real cost, but it is the kind of cost
+                  that can be explained in a sentence. A planner for a school week does not need a
+                  multi-tenant backend to be useful.
+                </p>
+              </div>
+            </section>
 
-            <h2>What is still missing</h2>
-            <p>
-              There is no mobile app, no account sync, and the import is shaped by one school's data.
-              Those are the same boundaries as the local-first choice, seen from the other side.
-              Adding another school would mean mapping another export, not adding another view to the
-              calendar.
-            </p>
-            <p>
-              That is the lesson worth keeping: for a tool built around an institution, start with the
-              data and the install. The calendar is the last thing to polish, not the first. W3Plan is
-              at its best when the school's data is already there and the student only has to decide
-              what to do with the week.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Distribution is the feature</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The desktop builds auto-update. They ship as a Windows installer and as a DMG or ZIP on
+                  macOS; the ZIP is what the updater uses. Installing and updating turn out to be the
+                  least glamorous and most fragile part of the app: two platforms, two sets of failure
+                  modes, and no way to fix a bad release by editing a server.
+                </p>
+                <p>
+                  A web build avoids installers, but it does not remove the data boundary: the schedule
+                  still has to stay on the device rather than becoming a server session. The desktop build
+                  is the version that reaches a classroom laptop and keeps its files there. The cost is
+                  that distribution becomes the product.
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Eight students is a real test</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  W3Plan was built for senior secondary students at Were Di Drie. It has been adopted by
+                  8+ final-year students and praised by teachers. That is not a mass market, but it is
+                  enough to test the parts a sample week never does: a real PTA export, a real exam
+                  period, and a real student deciding whether to trust the plan.
+                </p>
+                <p>
+                  The project is a team effort. Billie, Yannis Raijmakers and I built the initial base
+                  app together, and Yannis and I kept developing it out for the school. The division
+                  mattered less than the shared constraint: the data model had to survive contact with a
+                  real school calendar.
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">What is still missing</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  There is no mobile app, no account sync, and the import is shaped by one school's data.
+                  Those are the same boundaries as the local-first choice, seen from the other side.
+                  Adding another school would mean mapping another export, not adding another view to the
+                  calendar.
+                </p>
+                <p>
+                  That is the lesson worth keeping: for a tool built around an institution, start with the
+                  data and the install. The calendar is the last thing to polish, not the first. W3Plan is
+                  at its best when the school's data is already there and the student only has to decide
+                  what to do with the week.
+                </p>
+              </div>
+            </section>
           </div>
 
-          <nav class="article__end" aria-label="Article pagination">
-            <a href="/writing/" data-i18n="article.allWriting">← All writing</a>
-            <a href="/writing/dithering-the-hero/">Next: The hero is dithered →</a>
+          <nav class="case-pager" aria-label="Article pagination">
+            <a class="case-pager__card" href="/writing/plain-files/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">Plain files, no accounts</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/writing/dithering-the-hero/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">The hero is dithered, not blurred</span>
+            </a>
           </nav>
         </article>
       </div>

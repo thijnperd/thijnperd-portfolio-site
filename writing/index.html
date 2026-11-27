@@ -31,12 +31,18 @@
     <meta name="color-scheme" content="light dark" />
     <script>
       (function () {
-        var h = new Date().getHours() + new Date().getMinutes() / 60;
-        var night = h < 6 || h >= 19.5;
-        document.documentElement.dataset.scheme = night ? 'night' : 'day';
-        document.documentElement.dataset.phase = night ? 'night' : 'day';
-        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
-        document.querySelector('meta[name="theme-color"]').content = night ? '#0a0d10' : '#e4e6e1';
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -44,56 +50,116 @@
     <link rel="alternate" type="application/rss+xml" title="Thijn Köhne — writing" href="/writing/feed.xml" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body data-i18n-page="writing">
+  <body class="wide-page" data-i18n-page="writing">
     <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
 
-    <header class="page-bar">
-      <a class="page-bar__brand" href="/" data-i18n-attr="aria-label:ui.homeAria" aria-label="Thijn Köhne, home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
-            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
-            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
-            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
-            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
-            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
-          </svg>
-        </span>
-        <span class="page-bar__name">thijnperd</span>
-      </a>
-      <div class="page-bar__right">
-        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
-          <a href="/#work" data-i18n="ui.navWork">Work</a>
-          <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
-          <a href="/cv/" data-i18n="ui.navCv">CV</a>
-          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
-        </nav>
-        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
-          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
-          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
-          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a
+            class="page-bar__brand"
+            href="/"
+            data-i18n-attr="aria-label:ui.homeAria"
+            aria-label="Thijn Köhne, home"
+          >
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
         </div>
       </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
-      <div class="page-shell">
-        <h1 class="article__title" data-i18n="writing.title">Writing</h1>
-        <p class="page-intro" data-i18n="writing.intro">
-          How the tools are built, and why they are built this way. Mostly rendering, file formats,
-          and the places where a simple local choice beats a service.
-        </p>
+      <div class="case-shell">
+        <header class="case-hero">
+          <div class="case-hero__eyebrow">
+            <nav class="crumb" aria-label="Breadcrumb">
+              <a href="/" data-i18n="ui.home">Home</a><span aria-hidden="true">/</span><span data-i18n="ui.navWriting">Writing</span>
+            </nav>
+            <span class="project__kind">2026</span>
+          </div>
+
+          <div class="case-hero__grid">
+            <div class="case-hero__intro">
+              <h1 class="case-hero__title" data-i18n="writing.title">Writing</h1>
+              <p class="case-hero__lede" data-i18n="writing.intro">
+                How the tools are built, and why they are built this way. Mostly rendering, file formats,
+                and the places where a simple local choice beats a service.
+              </p>
+            </div>
+
+            <div class="case-hero__aside">
+              <div class="case-spec">
+                <dl class="case-spec__list">
+                  <div class="case-spec__row">
+                    <dt data-i18n="writing.kind">Essays</dt>
+                    <dd>03</dd>
+                  </div>
+                  <div class="case-spec__row">
+                    <dt data-i18n="article.published">Published</dt>
+                    <dd data-i18n="writing.date27Nov">27 Nov 2026</dd>
+                  </div>
+                  <div class="case-spec__row">
+                    <dt data-i18n="article.reading">Reading</dt>
+                    <dd>19 min</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </header>
 
         <div class="writing-list">
           <article class="writing-item">
-            <p class="writing-item__date" data-i18n="writing.date27Nov">27 Nov 2026</p>
-            <div>
+            <div class="writing-item__rail">
+              <p class="writing-item__date" data-i18n="writing.date27Nov">27 Nov 2026</p>
+              <p class="writing-item__meta" data-i18n="writing.w1Meta">Desktop · Distribution · 4 min</p>
+            </div>
+            <div class="writing-item__main">
               <h2 class="writing-item__title">
                 <a href="/writing/school-planner-distribution/" data-i18n="writing.w1Title"
                   >A school planner is a distribution problem</a
@@ -103,13 +169,15 @@
                 W3Plan begins with the school's PTA export, but the part that made it usable was the
                 import, the installer and the decision to keep student schedules local.
               </p>
-              <p class="writing-item__meta" data-i18n="writing.w1Meta">Desktop · Distribution · 4 min</p>
             </div>
           </article>
 
           <article class="writing-item">
-            <p class="writing-item__date" data-i18n="writing.date27Nov">27 Nov 2026</p>
-            <div>
+            <div class="writing-item__rail">
+              <p class="writing-item__date" data-i18n="writing.date27Nov">27 Nov 2026</p>
+              <p class="writing-item__meta" data-i18n="writing.w2Meta">GLSL · Rendering · 8 min</p>
+            </div>
+            <div class="writing-item__main">
               <h2 class="writing-item__title">
                 <a href="/writing/dithering-the-hero/" data-i18n="writing.w2Title">The hero is dithered, not blurred</a>
               </h2>
@@ -118,13 +186,15 @@
                 8×8 Bayer pass, why the blocks are two CSS pixels wide, and how the palette moves
                 from daylight to midnight.
               </p>
-              <p class="writing-item__meta" data-i18n="writing.w2Meta">GLSL · Rendering · 8 min</p>
             </div>
           </article>
 
           <article class="writing-item">
-            <p class="writing-item__date" data-i18n="writing.date27Nov">27 Nov 2026</p>
-            <div>
+            <div class="writing-item__rail">
+              <p class="writing-item__date" data-i18n="writing.date27Nov">27 Nov 2026</p>
+              <p class="writing-item__meta" data-i18n="writing.w3Meta">Local-first · Files · 7 min</p>
+            </div>
+            <div class="writing-item__main">
               <h2 class="writing-item__title">
                 <a href="/writing/plain-files/" data-i18n="writing.w3Title">Plain files, no accounts</a>
               </h2>
@@ -132,7 +202,6 @@
                 Four projects, one rule: the data belongs in a folder the person can inspect. What
                 local-first buys, what it costs, and the one place a database still earns its keep.
               </p>
-              <p class="writing-item__meta" data-i18n="writing.w3Meta">Local-first · Files · 7 min</p>
             </div>
           </article>
         </div>

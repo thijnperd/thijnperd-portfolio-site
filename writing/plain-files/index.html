@@ -31,191 +31,291 @@
     <meta name="color-scheme" content="light dark" />
     <script>
       (function () {
-        var h = new Date().getHours() + new Date().getMinutes() / 60;
-        var night = h < 6 || h >= 19.5;
-        document.documentElement.dataset.scheme = night ? 'night' : 'day';
-        document.documentElement.dataset.phase = night ? 'night' : 'day';
-        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
-        document.querySelector('meta[name="theme-color"]').content = night ? '#0a0d10' : '#e4e6e1';
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
+  <body class="wide-page">
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="page-bar">
-      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
-            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
-            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
-            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
-            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
-            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
-          </svg>
-        </span>
-        <span class="page-bar__name">thijnperd</span>
-      </a>
-      <div class="page-bar__right">
-        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
-          <a href="/#work" data-i18n="ui.navWork">Work</a>
-          <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
-          <a href="/cv/" data-i18n="ui.navCv">CV</a>
-          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
-        </nav>
-        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
-          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
-          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
-          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a
+            class="page-bar__brand"
+            href="/"
+            data-i18n-attr="aria-label:ui.homeAria"
+            aria-label="Thijn Köhne, home"
+          >
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
         </div>
       </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
-      <div class="page-shell">
+      <div class="case-shell">
         <article>
-          <nav class="crumb" aria-label="Breadcrumb">
-            <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Local-first</span>
-          </nav>
-          <h1 class="article__title">Plain files, no accounts</h1>
-          <p class="article__lede">
-            Four projects, one rule: the data belongs in a folder the person can inspect, move and
-            back up without asking a server for permission.
-          </p>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Local-first</span>
+              </nav>
+              <span class="project__kind">Essay</span>
+            </div>
 
-          <dl class="article__meta">
-            <div><dt data-i18n="article.published">Published</dt><dd>27 Nov 2026</dd></div>
-            <div><dt data-i18n="article.reading">Reading</dt><dd>7 minutes</dd></div>
-            <div><dt data-i18n="article.topics">Topics</dt><dd>Local-first, file formats</dd></div>
-            <div><dt data-i18n="article.projects">Projects</dt><dd><a href="/#work">Four</a></dd></div>
-          </dl>
-          <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyEssay" hidden></p>
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">Plain files, no accounts</h1>
+                <p class="case-hero__lede">
+                  Four projects, one rule: the data belongs in a folder the person can inspect, move and
+                              back up without asking a server for permission.
+                </p>
+              </div>
 
-          <div class="article__body">
-            <h2>The default is somebody else's computer</h2>
-            <p>
-              Most software now assumes an account. Notes, images, plans and research live in a
-              service, in a format the service defines, reachable while the service is reachable. It
-              is a good deal for synchronisation, and a bad one for everything else: the tool can
-              disappear, the format can change, the price can move, and the data cannot be opened
-              without the app that wrote it.
-            </p>
-            <p>
-              The four projects on this site point the other way. Not because the cloud is evil, but
-              because for these particular tools the local version is simpler, faster and easier to
-              trust. The file is the interface.
-            </p>
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.published">Published</dt>
+                      <dd>27 Nov 2026</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.reading">Reading</dt>
+                      <dd>7 minutes</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.topics">Topics</dt>
+                      <dd>Local-first, file formats</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.projects">Projects</dt>
+                      <dd><a href="/#work">Four</a></dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
 
-            <h2>What that looks like in practice</h2>
-            <ul>
-              <li>
-                <strong>Dither Studio</strong>'s web build opens from its own folder with no build
-                step and no runtime dependencies. A finished piece exports as PNG, text, WebM or a
-                JSON recipe;
-                the recipe is the whole setup, readable in any editor.
-              </li>
-              <li>
-                <strong>Cortex</strong> reads a vault of Markdown where it already lives. There is no
-                import, no database and no copy. If the app is deleted, the notes are untouched.
-              </li>
-              <li>
-                <strong>W3Plan</strong> keeps a student's schedule on the device. The school's PTA
-                data ships as a read-only JSON dataset, kept separate from a student's own schedule.
-              </li>
-              <li>
-                <strong>PapersPlease</strong> writes nothing to a service at all. It queries public
-                APIs, links to open-access papers, and leaves the reading to you.
-              </li>
-            </ul>
+            <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyEssay" hidden></p>
+          </header>
 
-            <h2>What it buys</h2>
-            <p>
-              <strong>It opens.</strong> No session check, no loading state, no "contact your
-              administrator". A folder of static files is the fastest kind of app there is.
-            </p>
-            <p>
-              <strong>It works offline.</strong> On a train, in a basement, on a school network that
-              blocks everything. The tool does not care, because nothing essential is remote.
-            </p>
-            <p>
-              <strong>The files outlive the app.</strong> Markdown, PNG, WebM and JSON are readable
-              without this codebase. That is the real exit plan: not a data export feature, but data
-              that never needed exporting.
-            </p>
-            <p>
-              <strong>Backups are boring.</strong> A folder can be copied, zipped, put in git or
-              dropped on a USB stick. There is no restore flow to test and no account recovery to
-              lose.
-            </p>
-            <p>
-              <strong>There is no permission model.</strong> No sharing settings, no roles, no link
-              that is accidentally public. Access is whatever the filesystem says it is.
-            </p>
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">The default is somebody else's computer</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  Most software now assumes an account. Notes, images, plans and research live in a
+                  service, in a format the service defines, reachable while the service is reachable. It
+                  is a good deal for synchronisation, and a bad one for everything else: the tool can
+                  disappear, the format can change, the price can move, and the data cannot be opened
+                  without the app that wrote it.
+                </p>
+                <p>
+                  The four projects on this site point the other way. Not because the cloud is evil, but
+                  because for these particular tools the local version is simpler, faster and easier to
+                  trust. The file is the interface.
+                </p>
+              </div>
+            </section>
 
-            <h2>What it costs</h2>
-            <p>
-              <strong>No sync.</strong> Two machines mean two copies, and merging them is the user's
-              problem. This is the biggest cost and the one that rules out some products entirely.
-            </p>
-            <p>
-              <strong>No collaboration.</strong> Two people editing the same file at the same time is
-              a hard problem, and "put it in a shared folder" is not a solution. A tool that needs
-              real-time collaboration needs a server; pretending otherwise just moves the conflict.
-            </p>
-            <p>
-              <strong>You own the backups.</strong> Local-first means the failure mode is local too.
-              A deleted folder is gone unless the person made a copy.
-            </p>
-            <p>
-              <strong>Distribution is on you.</strong> Installers, updates and code signing are the
-              unglamorous tax on desktop software. W3Plan ships auto-updating builds for Windows and
-              macOS, and that machinery took more care than some of the features.
-            </p>
-            <p>
-              <strong>Local compute has a ceiling.</strong> Anything that needs a large model or a lot
-              of CPU is harder without a server, and sometimes not worth doing locally at all.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">What that looks like in practice</h2>
+              </div>
+              <div class="case-section__content">
+                <ul>
+                  <li>
+                    <strong>Dither Studio</strong>'s web build opens from its own folder with no build
+                    step and no runtime dependencies. A finished piece exports as PNG, text, WebM or a
+                    JSON recipe;
+                    the recipe is the whole setup, readable in any editor.
+                  </li>
+                  <li>
+                    <strong>Cortex</strong> reads a vault of Markdown where it already lives. There is no
+                    import, no database and no copy. If the app is deleted, the notes are untouched.
+                  </li>
+                  <li>
+                    <strong>W3Plan</strong> keeps a student's schedule on the device. The school's PTA
+                    data ships as a read-only JSON dataset, kept separate from a student's own schedule.
+                  </li>
+                  <li>
+                    <strong>PapersPlease</strong> writes nothing to a service at all. It queries public
+                    APIs, links to open-access papers, and leaves the reading to you.
+                  </li>
+                </ul>
+              </div>
+            </section>
 
-            <h2>Where the cloud earns its place</h2>
-            <p>
-              W3Plan is a clean example of that boundary. The school's PTA calendar is published data
-              that every student needs and no student should edit. Shipping it as a read-only JSON
-              dataset — separate from the student's own schedule and updated when the school
-              publishes a new export — keeps the division clear because the data has an owner and a
-              direction: published by the school, consumed by the app, never written back.
-            </p>
-            <p>
-              That is a reasonable rule of thumb. Data a person creates stays local. Data an
-              institution publishes can be fetched. Data two people must edit at once needs a real
-              sync model, and the product should say so rather than pretend a folder is one.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">What it buys</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  <strong>It opens.</strong> No session check, no loading state, no "contact your
+                  administrator". A folder of static files is the fastest kind of app there is.
+                </p>
+                <p>
+                  <strong>It works offline.</strong> On a train, in a basement, on a school network that
+                  blocks everything. The tool does not care, because nothing essential is remote.
+                </p>
+                <p>
+                  <strong>The files outlive the app.</strong> Markdown, PNG, WebM and JSON are readable
+                  without this codebase. That is the real exit plan: not a data export feature, but data
+                  that never needed exporting.
+                </p>
+                <p>
+                  <strong>Backups are boring.</strong> A folder can be copied, zipped, put in git or
+                  dropped on a USB stick. There is no restore flow to test and no account recovery to
+                  lose.
+                </p>
+                <p>
+                  <strong>There is no permission model.</strong> No sharing settings, no roles, no link
+                  that is accidentally public. Access is whatever the filesystem says it is.
+                </p>
+              </div>
+            </section>
 
-            <h2>The test</h2>
-            <p>
-              A simple question decides most of these cases: if the service disappeared tomorrow,
-              what would the user still have? If the answer is "a folder of files that open in
-              anything", the design is probably right. If the answer is "a login screen", it is worth
-              asking what the account is actually buying.
-            </p>
-            <p>
-              The projects are linked from the <a href="/#work">work section</a>; each has a longer
-              write-up, including the parts where local-first was the harder choice.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">What it costs</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  <strong>No sync.</strong> Two machines mean two copies, and merging them is the user's
+                  problem. This is the biggest cost and the one that rules out some products entirely.
+                </p>
+                <p>
+                  <strong>No collaboration.</strong> Two people editing the same file at the same time is
+                  a hard problem, and "put it in a shared folder" is not a solution. A tool that needs
+                  real-time collaboration needs a server; pretending otherwise just moves the conflict.
+                </p>
+                <p>
+                  <strong>You own the backups.</strong> Local-first means the failure mode is local too.
+                  A deleted folder is gone unless the person made a copy.
+                </p>
+                <p>
+                  <strong>Distribution is on you.</strong> Installers, updates and code signing are the
+                  unglamorous tax on desktop software. W3Plan ships auto-updating builds for Windows and
+                  macOS, and that machinery took more care than some of the features.
+                </p>
+                <p>
+                  <strong>Local compute has a ceiling.</strong> Anything that needs a large model or a lot
+                  of CPU is harder without a server, and sometimes not worth doing locally at all.
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Where the cloud earns its place</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  W3Plan is a clean example of that boundary. The school's PTA calendar is published data
+                  that every student needs and no student should edit. Shipping it as a read-only JSON
+                  dataset — separate from the student's own schedule and updated when the school
+                  publishes a new export — keeps the division clear because the data has an owner and a
+                  direction: published by the school, consumed by the app, never written back.
+                </p>
+                <p>
+                  That is a reasonable rule of thumb. Data a person creates stays local. Data an
+                  institution publishes can be fetched. Data two people must edit at once needs a real
+                  sync model, and the product should say so rather than pretend a folder is one.
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">The test</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  A simple question decides most of these cases: if the service disappeared tomorrow,
+                  what would the user still have? If the answer is "a folder of files that open in
+                  anything", the design is probably right. If the answer is "a login screen", it is worth
+                  asking what the account is actually buying.
+                </p>
+                <p>
+                  The projects are linked from the <a href="/#work">work section</a>; each has a longer
+                  write-up, including the parts where local-first was the harder choice.
+                </p>
+              </div>
+            </section>
           </div>
 
-          <nav class="article__end" aria-label="Article pagination">
-            <a href="/writing/dithering-the-hero/">← The hero is dithered</a>
-            <a href="/writing/">All writing →</a>
+          <nav class="case-pager" aria-label="Article pagination">
+            <a class="case-pager__card" href="/writing/dithering-the-hero/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">The hero is dithered, not blurred</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/writing/school-planner-distribution/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">A school planner is a distribution problem</span>
+            </a>
           </nav>
         </article>
       </div>

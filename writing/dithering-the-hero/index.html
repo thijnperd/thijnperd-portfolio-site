@@ -31,217 +31,320 @@
     <meta name="color-scheme" content="light dark" />
     <script>
       (function () {
-        var h = new Date().getHours() + new Date().getMinutes() / 60;
-        var night = h < 6 || h >= 19.5;
-        document.documentElement.dataset.scheme = night ? 'night' : 'day';
-        document.documentElement.dataset.phase = night ? 'night' : 'day';
-        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
-        document.querySelector('meta[name="theme-color"]').content = night ? '#0a0d10' : '#e4e6e1';
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
+  <body class="wide-page">
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="page-bar">
-      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
-            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
-            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
-            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
-            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
-            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
-          </svg>
-        </span>
-        <span class="page-bar__name">thijnperd</span>
-      </a>
-      <div class="page-bar__right">
-        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
-          <a href="/#work" data-i18n="ui.navWork">Work</a>
-          <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
-          <a href="/cv/" data-i18n="ui.navCv">CV</a>
-          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
-        </nav>
-        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
-          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
-          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
-          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a
+            class="page-bar__brand"
+            href="/"
+            data-i18n-attr="aria-label:ui.homeAria"
+            aria-label="Thijn Köhne, home"
+          >
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
         </div>
       </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
-      <div class="page-shell">
+      <div class="case-shell">
         <article>
-          <nav class="crumb" aria-label="Breadcrumb">
-            <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Rendering</span>
-          </nav>
-          <h1 class="article__title">The hero is dithered, not blurred</h1>
-          <p class="article__lede">
-            The scene on the home page is a normal Three.js render that is then quantised down to
-            twelve levels per channel with an 8×8 Bayer pattern. That single pass is most of the look.
-          </p>
-
-          <dl class="article__meta">
-            <div><dt data-i18n="article.published">Published</dt><dd>27 Nov 2026</dd></div>
-            <div><dt data-i18n="article.reading">Reading</dt><dd>8 minutes</dd></div>
-            <div><dt data-i18n="article.topics">Topics</dt><dd>GLSL, rendering, Three.js</dd></div>
-            <div>
-              <dt data-i18n="article.source">Source</dt>
-              <dd><a href="https://github.com/thijnperd/thijnperd.github.io" target="_blank" rel="noopener noreferrer">GitHub ↗</a></dd>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Rendering</span>
+              </nav>
+              <span class="project__kind">Essay</span>
             </div>
-          </dl>
-          <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyEssay" hidden></p>
 
-          <figure class="article__figure">
-            <img
-              src="/hero-poster.jpg"
-              width="1440"
-              height="900"
-              loading="lazy"
-              decoding="async"
-              alt="The home page at midnight: a dithered sky with a full moon, a laptop on a desk by the water, and the name Thijn Köhne in large white type."
-            />
-            <figcaption>
-              Midnight on the home page. The sky is where the dither is easiest to see: a gradient
-              that would normally band is broken into a pattern instead.
-            </figcaption>
-          </figure>
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">The hero is dithered, not blurred</h1>
+                <p class="case-hero__lede">
+                  The scene on the home page is a normal Three.js render that is then quantised down to
+                              twelve levels per channel with an 8×8 Bayer pattern. That single pass is most of the look.
+                </p>
+              </div>
 
-          <div class="article__body">
-            <h2>Why dither at all</h2>
-            <p>
-              A smooth gradient is one of the hardest things to show on an 8-bit display. Step
-              through a sky slowly enough and the rounding errors line up into visible bands. The
-              usual fix is to add noise, which trades banding for grain.
-            </p>
-            <p>
-              Dithering makes the trade on purpose. Reduce the palette to a deliberately small number
-              of levels, then choose which level each pixel gets based on its brightness and a
-              threshold pattern. At a distance the eye averages the pattern back into a tone; up
-              close it is a texture. That texture is the point, not a side effect.
-            </p>
-            <p>
-              The hero uses twelve levels. Few enough that the pattern is visible, many enough that
-              skin, wood and water still read as themselves.
-            </p>
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.published">Published</dt>
+                      <dd>27 Nov 2026</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.reading">Reading</dt>
+                      <dd>8 minutes</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.topics">Topics</dt>
+                      <dd>GLSL, rendering, Three.js</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.source">Source</dt>
+                      <dd><a href="https://github.com/thijnperd/thijnperd.github.io" target="_blank" rel="noopener noreferrer">GitHub ↗</a></dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
 
-            <h2>Bayer, without the lookup table</h2>
-            <p>
-              Ordered dithering uses a fixed matrix of thresholds: an 8×8 grid of values that repeats
-              across the screen. The usual implementation stores 64 numbers in an array or a texture.
-              The shader builds the same pattern recursively instead, from one two-by-two function:
-            </p>
-            <pre><code>float bayer2(vec2 a) {
+            <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyEssay" hidden></p>
+
+            <figure class="case-hero__media">
+              <img
+                src="/hero-poster.jpg"
+                width="1440"
+                height="900"
+                fetchpriority="high"
+                decoding="async"
+                alt="The home page at midnight: a dithered sky with a full moon, a laptop on a desk by the water, and the name Thijn Köhne in large white type."
+              />
+              <figcaption>
+                Midnight on the home page. The sky is where the dither is easiest to see: a gradient
+                that would normally band is broken into a pattern instead.
+              </figcaption>
+            </figure>
+          </header>
+
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Why dither at all</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  A smooth gradient is one of the hardest things to show on an 8-bit display. Step
+                  through a sky slowly enough and the rounding errors line up into visible bands. The
+                  usual fix is to add noise, which trades banding for grain.
+                </p>
+                <p>
+                  Dithering makes the trade on purpose. Reduce the palette to a deliberately small number
+                  of levels, then choose which level each pixel gets based on its brightness and a
+                  threshold pattern. At a distance the eye averages the pattern back into a tone; up
+                  close it is a texture. That texture is the point, not a side effect.
+                </p>
+                <p>
+                  The hero uses twelve levels. Few enough that the pattern is visible, many enough that
+                  skin, wood and water still read as themselves.
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Bayer, without the lookup table</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  Ordered dithering uses a fixed matrix of thresholds: an 8×8 grid of values that repeats
+                  across the screen. The usual implementation stores 64 numbers in an array or a texture.
+                  The shader builds the same pattern recursively instead, from one two-by-two function:
+                </p>
+                <pre><code>float bayer2(vec2 a) {
   a = floor(a);
   return fract(a.x / 2.0 + a.y * a.y * 0.75);
 }
 #define bayer4(a) (bayer2(0.5 * (a)) * 0.25 + bayer2(a))
 #define bayer8(a) (bayer4(0.5 * (a)) * 0.25 + bayer2(a))</code></pre>
-            <p>
-              Each step halves the coordinate, evaluates the smaller pattern, and folds it back in at
-              a quarter of the weight. The result is a 64-value threshold field in the range 0–1,
-              generated from a few instructions and no memory. Subtracting 0.5 turns it into the
-              signed offset the quantiser wants.
-            </p>
-            <p>
-              The pattern is why the result reads as print rather than television static. Noise
-              varies per pixel and per frame; Bayer repeats, so the eye can lock onto it and the
-              image holds still even when the camera moves.
-            </p>
+                <p>
+                  Each step halves the coordinate, evaluates the smaller pattern, and folds it back in at
+                  a quarter of the weight. The result is a 64-value threshold field in the range 0–1,
+                  generated from a few instructions and no memory. Subtracting 0.5 turns it into the
+                  signed offset the quantiser wants.
+                </p>
+                <p>
+                  The pattern is why the result reads as print rather than television static. Noise
+                  varies per pixel and per frame; Bayer repeats, so the eye can lock onto it and the
+                  image holds still even when the camera moves.
+                </p>
+              </div>
+            </section>
 
-            <h2>One pass, after the tone map</h2>
-            <p>
-              The scene is rendered normally, tone-mapped and converted to display space by an
-              <code>OutputPass</code>, and only then handed to the dither pass, so the levels are
-              quantised in display space rather than the linear space the scene was lit in.
-            </p>
-            <p>
-              The pass does not sample each pixel independently. It snaps to a block first, then
-              samples the centre of that block:
-            </p>
-            <pre><code>vec2 block = floor(gl_FragCoord.xy / uPixelSize);
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">One pass, after the tone map</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The scene is rendered normally, tone-mapped and converted to display space by an
+                  <code>OutputPass</code>, and only then handed to the dither pass, so the levels are
+                  quantised in display space rather than the linear space the scene was lit in.
+                </p>
+                <p>
+                  The pass does not sample each pixel independently. It snaps to a block first, then
+                  samples the centre of that block:
+                </p>
+                <pre><code>vec2 block = floor(gl_FragCoord.xy / uPixelSize);
 vec2 blockUv = (block * uPixelSize + uPixelSize * 0.5) / uResolution;
 
 vec3 color = texture2D(tDiffuse, blockUv).rgb;</code></pre>
-            <p>
-              That detail matters. If every pixel sampled its own colour and then quantised, the
-              pattern would sit on top of the full-resolution image and the edges would turn to
-              mush. Sampling the block centre first means the whole block shares one input colour, so
-              the dither grid itself becomes the resolution of the image. It is a deliberate drop in
-              spatial detail to gain a stable, crisp texture.
-            </p>
+                <p>
+                  That detail matters. If every pixel sampled its own colour and then quantised, the
+                  pattern would sit on top of the full-resolution image and the edges would turn to
+                  mush. Sampling the block centre first means the whole block shares one input colour, so
+                  the dither grid itself becomes the resolution of the image. It is a deliberate drop in
+                  spatial detail to gain a stable, crisp texture.
+                </p>
+              </div>
+            </section>
 
-            <h2>The grid is two CSS pixels wide</h2>
-            <p>
-              The block size is set in device pixels and scaled by the device pixel ratio, because
-              <code>gl_FragCoord</code> is measured in device pixels too. Without that scale, the same
-              shader would produce a grid half as wide on a retina screen and the dither would almost
-              disappear.
-            </p>
-            <p>
-              The pixel ratio used by the renderer is capped at 1.5, and the block is set to
-              <code>2.0 × dpr</code> (2.2 on narrow screens). So the grid stays roughly two CSS pixels
-              on a phone, a laptop and a 4K monitor.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">The grid is two CSS pixels wide</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The block size is set in device pixels and scaled by the device pixel ratio, because
+                  <code>gl_FragCoord</code> is measured in device pixels too. Without that scale, the same
+                  shader would produce a grid half as wide on a retina screen and the dither would almost
+                  disappear.
+                </p>
+                <p>
+                  The pixel ratio used by the renderer is capped at 1.5, and the block is set to
+                  <code>2.0 × dpr</code> (2.2 on narrow screens). So the grid stays roughly two CSS pixels
+                  on a phone, a laptop and a 4K monitor.
+                </p>
+              </div>
+            </section>
 
-            <h2>The palette moves with the scene</h2>
-            <p>
-              Dithering is only half of the look. The other half is that the twelve levels are not
-              fixed colours: the scene's atmosphere is sampled across four keyframes — daylight at 0,
-              golden dusk at 0.46, twilight at 0.66, midnight at 1 — and every colour in the scene is
-              interpolated between them with a smoothstep.
-            </p>
-            <p>
-              The same scalar drives the page. A separate pair of light and dark palettes is sampled
-              on the CPU and written to CSS custom properties, so the paper, ink and accent of the
-              sections below the hero move with the sky. The favicon and the browser theme colour
-              change too. One number, one light.
-            </p>
-            <p>
-              That is also why the dial can be dragged instead of toggling a theme. There is no
-              discrete dark mode to switch: there is a time of day, and everything samples it.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">The palette moves with the scene</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  Dithering is only half of the look. The other half is that the twelve levels are not
+                  fixed colours: the scene's atmosphere is sampled across four keyframes — daylight at 0,
+                  golden dusk at 0.46, twilight at 0.66, midnight at 1 — and every colour in the scene is
+                  interpolated between them with a smoothstep.
+                </p>
+                <p>
+                  The same scalar drives the page. A separate pair of light and dark palettes is sampled
+                  on the CPU and written to CSS custom properties, so the paper, ink and accent of the
+                  sections below the hero move with the sky. The favicon and the browser theme colour
+                  change too. One number, one light.
+                </p>
+                <p>
+                  That is also why the dial can be dragged instead of toggling a theme. There is no
+                  discrete dark mode to switch: there is a time of day, and everything samples it.
+                </p>
+              </div>
+            </section>
 
-            <h2>What it costs</h2>
-            <p>
-              The post pass is cheap; the scene is not. A full Three.js scene with a custom ripple
-              plane, particles and a composer is a lot of work for a background, so the module is
-              loaded on idle rather than in the first payload, the renderer pauses when the hero
-              scrolls out of view or the tab is hidden, and visitors with Save-Data get a static
-              background instead. With <code>prefers-reduced-motion</code>, the clock stops: no drift,
-              no entrance, no ripples, but the dither remains.
-            </p>
-            <p>
-              One anti-flicker detail worth keeping: the paper grain added after quantisation is
-              hashed from the block coordinate, not from time. Per-frame noise on a static pattern
-              sparkles; per-block noise looks like paper tooth.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">What it costs</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The post pass is cheap; the scene is not. A full Three.js scene with a custom ripple
+                  plane, particles and a composer is a lot of work for a background, so the module is
+                  loaded on idle rather than in the first payload, the renderer pauses when the hero
+                  scrolls out of view or the tab is hidden, and visitors with Save-Data get a static
+                  background instead. With <code>prefers-reduced-motion</code>, the clock stops: no drift,
+                  no entrance, no ripples, but the dither remains.
+                </p>
+                <p>
+                  One anti-flicker detail worth keeping: the paper grain added after quantisation is
+                  hashed from the block coordinate, not from time. Per-frame noise on a static pattern
+                  sparkles; per-block noise looks like paper tooth.
+                </p>
+              </div>
+            </section>
 
-            <h2>Read it</h2>
-            <p>
-              The pass is in <code>src/hero/dither.js</code>, the palette in
-              <code>src/hero/atmosphere.js</code>, and the order of passes in
-              <code>src/hero/HeroScene.js</code>. The
-              <a href="https://github.com/thijnperd/thijnperd.github.io" target="_blank" rel="noopener noreferrer">source for the site</a>
-              is on GitHub.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Read it</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The pass is in <code>src/hero/dither.js</code>, the palette in
+                  <code>src/hero/atmosphere.js</code>, and the order of passes in
+                  <code>src/hero/HeroScene.js</code>. The
+                  <a href="https://github.com/thijnperd/thijnperd.github.io" target="_blank" rel="noopener noreferrer">source for the site</a>
+                  is on GitHub.
+                </p>
+              </div>
+            </section>
           </div>
 
-          <nav class="article__end" aria-label="Article pagination">
-            <a href="/writing/" data-i18n="article.allWriting">← All writing</a>
-            <a href="/writing/plain-files/">Next: Plain files, no accounts →</a>
+          <nav class="case-pager" aria-label="Article pagination">
+            <a class="case-pager__card" href="/writing/school-planner-distribution/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">A school planner is a distribution problem</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/writing/plain-files/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">Plain files, no accounts</span>
+            </a>
           </nav>
         </article>
       </div>

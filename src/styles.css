@@ -2590,33 +2590,49 @@ html[data-phase="dawn"] .ts__end--bottom {
   text-wrap: pretty;
 }
 
+/* The list borrows the case-study section grid: a narrow mono rail on the
+   left, the writing itself in the wide column. */
 .writing-list {
-  margin-top: clamp(2rem, 4vw, 3rem);
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
   border-top: 1px solid var(--line);
 }
 
 .writing-item {
   display: grid;
-  grid-template-columns: 9rem minmax(0, 1fr);
-  gap: 1.5rem;
-  padding: 1.5rem 0;
+  grid-template-columns: minmax(14rem, 0.34fr) minmax(0, 0.66fr);
+  gap: clamp(1.25rem, 3.5vw, 3.5rem);
+  padding-block: clamp(1.75rem, 3vw, 2.5rem);
   border-bottom: 1px solid var(--line);
 }
 
+.writing-item__rail {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  gap: 0.4rem;
+}
+
 .writing-item__date {
-  padding-top: 0.3rem;
   font-family: var(--mono);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
+}
+
+.writing-item__meta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--muted);
 }
 
 .writing-item__title {
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(1.5rem, 1.2rem + 0.8vw, 2rem);
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+  font-size: clamp(1.6rem, 1.15rem + 1.4vw, 2.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 .writing-item__title a {
@@ -2628,21 +2644,12 @@ html[data-phase="dawn"] .ts__end--bottom {
 }
 
 .writing-item__desc {
-  max-width: 36rem;
-  margin-top: 0.5rem;
-  font-size: 0.98rem;
-  line-height: 1.6;
+  max-width: 44ch;
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.65;
   color: var(--muted);
   text-wrap: pretty;
-}
-
-.writing-item__meta {
-  margin-top: 0.6rem;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--muted);
 }
 
 /* Case studies */
@@ -2769,6 +2776,17 @@ html[data-phase="dawn"] .ts__end--bottom {
   font-size: 0.9375rem;
   line-height: 1.45;
   color: var(--ink);
+}
+
+.case-spec__row dd a {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+  transition: color 180ms var(--ease-out);
+}
+
+.case-spec__row dd a:hover {
+  color: var(--accent);
 }
 
 .case-page .article__outcome {
@@ -3032,7 +3050,8 @@ html[data-phase="dawn"] .ts__end--bottom {
   color: var(--ink);
 }
 
-.case-page .page-footer__inner {
+.case-page .page-footer__inner,
+.wide-page .page-footer__inner {
   max-width: var(--maxw);
   align-items: center;
 }
@@ -3702,11 +3721,14 @@ html[data-phase="dawn"] .ts__end--bottom {
 
   .writing-item {
     grid-template-columns: minmax(0, 1fr);
-    gap: 0.4rem;
+    gap: 0.75rem;
   }
 
-  .writing-item__date {
-    padding-top: 0;
+  .writing-item__rail {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
   }
 
   .article__body pre,
