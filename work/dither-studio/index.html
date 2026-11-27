@@ -50,13 +50,18 @@
       <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
-            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
-            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
-            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
-            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
-            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
-            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
           </svg>
         </span>
         <span class="page-bar__name">thijnperd</span>
@@ -162,17 +167,32 @@
               <li>Exports: PNG up to 8×, text grids, WebM, and a JSON recipe of the whole setup.</li>
             </ul>
 
-            <figure class="article__figure">
+            <figure class="article__figure article__figure--compact">
               <img
-                src="/work/dither-detail.png"
-                width="720"
-                height="450"
-                alt="1:1 crop of the Dither Studio canvas showing the Floyd–Steinberg 1-bit pattern on the Sphinx image."
+                src="/work/dither-portrait-quad.webp"
+                width="1024"
+                height="1024"
+                alt="Four Dither Studio passes on the same portrait: radial glow, vertical CRT halftone, thermal posterization, and coarse warm ordered dither."
                 loading="lazy"
               />
               <figcaption>
-                A close crop of the canvas: Floyd–Steinberg on a 1-bit palette, two-pixel cells.
-                Nothing sits between the engine's output and the screen.
+                Four passes on the same portrait — radial glow, vertical CRT halftone, thermal
+                posterization, and coarse warm ordered dither — produced with Dither Studio's
+                algorithm, ink palette, and effect stack.
+              </figcaption>
+            </figure>
+
+            <figure class="article__figure">
+              <img
+                src="/work/dither-screens.webp"
+                width="1032"
+                height="518"
+                alt="1:1 crop comparison of three structure-aware screens on the same photograph: Matrix Rain, Ice Dot Field, and Smooth Diffusion."
+                loading="lazy"
+              />
+              <figcaption>
+                1:1 crop comparison of three structure-aware screens on the same photograph — Matrix
+                Rain, Ice Dot Field, and Smooth Diffusion.
               </figcaption>
             </figure>
 
@@ -187,6 +207,21 @@
               shader, no GPU-specific path. That is what lets the same engine file run unchanged in
               the web demo, the launcher and the desktop app.
             </p>
+
+            <figure class="article__figure">
+              <img
+                src="/work/dither-pipeline.webp"
+                width="1440"
+                height="830"
+                alt="Diagram of the pixel-buffer pipeline from PREPARE (RGBA source, tone adjustments, blur/sharpen, downsampling) through PRESS (dither and tone map) to FINISH (effects stack, glow, alpha, nearest-neighbour upscale)."
+                loading="lazy"
+              />
+              <figcaption>
+                The pixel-buffer pipeline (PREPARE → PRESS → FINISH) running inside
+                <code>process()</code>, from tone prep and downsampling through dithering and the
+                post-effect stack.
+              </figcaption>
+            </figure>
 
             <h3>A recipe is a file</h3>
             <p>
@@ -205,6 +240,20 @@
               plugins or custom palette import, while the desktop app adds native menus and dialogs,
               the full catalogue and the tutorial. Same engine, different amounts of app around it.
             </p>
+
+            <figure class="article__figure">
+              <img
+                src="/work/dither-desktop.webp"
+                width="1440"
+                height="948"
+                alt="Dither Studio Electron desktop app running Bayer 8×8 on a 4-color Game Boy palette with native application menus and the 21-recipe inspector panel."
+                loading="lazy"
+              />
+              <figcaption>
+                The Electron desktop shell running the same engine with native menus, Bayer 8×8 on a
+                4-color Game Boy ink set, and the 21-recipe inspector.
+              </figcaption>
+            </figure>
 
             <h2>What local-only costs</h2>
             <p>

@@ -50,13 +50,18 @@
       <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
-            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
-            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
-            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
-            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
-            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
-            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
           </svg>
         </span>
         <span class="page-bar__name">thijnperd</span>
@@ -146,6 +151,20 @@
               where something lives. The stress-test vault is 5,523 notes across 41 folders, with 24,151 links.
             </p>
 
+            <figure class="article__figure">
+              <img
+                src="/work/cortex-graph.webp"
+                width="1440"
+                height="900"
+                alt="Cortex Graph view showing the 5,523-note, 24,151-link vault across 41 folders rendered live in WebGL2."
+                loading="lazy"
+              />
+              <figcaption>
+                The Graph view on the 5,523-note, 24,151-link stress-test vault (41 folders), rendered
+                live in WebGL2.
+              </figcaption>
+            </figure>
+
             <h2>Six views, one model</h2>
             <p>
               Graph, brain, timeline, atlas, bento and decisions are projections of the same parsed
@@ -165,6 +184,35 @@
               </li>
               <li><strong>Decisions</strong> — the reasoning trail behind a choice, kept next to the choice.</li>
             </ul>
+
+            <figure class="article__figure">
+              <img
+                src="/work/cortex-atlas.webp"
+                width="1440"
+                height="900"
+                alt="Cortex Atlas view rendering the 5,523-note vault as a cartographic map of 41 labeled folder countries connected by routes."
+                loading="lazy"
+              />
+              <figcaption>
+                The Atlas view over the same 5,523-note vault — folders laid out deterministically as
+                41 countries, notes as places, and links as routes.
+              </figcaption>
+            </figure>
+
+            <figure class="article__figure">
+              <img
+                src="/work/cortex-bento.webp"
+                width="1440"
+                height="900"
+                alt="Cortex Bento view showing every folder sized proportionally, with Journal at 20%, Research at 3%, and Systems at 2% alongside top notes."
+                loading="lazy"
+              />
+              <figcaption>
+                The Bento view sizing each folder proportionally (Journal 20%, Research 3%, Systems
+                2%) with its strongest notes surfaced inside.
+              </figcaption>
+            </figure>
+
             <p>
               The decisions view is the one that changes how the vault gets used. A note that records
               a decision is only useful if the alternatives and the reason survive with it, and that
@@ -173,15 +221,15 @@
 
             <figure class="article__figure">
               <img
-                src="/work/cortex-detail.webp"
-                width="720"
-                height="450"
-                alt="Close crop of the Cortex Brain view showing folder labels and bright wikilink tracts over the folded surface."
+                src="/work/cortex-decisions.webp"
+                width="1440"
+                height="900"
+                alt="Cortex Decisions board beside an open YAML-frontmatter decision trail showing status, confidence, superseded notes, and load-bearing assumptions."
                 loading="lazy"
               />
               <figcaption>
-                A close crop of the Brain view: Journal, Research and Ideas are folder regions; the
-                bright lines are wikilinks resolving across them.
+                The Decisions board beside an open YAML-frontmatter decision trail showing status,
+                confidence, superseded notes, and load-bearing assumptions.
               </figcaption>
             </figure>
 

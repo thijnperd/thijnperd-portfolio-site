@@ -50,13 +50,18 @@
       <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
-            <rect class="brand-mark__fg" x="6.5" y="7" width="16.5" height="3.2" rx="0.5" />
-            <rect class="brand-mark__fg" x="13.1" y="7" width="3.3" height="17.5" rx="0.5" />
-            <circle class="brand-mark__dot" cx="23.2" cy="22.1" r="2.7" />
-            <rect class="brand-mark__fg" x="6.5" y="21.8" width="2.2" height="2.2" opacity=".48" />
-            <rect class="brand-mark__fg" x="9.3" y="21.8" width="2.2" height="2.2" opacity=".24" />
-            <rect class="brand-mark__fg" x="6.5" y="19" width="2.2" height="2.2" opacity=".24" />
+            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
           </svg>
         </span>
         <span class="page-bar__name">thijnperd</span>
@@ -144,6 +149,20 @@
               renders the same verdicts.
             </p>
 
+            <figure class="article__figure">
+              <img
+                src="/work/papers-pipeline.webp"
+                width="1008"
+                height="371"
+                alt="PapersPlease terminal live pipeline showing candidate counts arriving from epmc, crossref, openalex, and arxiv before abstract screening."
+                loading="lazy"
+              />
+              <figcaption>
+                Live progress across the five pipeline stages as epmc, crossref, openalex, and arxiv
+                return candidates before abstract screening.
+              </figcaption>
+            </figure>
+
             <h2>Reading before downloading</h2>
             <p>
               PapersPlease queries Europe PMC, Crossref, arXiv, Semantic Scholar and OpenAlex, then
@@ -160,15 +179,16 @@
 
             <figure class="article__figure">
               <img
-                src="/work/papers-detail.webp"
-                width="720"
-                height="560"
-                alt="Close crop of the PapersPlease detail pane showing an in-scope verdict, relevance score, matched terms and access links."
+                src="/work/papers-explain.webp"
+                width="1048"
+                height="646"
+                alt="Output of papersplease explain showing expanded synonym facets for unhealthy diet and type 1 diabetes, coverage threshold, and causal direction."
                 loading="lazy"
               />
               <figcaption>
-                A close crop of the verdict: scope, score, the matched terms, and the access links —
-                before the paper is opened.
+                <code>papersplease explain</code> inspecting the offline scope contract — expanded
+                synonym facets, coverage guard (≥ 0.70), and causal direction (unhealthy diet → type
+                1 diabetes).
               </figcaption>
             </figure>
 
@@ -190,6 +210,21 @@
               still reading the paper. The tool's job is to make that pile smaller and better
               labelled, not to replace it.
             </p>
+
+            <figure class="article__figure article__figure--compact">
+              <img
+                src="/work/papers-report.webp"
+                width="1048"
+                height="1771"
+                alt="Full PapersPlease CLI scope report grouping candidates into IN SCOPE, ADJACENT, and REJECTED buckets with explanation lines for domain-sense exclusions."
+                loading="lazy"
+              />
+              <figcaption>
+                The full CLI scope report separating IN SCOPE, ADJACENT, and REJECTED candidates —
+                including domain-sense rejections like filtering out cardiac hypertrophy on a
+                muscle-hypertrophy query.
+              </figcaption>
+            </figure>
 
             <h2>Try it</h2>
             <p>

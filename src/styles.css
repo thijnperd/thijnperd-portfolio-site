@@ -401,7 +401,7 @@ html[data-scheme="night"] .phase-btn__label {
   font-family: var(--mono);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
-  color: var(--muted);
+  color: rgba(var(--ink-rgb), 0.85);
   transition: color 180ms var(--ease-out);
 }
 
@@ -1279,7 +1279,7 @@ html[data-phase="dawn"] .ts__end--bottom {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: contrast(1.14) brightness(1.05);
+  filter: brightness(1.30) contrast(1.06);
 }
 
 .about__portrait picture::before,
@@ -1289,7 +1289,7 @@ html[data-phase="dawn"] .ts__end--bottom {
   inset: 0;
   background: var(--portrait-lo, #113c33);
   mix-blend-mode: lighten;
-  opacity: 0.75;
+  opacity: 1;
   pointer-events: none;
   z-index: 1;
 }
@@ -2056,6 +2056,10 @@ html[data-phase="dawn"] .ts__end--bottom {
   text-wrap: pretty;
 }
 
+.article__figure--compact {
+  max-width: 34rem;
+}
+
 .article__body {
   margin-top: clamp(2rem, 4vw, 3rem);
   font-size: 1.0625rem;
@@ -2373,7 +2377,7 @@ html[data-phase="dawn"] .ts__end--bottom {
 }
 
 .cv__portrait img {
-  filter: contrast(1.14) brightness(1.05);
+  filter: brightness(1.30) contrast(1.06);
 }
 
 .cv__name {
@@ -2655,7 +2659,7 @@ html[data-phase="dawn"] .ts__end--bottom {
   }
 
   .cv__portrait img {
-    filter: grayscale(1) contrast(1.08);
+    filter: grayscale(1) brightness(1.18) contrast(1.06);
   }
 
   .cv__section {
