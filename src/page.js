@@ -1,4 +1,5 @@
 import { initSite } from './ui/site.js';
+import { initDitherSelection } from './ui/ditherSelection.js';
 import { initAnalytics, track } from './analytics.js';
 import {
   createAdaptiveUI,
@@ -11,6 +12,7 @@ const PHASE_PRESETS = { dawn: 0.275, day: 0.5, dusk: 0.76, night: 0.96 };
 
 initSite();
 initAnalytics();
+initDitherSelection();
 
 const adaptiveUI = createAdaptiveUI(getStoredTimeOfDay() ?? getTimeOfDayFromClock());
 const phaseCycleBtn = document.querySelector('[data-phase-cycle]');

@@ -12,9 +12,18 @@ export function initDitherSelection() {
   layer.setAttribute('aria-hidden', 'true');
 
   let frame = 0;
+  let target = null;
 
   const clear = () => {
     if (layer.childElementCount) layer.replaceChildren();
+  };
+
+  // The selected heading is lifted above the pattern layer so its glyphs stay solid.
+  const setTarget = (heading) => {
+    if (target === heading) return;
+    if (target) target.classList.remove('dither-selection-target');
+    target = heading;
+    if (target) target.classList.add('dither-selection-target');
   };
 
   const paint = () => {
@@ -22,12 +31,20 @@ export function initDitherSelection() {
     clear();
 
     const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+      setTarget(null);
+      return;
+    }
 
     const range = selection.getRangeAt(0);
     const start = range.startContainer;
     const element = start.nodeType === Node.ELEMENT_NODE ? start : start.parentElement;
-    if (!element || !element.closest(HEADINGS)) return;
+    const heading = element && element.closest(HEADINGS);
+    if (!heading) {
+      setTarget(null);
+      return;
+    }
+    setTarget(heading);
 
     for (const rect of range.getClientRects()) {
       if (rect.width < 2 || rect.height < 2) continue;
