@@ -131,9 +131,11 @@ function walk(html) {
 
   for (const row of hero.matchAll(/<div class="case-spec__row">\s*<dt[^>]*>([\s\S]*?)<\/dt>\s*<dd[^>]*>([\s\S]*?)<\/dd>/g)) {
     const offset = articleStart + hero.indexOf(row[0]);
+    const ddOpen = row[0].indexOf('<dd');
+    const ddInner = ddOpen + row[0].slice(ddOpen).indexOf('>') + 1;
     slots.push({
-      start: offset + row[0].indexOf('>', row[0].indexOf('</dt>')) + 1,
-      end: offset + row[0].indexOf('>', row[0].indexOf('</dt>')) + 1 + row[2].length,
+      start: offset + ddInner,
+      end: offset + ddInner + row[2].length,
       kind: `spec · ${decode(row[1])}`,
       inner: row[2],
       match: null,
@@ -235,10 +237,46 @@ function blockSlots(region, regionOffset) {
   return slots;
 }
 
+// The translations are plain text, so the anchors the English copy carries have to be
+// put back around the translated equivalent of their link text. Keyed by href, since
+// every one of them points somewhere different.
+const LINK_TEXT = {
+  nl: {
+    'https://thijnperd.github.io/dither-studio/': 'De webapp',
+    'https://github.com/thijnperd/dither-studio': 'De broncode',
+    'https://thijnperd.github.io/Dither-studio_publicity/': 'de lanceringsfilm',
+    '/writing/dithering-the-hero/': 'De hero is geditherd, niet vervaagd',
+    '/writing/plain-files/': 'Platte bestanden, geen accounts',
+    '/writing/school-planner-distribution/': 'Meer over waarom distributie het lastigste deel was',
+    'https://thijnperd.github.io/obsidian-cortex/': 'Open de live demo',
+    'https://github.com/thijnperd/obsidian-cortex': 'de broncode',
+    'https://yannis-raijmakers.github.io/W3Plan-desktop/': 'de walkthrough',
+    'https://github.com/Yannis-Raijmakers/W3Plan-desktop': 'de installers-repository',
+    'https://github.com/thijnperd/PapersPlease': 'de repository',
+    'https://github.com/thijnperd/thijnperd.github.io': 'GitHub',
+    '/#work': 'sectie werk',
+  },
+  de: {
+    'https://thijnperd.github.io/dither-studio/': 'Die Web-App',
+    'https://github.com/thijnperd/dither-studio': 'Der Quellcode',
+    'https://thijnperd.github.io/Dither-studio_publicity/': 'der Launch-Film',
+    '/writing/dithering-the-hero/': 'Der Hero ist gedithert, nicht weichgezeichnet',
+    '/writing/plain-files/': 'Einfache Dateien, keine Accounts',
+    '/writing/school-planner-distribution/': 'Mehr dazu, warum die Verteilung der schwierige Teil war',
+    'https://thijnperd.github.io/obsidian-cortex/': 'Öffne die Live-Demo',
+    'https://github.com/thijnperd/obsidian-cortex': 'den Quellcode',
+    'https://yannis-raijmakers.github.io/W3Plan-desktop/': 'das Walkthrough',
+    'https://github.com/Yannis-Raijmakers/W3Plan-desktop': 'Installers-Repository',
+    'https://github.com/thijnperd/PapersPlease': 'Im Repository',
+    'https://github.com/thijnperd/thijnperd.github.io': 'GitHub',
+    '/#work': 'Arbeitsbereich',
+  },
+};
+
 const escapeHtml = (text) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-function renderText(text, englishInner, kind) {
+function renderText(text, englishInner, kind, lang) {
   let html = escapeHtml(text).replace(/`([^`]+)`/g, '<code>$1</code>');
 
   // Keep the emphasis the English block carries: either on a short lead-in before
@@ -257,7 +295,25 @@ function renderText(text, englishInner, kind) {
     }
   }
 
-  return kind === 'blockquote' ? html : html;
+  const anchors = LINK_TEXT[lang] || {};
+  const hrefs = [...englishInner.matchAll(/<a\s[^>]*href="([^"]+)"/g)].map((match) => match[1]);
+  let placed = 0;
+  for (const href of hrefs) {
+    const phrase = anchors[href];
+    if (!phrase) continue;
+    const index = html.indexOf(phrase);
+    if (index === -1) continue;
+    html = `${html.slice(0, index)}<a href="${href}">${phrase}</a>${html.slice(index + phrase.length)}`;
+    placed += 1;
+  }
+
+  // A spec value that is itself a link (the project name) keeps its anchor around
+  // the whole value; those are single links, so wrapping the text is exact.
+  if (placed === 0 && hrefs.length === 1) {
+    html = `<a href="${hrefs[0]}">${html}</a>`;
+  }
+
+  return html;
 }
 
 function localizeHead(html, { lang, path, title, description }) {
@@ -275,6 +331,7 @@ function localizeHead(html, { lang, path, title, description }) {
   html = html.replace(/(<meta\s+name="twitter:description"\s+content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
   html = html.replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${localUrl}" />`);
 
+  html = html.replace(/\n\s*<link rel="alternate" hreflang="[^"]*"[^>]*>/g, '');
   const alternates = [
     `<link rel="alternate" hreflang="en" href="${enUrl}" />`,
     `<link rel="alternate" hreflang="nl" href="${ORIGIN}/nl/${path.replace(/index\.html$/, '')}" />`,
@@ -367,7 +424,7 @@ for (const [lang, mdFile] of Object.entries(LANGS)) {
       const slot = slots[i];
       const block = blocks[i];
       if (slot.kind === 'code') continue;
-      const replacement = renderText(block.text, slot.inner, slot.kind);
+      const replacement = renderText(block.text, slot.inner, slot.kind, lang);
       html = html.slice(0, slot.start) + replacement + html.slice(slot.end);
     }
 
@@ -387,6 +444,42 @@ for (const [lang, mdFile] of Object.entries(LANGS)) {
     mkdirSync(dirname(out.slice(1)), { recursive: true });
     writeFileSync(out.slice(1), html);
   }
+}
+
+// The English pages advertise the same alternates, and the sitemap lists the new URLs.
+if (!check && !selftest) {
+  for (const doc of DOCS) {
+    const p = doc.replace(/index\.html$/, '');
+    const set = [
+      ['en', `${ORIGIN}/${p}`],
+      ['nl', `${ORIGIN}/nl/${p}`],
+      ['de', `${ORIGIN}/de/${p}`],
+      ['x-default', `${ORIGIN}/${p}`],
+    ];
+    const block = set
+      .map(([hreflang, href]) => `<link rel="alternate" hreflang="${hreflang}" href="${href}" />`)
+      .join('\n    ');
+    let html = readFileSync(doc, 'utf8');
+    html = html.replace(/\n\s*<link rel="alternate" hreflang="[^"]*"[^>]*>/g, '');
+    html = html.replace(/(<link rel="canonical"[^>]*\/>)/, `$1\n    ${block}`);
+    writeFileSync(doc, html);
+  }
+
+  const sitemapPath = 'public/sitemap.xml';
+  let sitemap = readFileSync(sitemapPath, 'utf8');
+  sitemap = sitemap.replace(/\s*<url>\s*<loc>[^<]*\/(?:nl|de)\/[^<]*<\/loc>[\s\S]*?<\/url>/g, '');
+  const entries = [];
+  for (const lang of ['nl', 'de']) {
+    for (const doc of DOCS) {
+      const url = `${ORIGIN}/${lang}/${doc.replace(/index\.html$/, '')}`;
+      const priority = doc.startsWith('work/') ? '0.8' : '0.7';
+      entries.push(
+        `  <url>\n    <loc>${url}</loc>\n    <lastmod>2026-11-27</lastmod>\n    <changefreq>yearly</changefreq>\n    <priority>${priority}</priority>\n  </url>`
+      );
+    }
+  }
+  sitemap = sitemap.replace('</urlset>', `${entries.join('\n')}\n</urlset>`);
+  writeFileSync(sitemapPath, sitemap);
 }
 
 console.log(report.join('\n') || 'all documents align');

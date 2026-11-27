@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="nl" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>W3Plan · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="Een studie- en toetsplanner die begint vanuit het echte toetsrooster van de school in plaats van een lege week — gestart als basisapp door ons drieën met…"
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/nl/work/w3plan/" />
+    <link rel="alternate" hreflang="en" href="https://thijnperd.github.io/work/w3plan/" />
+    <link rel="alternate" hreflang="nl" href="https://thijnperd.github.io/nl/work/w3plan/" />
+    <link rel="alternate" hreflang="de" href="https://thijnperd.github.io/de/work/w3plan/" />
+    <link rel="alternate" hreflang="x-default" href="https://thijnperd.github.io/work/w3plan/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="W3Plan · Thijn Köhne" />
+    <meta
+      property="og:description"
+      content="Een studie- en toetsplanner die begint vanuit het echte toetsrooster van de school in plaats van een lege week — gestart als basisapp door ons drieën met…"
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/nl/work/w3plan/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/w3plan.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="W3Plan · Thijn Köhne" />
+    <meta
+      name="twitter:description"
+      content="Een studie- en toetsplanner die begint vanuit het echte toetsrooster van de school in plaats van een lege week — gestart als basisapp door ons drieën met…"
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/w3plan.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="case-page">
+    <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
+
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a class="page-bar__brand" href="/" data-i18n-attr="aria-label:ui.homeAria" aria-label="Thijn Köhne, home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" aria-current="page" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="case-shell">
+        <article>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/#work" data-i18n="article.crumbWork">Work</a><span aria-hidden="true">/</span><span>03</span>
+              </nav>
+              <span class="project__kind" data-i18n="home.kindDesktopWeb">Desktop &amp; Web</span>
+            </div>
+
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">W3Plan</h1>
+                <p class="case-hero__lede">Een studie- en toetsplanner die begint vanuit het echte toetsrooster van de school in plaats van een lege week — gestart als basisapp door ons drieën met Yannis Raijmakers en Billie, en daarna verder ontwikkeld door Yannis en mij voor leerlingen van Were Di Drie.</p>
+
+                <ul class="project__stats case-hero__stats">
+                  <li><strong>643</strong><span data-i18n="home.w3planStat0">PTA components</span></li>
+                  <li><strong>29</strong><span data-i18n="home.w3planStat1">subjects</span></li>
+                  <li><strong>8+</strong><span data-i18n="home.w3planStat2">final-year students</span></li>
+                </ul>
+
+                <div class="case-hero__actions">
+                  <a
+                    class="btn btn--primary"
+                    href="https://yannis-raijmakers.github.io/W3Plan-desktop/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span data-i18n="home.linkWalkthrough">Walkthrough</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                  <a
+                    class="btn btn--ghost"
+                    href="https://github.com/Yannis-Raijmakers/W3Plan-desktop"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>Installers</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.role">Role</dt>
+                      <dd>Teamproject · basisapp gebouwd met Yannis Raijmakers &amp; Billie; voortgezet door Yannis &amp; mij</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.stack">Stack</dt>
+                      <dd>React 19, TypeScript, Electron</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.status">Status</dt>
+                      <dd>Gebouwd voor leerlingen van Were Di Drie</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <p class="article__outcome">
+                  <span data-i18n="article.outcome">Outcome</span>Gebruikt door 8+ examenleerlingen en geprezen door docenten.</p>
+              </div>
+            </div>
+
+            <figure class="case-hero__media">
+              <img
+De weekkalender van W3Plan met ingeplande schooltoetsen, domeinstudieblokken en aankomende toetskaarten in de linkerzijbalk.priority="high"
+                decoding="async"
+                alt="W3Plan weekly calendar showing scheduled school exams, domain study blocks and upcoming test cards in the left sidebar."
+              />
+              <figcaption>Een week waarop de schooltoetsen al staan: domeinstudieblokken in de kalender, en in de zijbalk de toetsen en hoeveel studie-uren er al zijn ingepland.</figcaption>
+            </figure>
+          </header>
+
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Algemene planners beginnen te laat</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Een planner-app gaat ervan uit dat je al weet wat er moet gebeuren. Op school zit het lastigste stuk daarvoor: het toetsrooster wordt door de school gepubliceerd, de studie-uren moeten over vakken worden verdeeld, en die twee staan op verschillende plekken. De meeste leerlingen lossen dat op met een papieren agenda en een screenshot.</p>
+                <p>W3Plan begint bij de PTA-data van de school en bouwt de week daaromheen: toetsen, domeinuren, checklists per toets en cijfercalculators op één plek.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Openbare schooldata, persoonlijke leerlingdata</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Die scheiding is bewust. PTA-data wordt door de school gepubliceerd en zit daarom als alleen-lezen lokale JSON-dataset bij de app inbegrepen. De eigen planning van een leerling verlaat het apparaat nooit en er zijn geen leerlingaccounts, wat zowel de inlogflow als elke reden om gegevens centraal op te slaan overbodig maakt.</p>
+                <p>De import omvat 643 PTA-onderdelen over 29 vakken, waarvan 291 met een datum; een apart SE-overzicht voegt nog eens 133 toetsmomenten toe. Klein genoeg om als alleen-lezen dataset mee te leveren, en groot genoeg dat handmatig overtypen nooit realistisch was.</p>
+
+                <figure class="article__figure">
+                  <img
+Het Periode 2-overzicht van W3Plan van week 42 tot en met 49 met een wekelijkse drukte-indicator boven chronologische PTA-toetsrijen.             alt="W3Plan Period 2 overview spanning weeks 42 to 49 with a weekly busy-week workload indicator above chronological PTA exam rows."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>Periode 2-overzicht (wk 42–wk 49) dat een wekelijkse druktebalk (druk) combineert met chronologische PTA-toetsmomenten, wegingen en laatste kans-markeringen.</figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Hoe een week eruitziet</h2>
+              </div>
+              <div class="case-section__content">
+                <ul>
+                  <li>Een weekkalender met schooltoetsen en studieblokken naast elkaar.</li>
+                  <li>Domeinuren, zodat tijd over vakken wordt verdeeld in plaats van op gevoel.</li>
+                  <li>Checklists per toets voor wat er daadwerkelijk geleerd moet worden.</li>
+                  <li>Cijfercalculators, want de eerste vraag na een toets is wat het met je gemiddelde doet.</li>
+                </ul>
+
+                <div class="case-gallery">
+                  <figure class="article__figure">
+                    <img
+De toetsmodal van W3Plan voor SE3 Straling, Quantum en Kern- en deeltjesprocessen (PTA 1605) met studievoortgang en gesplitste Doen- en Kennen-checklists.lt="W3Plan per-test modal for SE3 Straling, Quantum en Kern- en deeltjesprocessen (PTA 1605) showing study progress and split Doen and Kennen checklists."
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <figcaption>Een werkruimte per toets (SE3: Straling, Quantum en Kern- en deeltjesprocessen, PTA 1605) met voortgangsregistratie en gesplitste Doen- (oefenen) en Kennen- (theorie) checklists.</figcaption>
+                  </figure>
+
+                  <figure class="article__figure">
+                    <img
+Het tabblad Cijfers van W3Plan met aanbevolen herkansingen gerangschikt op hoeveel elk punt het SE-gemiddelde verhoogt, boven de gewogen streefcijfercalculator.="W3Plan Cijfers tab listing recommended exam retakes ordered by how much each point raises the SE average above the weighted target-grade calculator."
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <figcaption>Het tabblad Cijfers dat aanbevolen herkansingen rangschikt op hoeveel elk punt het SE-gemiddelde verhoogt (+0,35 voor Nederlands, +0,25 voor Wiskunde B), boven de gewogen streefcijfercalculator.</figcaption>
+                  </figure>
+                </div>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Twee keuzes</h2>
+              </div>
+              <div class="case-section__content">
+                <h3>Builds die zichzelf bijwerken</h3>
+                <p>De desktopbuilds updaten automatisch en worden geleverd als Windows-installer en als DMG of ZIP op macOS (de ZIP wordt door de updater gebruikt). Distributie is het minst glamoureuze en meest kwetsbare deel van een desktop-app: installers, updatekanalen en twee platformen die elk op hun eigen manier stukgaan. Het is ook het deel dat van een project iets maakt wat klasgenoten echt kunnen gebruiken.</p>
+                <p><a href="/nl/writing/school-planner-distribution/">Meer over waarom distributie het lastigste deel was</a> →</p>
+
+                <h3>Een brug, geen automatische piloot</h3>
+                <p>W3Plan bevat een lokale MCP-brug zodat een assistent de week kan lezen en studieblokken kan voorstellen. De voorstellen verschijnen in de kalender, waar een leerling ze net als elke andere afspraak kan beoordelen — de planner blijft de plek waar de beslissing valt.</p>
+
+                <figure class="article__figure">
+                  <img
+De weergave Vandaag van W3Plan met gestippelde Voorstel-studieblokken en knoppen voor bevestiging met één klik (Zet erin) naast actuele studieonderwerpen.lan Vandaag view displaying dashed Voorstel study block suggestions with one-click Zet erin confirmation buttons beside current study topics."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>De weergave Vandaag met voorgestelde studieblokken (Voorstel) die wachten op goedkeuring met één klik (✓ Zet erin) voordat ze in de kalender komen.</figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Wat het niet kan</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Er is geen account en geen synchronisatie: een planning leeft op de machine waarop de app draait. Dat is de ruil om leerlinggegevens van een server te houden — geen login, geen cloudkopie, niets dat kan verlopen — maar het betekent ook dat de week niet meereist naar een andere computer.</p>
+                <p>De PTA-dataset is die van Were Di Drie: 643 onderdelen over 29 vakken, alleen-lezen meegebundeld met de build. Een andere school betekent een andere dataset, en een nieuw schooljaar betekent een nieuwe build met de bijgewerkte gegevens.</p>
+                <p>De MCP-brug is bewust geen automatische piloot. Hij kan de week lezen en studieblokken voorstellen, maar ze niet zelf in de kalender zetten; een leerling keurt elk blok nog altijd zelf goed.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">In gebruik</h2>
+              </div>
+              <div class="case-section__content">
+                <p>W3Plan is een teamproject. Billie, Yannis Raijmakers en ik bouwden samen als drietal de basisapp, en Yannis en ik ontwikkelden die verder voor bovenbouwleerlingen van Were Di Drie — wat betekende dat het datamodel bestand moest zijn tegen een echt schoolrooster in plaats van een voorbeeldrooster.</p>
+                <div class="quotes">
+                  <figure class="quote">
+                    <blockquote>“Dit heeft mijn hele planningsworkflow vervangen, en het is nu nog makkelijker.”</blockquote>
+                    <figcaption>Yannis Raijmakers Medemaker</figcaption>
+                  </figure>
+                  <figure class="quote">
+                    <blockquote>“Je merkt dat dit gebouwd is op zes jaar leren plannen. Het zit allemaal in één app.”</blockquote>
+                    <figcaption>Docent wiskunde Were Di Drie</figcaption>
+                  </figure>
+                </div>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Probeer het</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Bekijk <a href="https://yannis-raijmakers.github.io/W3Plan-desktop/">de walkthrough</a> of haal de builds uit <a href="https://github.com/Yannis-Raijmakers/W3Plan-desktop">de installers-repository</a>.</p>
+              </div>
+            </section>
+          </div>
+
+          <nav class="case-pager" aria-label="Project pagination">
+            <a class="case-pager__card" href="/nl/work/cortex/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">Cortex</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/nl/work/papersplease/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">PapersPlease</span>
+            </a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/" data-i18n="ui.home">Home</a>
+        </p>
+        <div class="footer__social">
+          <a
+            class="footer__icon-link"
+            href="https://github.com/thijnperd"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            title="github.com/thijnperd"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+            </svg>
+          </a>
+          <a
+            class="footer__icon-link"
+            href="https://www.linkedin.com/in/thijn-k%C3%B6hne-85893625a"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            title="linkedin.com/in/thijn-köhne-85893625a"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M8 11v5" />
+              <path d="M8 8v.01" />
+              <path d="M12 16v-5" />
+              <path d="M16 16v-3a2 2 0 1 0 -4 0" />
+              <path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <nav class="mobile-tabbar" data-tabbar data-i18n-attr="aria-label:ui.navMobile" aria-label="Mobile navigation">
+      <div class="tabbar__track" data-tabbar-track>
+        <ul class="tabbar__list tabbar__list--base">
+          <li>
+            <a class="tabbar__item" href="/#work" data-tab-id="work" aria-current="page">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="4" y="4" width="6" height="6" rx="1" />
+                <rect x="14" y="4" width="6" height="6" rx="1" />
+                <rect x="4" y="14" width="6" height="6" rx="1" />
+                <rect x="14" y="14" width="6" height="6" rx="1" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWork">Work</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/writing/" data-tab-id="writing">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                <path d="M9 13h6" />
+                <path d="M9 17h6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWriting">Writing</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/cv/" data-tab-id="cv">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="4" width="18" height="16" rx="3" />
+                <circle cx="9" cy="10" r="2" />
+                <path d="M15 8h2" />
+                <path d="M15 12h2" />
+                <path d="M7 16h10" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navCvTab">CV</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#about" data-tab-id="about">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="7" r="4" />
+                <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navAbout">About</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#contact" data-tab-id="contact">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6l9 -6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navContact">Contact</span>
+            </a>
+          </li>
+        </ul>
+        <div class="tabbar__indicator" data-tabbar-indicator aria-hidden="true"></div>
+      </div>
+    </nav>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

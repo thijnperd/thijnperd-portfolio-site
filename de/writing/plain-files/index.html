@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="de" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Einfache Dateien, keine Accounts · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="Vier Projekte, eine Regel: Die Daten gehören in einen Ordner, den man prüfen, verschieben und sichern kann, ohne einen Server um Erlaubnis zu fragen."
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/de/writing/plain-files/" />
+    <link rel="alternate" hreflang="en" href="https://thijnperd.github.io/writing/plain-files/" />
+    <link rel="alternate" hreflang="nl" href="https://thijnperd.github.io/nl/writing/plain-files/" />
+    <link rel="alternate" hreflang="de" href="https://thijnperd.github.io/de/writing/plain-files/" />
+    <link rel="alternate" hreflang="x-default" href="https://thijnperd.github.io/writing/plain-files/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="Einfache Dateien, keine Accounts · Thijn Köhne" />
+    <meta
+      property="og:description"
+      content="Vier Projekte, eine Regel: Die Daten gehören in einen Ordner, den man prüfen, verschieben und sichern kann, ohne einen Server um Erlaubnis zu fragen."
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/de/writing/plain-files/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/writing-plain-files.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Einfache Dateien, keine Accounts · Thijn Köhne" />
+    <meta
+      name="twitter:description"
+      content="Vier Projekte, eine Regel: Die Daten gehören in einen Ordner, den man prüfen, verschieben und sichern kann, ohne einen Server um Erlaubnis zu fragen."
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/writing-plain-files.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Einfache Dateien, keine Accounts · Thijn Köhne",
+        "description": "What local-first software buys, what it costs, and the one place a database still earns its keep.",
+        "url": "https://thijnperd.github.io/de/writing/plain-files/",
+        "mainEntityOfPage": "https://thijnperd.github.io/writing/plain-files/",
+        "datePublished": "2026-11-27",
+        "dateModified": "2026-11-27",
+        "inLanguage": "de",
+        "image": "https://thijnperd.github.io/og/writing-plain-files.jpg",
+        "author": {
+          "@type": "Person",
+          "name": "Thijn Köhne",
+          "url": "https://thijnperd.github.io/de/writing/plain-files/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="wide-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a
+            class="page-bar__brand"
+            href="/"
+            data-i18n-attr="aria-label:ui.homeAria"
+            aria-label="Thijn Köhne, home"
+          >
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="case-shell">
+        <article>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Local-first</span>
+              </nav>
+              <span class="project__kind">Essay</span>
+            </div>
+
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">Einfache Dateien, keine Accounts</h1>
+                <p class="case-hero__lede">Vier Projekte, eine Regel: Die Daten gehören in einen Ordner, den man prüfen, verschieben und sichern kann, ohne einen Server um Erlaubnis zu fragen.</p>
+              </div>
+
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.published">Published</dt>
+                      <dd>27. Nov. 2026</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.reading">Reading</dt>
+                      <dd>7 Minuten</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.topics">Topics</dt>
+                      <dd>Local-first, Dateiformate</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.projects">Projects</dt>
+                      <dd><a href="/#work">Vier</a></dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Der Standard ist der Computer von jemand anderem</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Die meiste Software setzt heute einen Account voraus. Notizen, Bilder, Pläne und Recherchen leben in einem Dienst, in einem Format, das dieser Dienst bestimmt, erreichbar solange der Dienst erreichbar ist. Das ist ein gutes Geschäft für die Synchronisation und ein schlechtes für alles andere: Das Werkzeug kann verschwinden, das Format sich ändern, der Preis steigen, und die Daten lassen sich ohne die App, die sie geschrieben hat, nicht öffnen.</p>
+                <p>Die vier Projekte auf dieser Seite zeigen in die andere Richtung. Nicht weil die Cloud böse wäre, sondern weil die lokale Version für genau diese Werkzeuge einfacher, schneller und leichter vertrauenswürdig ist. Die Datei ist die Oberfläche.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Wie das in der Praxis aussieht</h2>
+              </div>
+              <div class="case-section__content">
+                <ul>
+                  <li>Der Web-Build von Dither Studio öffnet direkt aus seinem eigenen Ordner, ohne Build-Schritt und ohne Laufzeitabhängigkeiten. Ein fertiges Bild wird als PNG, Text, WebM oder JSON-Rezept exportiert; das Rezept ist das gesamte Setup, lesbar in jedem Editor.</li>
+                  <li><strong>Cortex liest einen Markdown-Vault dort, wo er bereits liegt.</strong> Es gibt keinen Import, keine Datenbank und keine Kopie. Wird die App gelöscht, bleiben die Notizen unberührt.</li>
+                  <li><strong>W3Plan hält den Plan einer Schülerin oder eines Schülers auf dem Gerät.</strong> Die PTA-Daten der Schule werden als schreibgeschützter JSON-Datensatz mitgeliefert, getrennt vom eigenen Plan.</li>
+                  <li><strong>PapersPlease schreibt überhaupt nichts an einen Dienst.</strong> Es fragt öffentliche APIs ab, verlinkt Open-Access-Paper und überlässt das Lesen dir.</li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Was das einbringt</h2>
+              </div>
+              <div class="case-section__content">
+                <p><strong>Es geht einfach auf.</strong> Keine Sitzungsprüfung, kein Ladezustand, kein „Wenden Sie sich an Ihren Administrator“. Ein Ordner mit statischen Dateien ist die schnellste Art App, die es gibt.</p>
+                <p><strong>Es funktioniert offline.</strong> Im Zug, im Keller, in einem Schulnetz, das alles blockiert. Dem Werkzeug ist das egal, weil nichts Wesentliches auf einem entfernten Server liegt.</p>
+                <p><strong>Die Dateien überleben die App.</strong> Markdown, PNG, WebM und JSON bleiben ohne diese Codebasis lesbar. Das ist der eigentliche Exit-Plan: keine Datenexport-Funktion, sondern Daten, die nie exportiert werden mussten.</p>
+                <p><strong>Backups sind langweilig.</strong> Ein Ordner lässt sich kopieren, zippen, in git legen oder auf einen USB-Stick ziehen. Es gibt keinen Wiederherstellungsablauf zu testen und keine Account-Wiederherstellung zu verlieren.</p>
+                <p><strong>Es gibt kein Berechtigungsmodell.</strong> Keine Freigabeeinstellungen, keine Rollen, kein Link, der versehentlich öffentlich ist. Zugriff ist schlicht das, was das Dateisystem sagt.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Was es kostet</h2>
+              </div>
+              <div class="case-section__content">
+                <p><strong>Keine Synchronisation.</strong> Zwei Geräte bedeuten zwei Kopien, und sie zusammenzuführen ist Sache des Nutzers. Das ist der größte Preis und derjenige, der manche Produkte vollständig ausschließt.</p>
+                <p><strong>Keine Zusammenarbeit.</strong> Zwei Menschen, die gleichzeitig dieselbe Datei bearbeiten, sind ein hartes Problem, und „leg es in einen geteilten Ordner“ ist keine Lösung. Ein Werkzeug, das Echtzeit-Zusammenarbeit braucht, braucht einen Server; etwas anderes vorzugeben verschiebt nur den Konflikt.</p>
+                <p><strong>Die Backups liegen bei dir.</strong> Local-first bedeutet, dass auch der Fehlerfall lokal ist. Ein gelöschter Ordner ist weg, sofern man selbst keine Kopie angelegt hat.</p>
+                <p><strong>Verteilung ist dein Problem.</strong> Installer, Updates und Code-Signing sind die unglamouröse Steuer auf Desktop-Software. W3Plan liefert automatisch aktualisierende Builds für Windows und macOS, und diese Maschinerie verlangte mehr Sorgfalt als so manches Feature.</p>
+                <p><strong>Lokale Rechenleistung hat eine Obergrenze.</strong> Alles, was ein großes Modell oder viel CPU braucht, ist ohne Server schwerer – und manchmal lokal schlicht nicht sinnvoll.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Wo die Cloud ihren Platz verdient</h2>
+              </div>
+              <div class="case-section__content">
+                <p>W3Plan ist ein sauberes Beispiel für diese Grenze. Der PTA-Kalender der Schule besteht aus veröffentlichten Daten, die alle Schülerinnen und Schüler brauchen und niemand verändern darf. Ihn als schreibgeschützten JSON-Datensatz auszuliefern – getrennt vom eigenen Plan und aktualisiert, sobald die Schule einen neuen Export veröffentlicht – hält die Trennung klar, weil die Daten einen Eigentümer und eine Richtung haben: von der Schule veröffentlicht, von der App gelesen, nie zurückgeschrieben.</p>
+                <p>Das ist eine brauchbare Faustregel. Daten, die eine Person selbst erstellt, bleiben lokal. Daten, die eine Institution veröffentlicht, können abgerufen werden. Daten, die zwei Menschen gleichzeitig bearbeiten müssen, brauchen ein echtes Synchronisationsmodell – und das Produkt sollte das offen sagen, statt so zu tun, als wäre ein Ordner eines.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Der Test</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Eine einfache Frage entscheidet die meisten dieser Fälle: Wenn der Dienst morgen verschwände, was hätte der Nutzer noch? Lautet die Antwort „einen Ordner mit Dateien, die sich überall öffnen lassen“, stimmt das Design wahrscheinlich. Lautet die Antwort „einen Anmeldebildschirm“, lohnt sich die Frage, was der Account eigentlich bringt.</p>
+                <p>Die Projekte sind über den <a href="/#work">Arbeitsbereich</a> verlinkt; jedes hat eine ausführlichere Beschreibung, einschließlich der Stellen, an denen Local-first die schwierigere Wahl war.</p>
+              </div>
+            </section>
+          </div>
+
+          <nav class="case-pager" aria-label="Article pagination">
+            <a class="case-pager__card" href="/de/writing/dithering-the-hero/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">Der Hero ist gedithert, nicht weichgezeichnet</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/de/writing/school-planner-distribution/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">Ein Schulplaner ist ein Verteilungsproblem</span>
+            </a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/" data-i18n="ui.home">Home</a>
+        </p>
+      </div>
+    </footer>
+    <nav class="mobile-tabbar" data-tabbar data-i18n-attr="aria-label:ui.navMobile" aria-label="Mobile navigation">
+      <div class="tabbar__track" data-tabbar-track>
+        <ul class="tabbar__list tabbar__list--base">
+          <li>
+            <a class="tabbar__item" href="/#work" data-tab-id="work">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="4" y="4" width="6" height="6" rx="1" />
+                <rect x="14" y="4" width="6" height="6" rx="1" />
+                <rect x="4" y="14" width="6" height="6" rx="1" />
+                <rect x="14" y="14" width="6" height="6" rx="1" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWork">Work</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/writing/" data-tab-id="writing" aria-current="page">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                <path d="M9 13h6" />
+                <path d="M9 17h6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWriting">Writing</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/cv/" data-tab-id="cv">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="4" width="18" height="16" rx="3" />
+                <circle cx="9" cy="10" r="2" />
+                <path d="M15 8h2" />
+                <path d="M15 12h2" />
+                <path d="M7 16h10" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navCvTab">CV</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#about" data-tab-id="about">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="7" r="4" />
+                <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navAbout">About</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#contact" data-tab-id="contact">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6l9 -6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navContact">Contact</span>
+            </a>
+          </li>
+        </ul>
+        <div class="tabbar__indicator" data-tabbar-indicator aria-hidden="true"></div>
+      </div>
+    </nav>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

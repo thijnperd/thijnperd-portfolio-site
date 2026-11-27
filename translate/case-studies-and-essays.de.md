@@ -153,7 +153,7 @@ Language: de
 [p] Diese Trennung ist Absicht. PTA-Daten werden von der Schule veröffentlicht und deshalb als schreibgeschützter lokaler JSON-Datensatz mit der App ausgeliefert. Der eigene Plan einer Schülerin oder eines Schülers verlässt das Gerät nie und es gibt keine Schüler-Accounts – damit entfallen sowohl der Login-Ablauf als auch jeder Grund, Daten zentral zu speichern.
 [p] Der Import umfasst 643 PTA-Bestandteile aus 29 Fächern, von denen 291 ein Datum tragen; eine separate SE-Übersicht ergänzt 133 Prüfungstermine. Klein genug, um es als schreibgeschützten Datensatz mitzuliefern, und groß genug, dass manuelles Eintippen nie realistisch war.
 [alt] Die Periode-2-Übersicht von W3Plan über die Wochen 42 bis 49 mit einer wöchentlichen Belastungsanzeige über chronologischen PTA-Prüfungszeilen.
-[caption] Periode-2-Übersicht (wk 42–wk 49), die einen wöchentlichen Auslastungsbalken (druk – volle Wochen) mit chronologischen PTA-Prüfungsterminen, Gewichtungen und laatste-kans-Markierungen verbindet.
+[caption] Periode-2-Übersicht (wk 42–wk 49), die einen wöchentlichen Auslastungsbalken (druk – volle Wochen) mit chronologischen PTA-Prüfungsterminen, Gewichtungen und Markierungen für den letzten Versuch verbindet.
 
 ### Section 3 — "Wie eine Woche aussieht"
 [h2] Wie eine Woche aussieht

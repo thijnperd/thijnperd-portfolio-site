@@ -1944,6 +1944,37 @@ html[data-phase="dawn"] .ts__end--bottom {
   background: linear-gradient(180deg, var(--paper) 0%, var(--paper) 52%, rgba(var(--accent-rgb), 0.16) 100%);
 }
 
+/* Selection inside a heading is painted as a dither pattern by ditherSelection.js;
+   the native highlight underneath would read as a flat block. */
+h1::selection,
+h2::selection,
+h3::selection,
+.hero__title::selection,
+.case-hero__title::selection {
+  background: transparent;
+  color: inherit;
+}
+
+.dither-selection {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+}
+
+.dither-selection span {
+  position: fixed;
+  border-radius: 2px;
+  background-color: rgba(var(--accent-rgb), 0.9);
+  background-image: repeating-conic-gradient(
+    from 0deg,
+    rgba(0, 0, 0, 0.6) 0 25%,
+    transparent 0 50%
+  );
+  background-size: 4px 4px;
+  mix-blend-mode: multiply;
+}
+
 /* RESPONSIVE */
 
 @media (max-width: 960px) {
@@ -2754,8 +2785,11 @@ html[data-phase="dawn"] .ts__end--bottom {
 
 .case-spec__row {
   display: grid;
-  grid-template-columns: 5.5rem minmax(0, 1fr);
-  gap: 0.75rem;
+  /* Labels differ in length per language ("GEPUBLICEERD", "LEESTIJD"), so the
+     column has to follow the widest one instead of a fixed track. */
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 1.25rem;
+  row-gap: 0.5rem;
   padding: 0.7rem 0;
   border-bottom: 1px solid var(--line);
 }
@@ -2771,6 +2805,7 @@ html[data-phase="dawn"] .ts__end--bottom {
 
 .case-spec__row dt {
   padding-top: 0.125rem;
+  white-space: nowrap;
   font-family: var(--mono);
   font-size: 0.75rem;
   letter-spacing: 0.08em;

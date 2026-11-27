@@ -10,6 +10,11 @@ function normalizeLang(raw) {
 }
 
 function readInitialLanguage() {
+  // A translated page states its language in the markup, and that wins over a stored
+  // preference: otherwise a Dutch page would render German chrome around Dutch copy.
+  const pageLang = normalizeLang(document.documentElement.lang);
+  if (pageLang && pageLang !== 'en') return pageLang;
+
   try {
     const queryLang = normalizeLang(new URLSearchParams(window.location.search).get('lang'));
     if (queryLang) return queryLang;
@@ -134,7 +139,19 @@ export function initI18n() {
   document.addEventListener('click', (event) => {
     const btn = event.target.closest?.('[data-lang-pick]');
     if (!btn) return;
-    setLanguage(btn.dataset.langPick, { persist: true });
+    const next = btn.dataset.langPick;
+    setLanguage(next, { persist: true });
+
+    // Pages that exist in another language link to it with hreflang; follow that
+    // instead of swapping text on a page whose body is written in one language.
+    const alternate = document.querySelector(`link[rel="alternate"][hreflang="${next}"]`);
+    if (!alternate) return;
+    try {
+      const target = new URL(alternate.href, window.location.href);
+      if (target.pathname !== window.location.pathname) window.location.assign(target.href);
+    } catch {
+      /* leave the in-place translation in charge */
+    }
   }, { signal });
 
   window.addEventListener('storage', (event) => {

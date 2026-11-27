@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="de" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Der Hero ist gedithert, nicht weichgezeichnet · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="Die Szene auf der Startseite ist ein normaler Three.js-Render, der anschließend mit einem 8×8-Bayer-Muster auf zwölf Stufen pro Kanal quantisiert wird.…"
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/de/writing/dithering-the-hero/" />
+    <link rel="alternate" hreflang="en" href="https://thijnperd.github.io/writing/dithering-the-hero/" />
+    <link rel="alternate" hreflang="nl" href="https://thijnperd.github.io/nl/writing/dithering-the-hero/" />
+    <link rel="alternate" hreflang="de" href="https://thijnperd.github.io/de/writing/dithering-the-hero/" />
+    <link rel="alternate" hreflang="x-default" href="https://thijnperd.github.io/writing/dithering-the-hero/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="Der Hero ist gedithert, nicht weichgezeichnet · Thijn Köhne" />
+    <meta
+      property="og:description"
+      content="Die Szene auf der Startseite ist ein normaler Three.js-Render, der anschließend mit einem 8×8-Bayer-Muster auf zwölf Stufen pro Kanal quantisiert wird.…"
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/de/writing/dithering-the-hero/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/writing-dithering.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Der Hero ist gedithert, nicht weichgezeichnet · Thijn Köhne" />
+    <meta
+      name="twitter:description"
+      content="Die Szene auf der Startseite ist ein normaler Three.js-Render, der anschließend mit einem 8×8-Bayer-Muster auf zwölf Stufen pro Kanal quantisiert wird.…"
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/writing-dithering.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Der Hero ist gedithert, nicht weichgezeichnet · Thijn Köhne",
+        "description": "A full-screen 8×8 Bayer dither in one GLSL pass, and why the blocks stay two CSS pixels wide.",
+        "url": "https://thijnperd.github.io/de/writing/dithering-the-hero/",
+        "mainEntityOfPage": "https://thijnperd.github.io/writing/dithering-the-hero/",
+        "datePublished": "2026-11-27",
+        "dateModified": "2026-11-27",
+        "inLanguage": "de",
+        "image": "https://thijnperd.github.io/og/writing-dithering.jpg",
+        "author": {
+          "@type": "Person",
+          "name": "Thijn Köhne",
+          "url": "https://thijnperd.github.io/de/writing/dithering-the-hero/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="wide-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a
+            class="page-bar__brand"
+            href="/"
+            data-i18n-attr="aria-label:ui.homeAria"
+            aria-label="Thijn Köhne, home"
+          >
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="case-shell">
+        <article>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Rendering</span>
+              </nav>
+              <span class="project__kind">Essay</span>
+            </div>
+
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">Der Hero ist gedithert, nicht weichgezeichnet</h1>
+                <p class="case-hero__lede">Die Szene auf der Startseite ist ein normaler Three.js-Render, der anschließend mit einem 8×8-Bayer-Muster auf zwölf Stufen pro Kanal quantisiert wird. Dieser eine Pass macht den größten Teil des Looks aus.</p>
+              </div>
+
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.published">Published</dt>
+                      <dd>27. Nov. 2026</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.reading">Reading</dt>
+                      <dd>8 Minuten</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.topics">Topics</dt>
+                      <dd>GLSL, Rendering, Three.js</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.source">Source</dt>
+                      <dd><a href="https://github.com/thijnperd/thijnperd.github.io">GitHub</a> ↗</dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+            <figure class="case-hero__media">
+              <img
+Die Startseite um Mitternacht: ein geditherter Himmel mit Vollmond, ein Laptop auf einem Schreibtisch am Wasser und der Name Thijn Köhne in großer weißer Schrift.            decoding="async"
+                alt="The home page at midnight: a dithered sky with a full moon, a laptop on a desk by the water, and the name Thijn Köhne in large white type."
+              />
+              <figcaption>Mitternacht auf der Startseite. Am Himmel ist das Dithering am deutlichsten zu sehen: Ein Verlauf, der normalerweise Stufen bilden würde, bricht stattdessen in ein Muster auf.</figcaption>
+            </figure>
+          </header>
+
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Warum überhaupt dithern</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Ein weicher Farbverlauf gehört zu den schwierigsten Dingen auf einem 8-Bit-Display. Geht man langsam genug durch einen Himmel, reihen sich die Rundungsfehler zu sichtbaren Bändern auf. Die übliche Lösung ist Rauschen, das Banding gegen Körnung eintauscht.</p>
+                <p>Dithering geht diesen Tausch absichtlich ein. Man reduziert die Palette auf eine bewusst kleine Zahl von Stufen und entscheidet dann anhand von Helligkeit und Schwellenmuster, welche Stufe jedes Pixel bekommt. Aus der Ferne mittelt das Auge das Muster wieder zu einem Tonwert; aus der Nähe ist es eine Textur. Diese Textur ist der Sinn der Sache, kein Nebeneffekt.</p>
+                <p>Der Hero nutzt zwölf Stufen. Wenig genug, damit das Muster sichtbar bleibt, und genug, damit Haut, Holz und Wasser weiterhin als solche erkennbar sind.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Bayer, ganz ohne Nachschlagetabelle</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Geordnetes Dithering nutzt eine feste Schwellenmatrix: ein 8×8-Raster aus Werten, das sich über den Bildschirm wiederholt. Üblicherweise speichert man 64 Zahlen in einem Array oder einer Textur. Der Shader baut dasselbe Muster stattdessen rekursiv auf, aus einer einzigen Zwei-mal-zwei-Funktion:</p>
+                <pre><code>float bayer2(vec2 a) {
+  a = floor(a);
+  return fract(a.x / 2.0 + a.y * a.y * 0.75);
+}
+#define bayer4(a) (bayer2(0.5 * (a)) * 0.25 + bayer2(a))
+#define bayer8(a) (bayer4(0.5 * (a)) * 0.25 + bayer2(a))</code></pre>
+                <p>Jeder Schritt halbiert die Koordinate, wertet das kleinere Muster aus und faltet es mit einem Viertel Gewicht wieder ein. Das Ergebnis ist ein Schwellenfeld mit 64 Werten im Bereich 0–1, erzeugt aus wenigen Instruktionen und ohne Speicher. Zieht man 0.5 ab, entsteht der vorzeichenbehaftete Versatz, den der Quantisierer braucht.</p>
+                <p>Das Muster ist der Grund, warum das Ergebnis wie Druckgrafik wirkt statt wie Fernsehrauschen. Rauschen ändert sich pro Pixel und pro Frame; Bayer wiederholt sich, sodass das Auge Halt findet und das Bild ruhig bleibt, selbst wenn sich die Kamera bewegt.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Ein Pass, nach dem Tonemapping</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Die Szene wird normal gerendert, per Tonemapping angepasst und durch einen <code>OutputPass</code> in den Darstellungsfarbraum überführt; erst danach übernimmt der Dither-Pass, sodass die Stufen im Darstellungsraum quantisiert werden statt im linearen Raum, in dem die Szene beleuchtet wurde.</p>
+                <p>Der Pass tastet nicht jedes Pixel einzeln ab. Er rastet zuerst auf einen Block ein und liest dann die Mitte dieses Blocks:</p>
+                <pre><code>vec2 block = floor(gl_FragCoord.xy / uPixelSize);
+vec2 blockUv = (block * uPixelSize + uPixelSize * 0.5) / uResolution;
+
+vec3 color = texture2D(tDiffuse, blockUv).rgb;</code></pre>
+                <p>Dieses Detail zählt. Würde jedes Pixel seine eigene Farbe abtasten und dann quantisieren, läge das Muster über dem voll aufgelösten Bild und Kanten würden zu Brei. Indem zuerst die Blockmitte abgetastet wird, teilt sich der gesamte Block eine Eingabefarbe, sodass das Dither-Raster selbst zur Auflösung des Bildes wird. Es ist ein bewusster Verzicht auf räumliches Detail zugunsten einer stabilen, scharfen Textur.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Das Raster ist zwei CSS-Pixel breit</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Die Blockgröße wird in Gerätepixeln gesetzt und mit der Device Pixel Ratio skaliert, weil auch <code>gl_FragCoord</code> in Gerätepixeln misst. Ohne diese Skalierung würde derselbe Shader auf einem Retina-Display ein halb so breites Raster erzeugen und das Dithering fast verschwinden.</p>
+                <p>Das vom Renderer genutzte Pixelverhältnis ist bei 1.5 gedeckelt, und der Block liegt bei <code>2.0 × dpr</code> (2.2 auf schmalen Bildschirmen). So bleibt das Raster auf dem Smartphone, dem Laptop und dem 4K-Monitor ungefähr zwei CSS-Pixel breit.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Die Palette bewegt sich mit der Szene</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Dithering ist nur die halbe Optik. Die andere Hälfte ist, dass die zwölf Stufen keine festen Farben sind: Die Atmosphäre der Szene wird über vier Keyframes abgetastet – Tageslicht bei 0, goldene Abenddämmerung bei 0.46, Zwielicht bei 0.66, Mitternacht bei 1 – und jede Farbe der Szene wird per Smoothstep dazwischen interpoliert.</p>
+                <p>Derselbe Skalar steuert die Seite. Ein eigenes Paar aus heller und dunkler Palette wird auf der CPU abgetastet und in CSS Custom Properties geschrieben, sodass Papier, Tinte und Akzentfarbe der Abschnitte unterhalb des Hero mit dem Himmel mitwandern. Auch Favicon und Browser-Themefarbe ändern sich mit. Eine Zahl, ein Licht.</p>
+                <p>Deshalb lässt sich auch der Regler ziehen, statt ein Theme umzuschalten. Es gibt keinen diskreten Dark Mode zum Aktivieren: Es gibt eine Tageszeit, und alles tastet sie ab.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Was es kostet</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Der Post-Pass ist günstig; die Szene nicht. Eine komplette Three.js-Szene mit eigener Wellenfläche, Partikeln und Composer ist viel Arbeit für einen Hintergrund. Deshalb wird das Modul erst im Leerlauf geladen statt im ersten Payload, der Renderer pausiert, sobald der Hero aus dem Sichtfeld scrollt oder der Tab verborgen ist, und Besucher mit Save-Data erhalten stattdessen einen statischen Hintergrund. Bei <code>prefers-reduced-motion</code> bleibt die Uhr stehen: kein Driften, kein Einblenden, keine Wellen, aber das Dithering bleibt.</p>
+                <p>Ein Anti-Flimmer-Detail, das sich zu merken lohnt: Die Papierkörnung nach der Quantisierung wird aus der Blockkoordinate gehasht, nicht aus der Zeit. Rauschen pro Frame auf einem statischen Muster funkelt; Rauschen pro Block wirkt wie Papierstruktur.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Nachlesen</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Der Pass liegt in <code>src/hero/dither.js</code>, die Palette in <code>src/hero/atmosphere.js</code> und die Reihenfolge der Passes in <code>src/hero/HeroScene.js</code>. Der Quellcode der Website liegt auf <a href="https://github.com/thijnperd/thijnperd.github.io">GitHub</a>.</p>
+              </div>
+            </section>
+          </div>
+
+          <nav class="case-pager" aria-label="Article pagination">
+            <a class="case-pager__card" href="/de/writing/school-planner-distribution/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">Ein Schulplaner ist ein Verteilungsproblem</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/de/writing/plain-files/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">Einfache Dateien, keine Accounts</span>
+            </a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/" data-i18n="ui.home">Home</a>
+        </p>
+      </div>
+    </footer>
+    <nav class="mobile-tabbar" data-tabbar data-i18n-attr="aria-label:ui.navMobile" aria-label="Mobile navigation">
+      <div class="tabbar__track" data-tabbar-track>
+        <ul class="tabbar__list tabbar__list--base">
+          <li>
+            <a class="tabbar__item" href="/#work" data-tab-id="work">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="4" y="4" width="6" height="6" rx="1" />
+                <rect x="14" y="4" width="6" height="6" rx="1" />
+                <rect x="4" y="14" width="6" height="6" rx="1" />
+                <rect x="14" y="14" width="6" height="6" rx="1" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWork">Work</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/writing/" data-tab-id="writing" aria-current="page">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                <path d="M9 13h6" />
+                <path d="M9 17h6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWriting">Writing</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/cv/" data-tab-id="cv">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="4" width="18" height="16" rx="3" />
+                <circle cx="9" cy="10" r="2" />
+                <path d="M15 8h2" />
+                <path d="M15 12h2" />
+                <path d="M7 16h10" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navCvTab">CV</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#about" data-tab-id="about">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="7" r="4" />
+                <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navAbout">About</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#contact" data-tab-id="contact">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6l9 -6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navContact">Contact</span>
+            </a>
+          </li>
+        </ul>
+        <div class="tabbar__indicator" data-tabbar-indicator aria-hidden="true"></div>
+      </div>
+    </nav>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

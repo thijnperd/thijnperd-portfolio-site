@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="nl" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Platte bestanden, geen accounts · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="Vier projecten, één regel: de data hoort in een map die de gebruiker kan inzien, verplaatsen en back-uppen zonder een server om toestemming te vragen."
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/nl/writing/plain-files/" />
+    <link rel="alternate" hreflang="en" href="https://thijnperd.github.io/writing/plain-files/" />
+    <link rel="alternate" hreflang="nl" href="https://thijnperd.github.io/nl/writing/plain-files/" />
+    <link rel="alternate" hreflang="de" href="https://thijnperd.github.io/de/writing/plain-files/" />
+    <link rel="alternate" hreflang="x-default" href="https://thijnperd.github.io/writing/plain-files/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="Platte bestanden, geen accounts · Thijn Köhne" />
+    <meta
+      property="og:description"
+      content="Vier projecten, één regel: de data hoort in een map die de gebruiker kan inzien, verplaatsen en back-uppen zonder een server om toestemming te vragen."
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/nl/writing/plain-files/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/writing-plain-files.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Platte bestanden, geen accounts · Thijn Köhne" />
+    <meta
+      name="twitter:description"
+      content="Vier projecten, één regel: de data hoort in een map die de gebruiker kan inzien, verplaatsen en back-uppen zonder een server om toestemming te vragen."
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/writing-plain-files.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Platte bestanden, geen accounts · Thijn Köhne",
+        "description": "What local-first software buys, what it costs, and the one place a database still earns its keep.",
+        "url": "https://thijnperd.github.io/nl/writing/plain-files/",
+        "mainEntityOfPage": "https://thijnperd.github.io/writing/plain-files/",
+        "datePublished": "2026-11-27",
+        "dateModified": "2026-11-27",
+        "inLanguage": "nl",
+        "image": "https://thijnperd.github.io/og/writing-plain-files.jpg",
+        "author": {
+          "@type": "Person",
+          "name": "Thijn Köhne",
+          "url": "https://thijnperd.github.io/nl/writing/plain-files/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="wide-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a
+            class="page-bar__brand"
+            href="/"
+            data-i18n-attr="aria-label:ui.homeAria"
+            aria-label="Thijn Köhne, home"
+          >
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="case-shell">
+        <article>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Local-first</span>
+              </nav>
+              <span class="project__kind">Essay</span>
+            </div>
+
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">Platte bestanden, geen accounts</h1>
+                <p class="case-hero__lede">Vier projecten, één regel: de data hoort in een map die de gebruiker kan inzien, verplaatsen en back-uppen zonder een server om toestemming te vragen.</p>
+              </div>
+
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.published">Published</dt>
+                      <dd>27 nov 2026</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.reading">Reading</dt>
+                      <dd>7 minuten</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.topics">Topics</dt>
+                      <dd>Local-first, bestandsformaten</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.projects">Projects</dt>
+                      <dd><a href="/#work">Vier</a></dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">De standaard is de computer van iemand anders</h2>
+              </div>
+              <div class="case-section__content">
+                <p>De meeste software gaat tegenwoordig uit van een account. Notities, afbeeldingen, planningen en onderzoek leven in een dienst, in een formaat dat die dienst bepaalt, bereikbaar zolang de dienst bereikbaar is. Dat is een goede deal voor synchronisatie en een slechte voor al het andere: de tool kan verdwijnen, het formaat kan veranderen, de prijs kan stijgen en de data gaat niet open zonder de app die haar schreef.</p>
+                <p>De vier projecten op deze site wijzen de andere kant op. Niet omdat de cloud slecht is, maar omdat de lokale versie voor precies deze tools eenvoudiger, sneller en makkelijker te vertrouwen is. Het bestand is de interface.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Hoe dat er in de praktijk uitziet</h2>
+              </div>
+              <div class="case-section__content">
+                <ul>
+                  <li>De webversie van Dither Studio opent vanuit zijn eigen map, zonder build-stap en zonder runtime-afhankelijkheden. Een afgewerkt beeld exporteert als PNG, tekst, WebM of een JSON-recept; dat recept is de hele opstelling, leesbaar in elke editor.</li>
+                  <li><strong>Cortex leest een kluis met Markdown op de plek waar die al staat.</strong> Er is geen import, geen database en geen kopie. Als de app wordt verwijderd, blijven de notities onaangeraakt.</li>
+                  <li><strong>W3Plan houdt de planning van een leerling op het apparaat.</strong> De PTA-data van de school wordt meegeleverd als alleen-lezen JSON-dataset, los van het eigen rooster van de leerling.</li>
+                  <li><strong>PapersPlease schrijft überhaupt niets naar een dienst.</strong> Het bevraagt openbare API's, linkt naar open-access-artikelen en laat het lezen aan jou.</li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Wat het oplevert</h2>
+              </div>
+              <div class="case-section__content">
+                <p><strong>Het gaat open.</strong> Geen sessiecontrole, geen laadscherm, geen &quot;neem contact op met je beheerder&quot;. Een map met statische bestanden is de snelste soort app die er bestaat.</p>
+                <p><strong>Het werkt offline.</strong> In de trein, in een kelder, op een schoolnetwerk dat alles blokkeert. De tool merkt er niets van, omdat niets essentieels op afstand staat.</p>
+                <p><strong>De bestanden overleven de app.</strong> Markdown, PNG, WebM en JSON blijven leesbaar zonder deze codebase. Dat is het echte exitplan: geen data-exportfunctie, maar data die nooit geëxporteerd hoefde te worden.</p>
+                <p><strong>Back-ups zijn saai.</strong> Een map kun je kopiëren, zippen, in git zetten of op een USB-stick slepen. Er is geen herstelflow om te testen en geen accountherstel om kwijt te raken.</p>
+                <p><strong>Er is geen rechtenmodel.</strong> Geen deelinstellingen, geen rollen, geen link die per ongeluk openbaar staat. Toegang is simpelweg wat het bestandssysteem zegt dat het is.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Wat het kost</h2>
+              </div>
+              <div class="case-section__content">
+                <p><strong>Geen synchronisatie.</strong> Twee machines betekent twee kopieën, en die samenvoegen is het probleem van de gebruiker. Dit is de grootste prijs en degene die sommige producten volledig uitsluit.</p>
+                <p><strong>Niet samenwerken.</strong> Twee mensen die tegelijk hetzelfde bestand bewerken is een lastig probleem, en &quot;zet het in een gedeelde map&quot; is geen oplossing. Een tool die realtime samenwerking nodig heeft, heeft een server nodig; doen alsof dat niet zo is verschuift alleen het conflict.</p>
+                <p><strong>Je bent zelf eigenaar van je back-ups.</strong> Local-first betekent dat het ook lokaal misgaat. Een verwijderde map is weg, tenzij iemand zelf een kopie maakte.</p>
+                <p><strong>Distributie komt op jouw bord.</strong> Installers, updates en code signing zijn de ondankbare belasting op desktopsoftware. W3Plan levert automatisch bijwerkende builds voor Windows en macOS, en dat mechanisme vroeg meer zorg dan sommige functies.</p>
+                <p><strong>Lokale rekenkracht heeft een plafond.</strong> Alles wat een groot model of veel CPU vraagt is lastiger zonder server, en soms simpelweg niet de moeite waard om lokaal te doen.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Waar de cloud zijn plek verdient</h2>
+              </div>
+              <div class="case-section__content">
+                <p>W3Plan is een helder voorbeeld van die grens. Het PTA-rooster van de school is gepubliceerde data die elke leerling nodig heeft en die geen enkele leerling mag aanpassen. Door het mee te leveren als alleen-lezen JSON-dataset — gescheiden van de eigen planning van de leerling en bijgewerkt zodra de school een nieuwe export publiceert — blijft de scheiding scherp omdat de data een eigenaar en een richting heeft: gepubliceerd door de school, gelezen door de app, nooit teruggeschreven.</p>
+                <p>Dat is een bruikbare vuistregel. Data die iemand zelf maakt blijft lokaal. Data die een instelling publiceert kan worden opgehaald. Data die twee mensen tegelijk moeten bewerken heeft een echt synchronisatiemodel nodig, en het product moet dat eerlijk zeggen in plaats van te doen alsof een map dat is.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">De test</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Eén simpele vraag beslist de meeste van deze gevallen: als de dienst morgen verdween, wat heeft de gebruiker dan nog? Als het antwoord &quot;een map met bestanden die overal in opengaan&quot; is, klopt het ontwerp waarschijnlijk. Als het antwoord &quot;een inlogscherm&quot; is, is het de moeite waard om je af te vragen wat dat account nu eigenlijk oplevert.</p>
+                <p>De projecten zijn gelinkt vanuit de <a href="/#work">sectie werk</a>; elk project heeft een uitgebreider verhaal, inclusief de plekken waar local-first de moeilijkere keuze was.</p>
+              </div>
+            </section>
+          </div>
+
+          <nav class="case-pager" aria-label="Article pagination">
+            <a class="case-pager__card" href="/nl/writing/dithering-the-hero/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">De hero is geditherd, niet vervaagd</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/nl/writing/school-planner-distribution/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">Een schoolplanner is een distributieprobleem</span>
+            </a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/" data-i18n="ui.home">Home</a>
+        </p>
+      </div>
+    </footer>
+    <nav class="mobile-tabbar" data-tabbar data-i18n-attr="aria-label:ui.navMobile" aria-label="Mobile navigation">
+      <div class="tabbar__track" data-tabbar-track>
+        <ul class="tabbar__list tabbar__list--base">
+          <li>
+            <a class="tabbar__item" href="/#work" data-tab-id="work">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="4" y="4" width="6" height="6" rx="1" />
+                <rect x="14" y="4" width="6" height="6" rx="1" />
+                <rect x="4" y="14" width="6" height="6" rx="1" />
+                <rect x="14" y="14" width="6" height="6" rx="1" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWork">Work</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/writing/" data-tab-id="writing" aria-current="page">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                <path d="M9 13h6" />
+                <path d="M9 17h6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWriting">Writing</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/cv/" data-tab-id="cv">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="4" width="18" height="16" rx="3" />
+                <circle cx="9" cy="10" r="2" />
+                <path d="M15 8h2" />
+                <path d="M15 12h2" />
+                <path d="M7 16h10" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navCvTab">CV</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#about" data-tab-id="about">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="7" r="4" />
+                <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navAbout">About</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#contact" data-tab-id="contact">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6l9 -6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navContact">Contact</span>
+            </a>
+          </li>
+        </ul>
+        <div class="tabbar__indicator" data-tabbar-indicator aria-hidden="true"></div>
+      </div>
+    </nav>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>

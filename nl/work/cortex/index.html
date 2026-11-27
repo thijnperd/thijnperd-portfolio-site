@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="nl" data-phase="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Cortex · Thijn Köhne</title>
+    <meta
+      name="description"
+      content="Een local-first browser die een map met Markdown ter plekke leest en zes verschillende weergaven van dezelfde notities toont. Geen database, geen import…"
+    />
+    <link rel="canonical" href="https://thijnperd.github.io/nl/work/cortex/" />
+    <link rel="alternate" hreflang="en" href="https://thijnperd.github.io/work/cortex/" />
+    <link rel="alternate" hreflang="nl" href="https://thijnperd.github.io/nl/work/cortex/" />
+    <link rel="alternate" hreflang="de" href="https://thijnperd.github.io/de/work/cortex/" />
+    <link rel="alternate" hreflang="x-default" href="https://thijnperd.github.io/work/cortex/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Thijn Köhne" />
+    <meta property="og:title" content="Cortex · Thijn Köhne" />
+    <meta
+      property="og:description"
+      content="Een local-first browser die een map met Markdown ter plekke leest en zes verschillende weergaven van dezelfde notities toont. Geen database, geen import…"
+    />
+    <meta property="og:url" content="https://thijnperd.github.io/nl/work/cortex/" />
+    <meta property="og:image" content="https://thijnperd.github.io/og/cortex.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cortex · Thijn Köhne" />
+    <meta
+      name="twitter:description"
+      content="Een local-first browser die een map met Markdown ter plekke leest en zes verschillende weergaven van dezelfde notities toont. Geen database, geen import…"
+    />
+    <meta name="twitter:image" content="https://thijnperd.github.io/og/cortex.jpg" />
+    <meta name="theme-color" content="#e4e6e1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
+      })();
+    </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="case-page">
+    <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
+
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a class="page-bar__brand" href="/" data-i18n-attr="aria-label:ui.homeAria" aria-label="Thijn Köhne, home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" aria-current="page" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main" tabindex="-1">
+      <div class="case-shell">
+        <article>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/#work" data-i18n="article.crumbWork">Work</a><span aria-hidden="true">/</span><span>02</span>
+              </nav>
+              <span class="project__kind" data-i18n="home.kindDesktopWeb">Desktop &amp; Web</span>
+            </div>
+
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">Cortex</h1>
+                <p class="case-hero__lede">Een local-first browser die een map met Markdown ter plekke leest en zes verschillende weergaven van dezelfde notities toont. Geen database, geen import, geen account.</p>
+
+                <ul class="project__stats case-hero__stats">
+                  <li><strong>6</strong><span data-i18n="home.cortexStat0">views</span></li>
+                  <li><strong>5,523</strong><span data-i18n="home.cortexStat1">notes benchmarked</span></li>
+                  <li><strong>100%</strong><span data-i18n="home.cortexStat2">local-first</span></li>
+                </ul>
+
+                <div class="case-hero__actions">
+                  <a
+                    class="btn btn--primary"
+                    href="https://thijnperd.github.io/obsidian-cortex/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span data-i18n="home.linkLiveDemo">Live demo</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                  <a
+                    class="btn btn--ghost"
+                    href="https://github.com/thijnperd/obsidian-cortex"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span data-i18n="ui.github">GitHub</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.role">Role</dt>
+                      <dd>Onafhankelijk project</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.stack">Stack</dt>
+                      <dd>Rust, axum, WebGL2</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.status">Status</dt>
+                      <dd>Windows-desktop-app, statische webdemo</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <p class="article__outcome">
+                  <span data-i18n="article.inDailyUse">In daily use</span>Een kluis van 500 notities met 5,000 links.</p>
+              </div>
+            </div>
+
+            <figure class="case-hero__media">
+              <img
+De Brain-weergave van Cortex met een kluis van 328 notities weergegeven als een 3D-hersenschors met mapclusters en wikilink-banen.hpriority="high"
+                decoding="async"
+                alt="Cortex Brain view showing a 328-note vault rendered as a 3D cortical surface with folder clusters and wikilink tracts."
+              />
+              <figcaption>De Brain-weergave: een kluis van 328 notities gevouwen tot een hersenschors, met mappen als clusters en wikilinks als banen ertussen.</figcaption>
+            </figure>
+          </header>
+
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Notities ontgroeien mappen</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Een kluis met een paar honderd Markdown-bestanden heeft structuur, maar niet de structuur die de mappenboom doet vermoeden. Notities die maanden uit elkaar zijn geschreven raken met elkaar verbonden; mappen zijn alleen maar de plek waar ze toevallig zijn opgeslagen. De meeste tools lossen dit op met een zoekfunctie, of met een graaf die óf een decoratieve haarbal is óf een betaalde cloudfunctie.</p>
+                <p>Cortex kiest de derde optie: lees de map zoals hij is, parse de links en geef dezelfde data meerdere vormen. Er wordt niets geïmporteerd en niets gekopieerd. Als je de app verwijdert, staan je notities nog precies waar ze stonden.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Ter plekke lezen, één keer opbouwen</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Cortex wijst naar een kluis en parset die rechtstreeks: Markdown-bestanden, frontmatter, wikilinks. Dat vormt één in-memory model voor de sessie. Er is geen database om te migreren en geen index om opnieuw op te bouwen — de map is de bron van waarheid.</p>
+                <p>De lay-out is deterministisch. Dezelfde kluis levert dezelfde kaart op, en dat is belangrijker dan het klinkt: een kaart die bij elke start opnieuw schudt is een screensaver, geen manier om te onthouden waar iets ligt. De stresstest-kluis bevat 5,523 notities verspreid over 41 mappen, met 24,151 links.</p>
+
+                <figure class="article__figure">
+                  <img
+De Graph-weergave van Cortex met de kluis van 5,523 notities en 24,151 links over 41 mappen, live gerenderd in WebGL2. height="900"
+                    alt="Cortex Graph view showing the 5,523-note, 24,151-link vault across 41 folders rendered live in WebGL2."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>De Graph-weergave van de stresstest-kluis met 5,523 notities en 24,151 links (41 mappen), live gerenderd in WebGL2.</figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Zes weergaven, één model</h2>
+              </div>
+              <div class="case-section__content">
+                <p>Graph, brain, timeline, atlas, bento en decisions zijn projecties van dezelfde geparste kluis, geen zes losse tools:</p>
+                <ul>
+                  <li><strong>Graph</strong> — wat waarnaar linkt, zonder de mappenboom in de weg.</li>
+                  <li><strong>Brain</strong> — de kluis als een gevouwen oppervlak, met mappen als regio's.</li>
+                  <li><strong>Timeline</strong> — wanneer de notities zijn geschreven en wat zich in de tijd groepeert.</li>
+                  <li><strong>Atlas</strong> — mappen als landen, notities als plaatsen, links als wegen, op een kaart die elke keer op dezelfde manier groeit.</li>
+                  <li><strong>Bento</strong> — elke map als een vak, geschaald naar het aandeel in de kluis, met de sterkste notities erin.</li>
+                  <li><strong>Decisions</strong> — het redeneerspoor achter een keuze, bewaard naast de keuze zelf.</li>
+                </ul>
+
+                <div class="case-gallery">
+                  <figure class="article__figure">
+                    <img
+De Atlas-weergave van Cortex waarin de kluis van 5,523 notities wordt getekend als een landkaart met 41 gelabelde maplanden verbonden door routes.                      alt="Cortex Atlas view rendering the 5,523-note vault as a cartographic map of 41 labeled folder countries connected by routes."
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <figcaption>De Atlas-weergave van dezelfde kluis van 5,523 notities — mappen deterministisch neergelegd als 41 landen, notities als plaatsen en links als routes.</figcaption>
+                  </figure>
+
+                  <figure class="article__figure">
+                    <img
+De Bento-weergave van Cortex waarin elke map naar verhouding is geschaald, met Journal op 20%, Research op 3% en Systems op 2% naast de belangrijkste notities.        alt="Cortex Bento view showing every folder sized proportionally, with Journal at 20%, Research at 3%, and Systems at 2% alongside top notes."
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <figcaption>De Bento-weergave die elke map naar verhouding schaalt (Journal 20%, Research 3%, Systems 2%) en de sterkste notities naar voren haalt.</figcaption>
+                  </figure>
+                </div>
+
+                <p>De decisions-weergave is de weergave die verandert hoe je de kluis gebruikt. Een notitie die een besluit vastlegt is alleen nuttig als de alternatieven en de reden mee bewaard blijven, en dat is eerst een datastructuurprobleem voordat het een visueel probleem is.</p>
+
+                <figure class="article__figure">
+                  <img
+Het Decisions-bord van Cortex naast een geopend beslisspoor met YAML-frontmatter dat status, vertrouwen, vervangen notities en dragende aannames toont.Cortex Decisions board beside an open YAML-frontmatter decision trail showing status, confidence, superseded notes, and load-bearing assumptions."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>Het Decisions-bord naast een geopend beslisspoor met YAML-frontmatter, met status, vertrouwen, vervangen notities en dragende aannames.</figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Rust, WebGL2 en een lokale server</h2>
+              </div>
+              <div class="case-section__content">
+                <p>De Rust-kern doet het zware werk: scannen, parsen, links oplossen en de lay-out berekenen. Een axum-server stelt dat beschikbaar aan een handgeschreven WebGL2-interface, waardoor duizenden knooppunten interactief blijven in plaats van een statisch plaatje. De app is een lokale server die opent in je browser, standaard gebonden aan loopback, en de Windows-build verpakt het geheel in een installer.</p>
+                <pre><code>cargo run -p cortex -- serve ./vault</code></pre>
+                <p>De GitHub Pages-build is een statische export van een gevulde voorbeeldkluis, zodat je de weergaven kunt uitproberen zonder iets te installeren.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Wat lokaal werken kost</h2>
+              </div>
+              <div class="case-section__content">
+                <p>De installer is alleen voor Windows, er is geen mobiele app en er is geen synchronisatie tussen machines: daarvoor heb je iCloud, Dropbox, Syncthing of git nodig. Dat zijn echte beperkingen. Het is ook de reden dat de app binnen een seconde opent, nooit om een account vraagt en dat een kluis verplaatst, geback-upt of geversioneerd kan worden zoals elke andere map. Het bredere verhaal, over alle vier de projecten heen, staat in <a href="/nl/writing/plain-files/">Platte bestanden, geen accounts</a>.</p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Probeer het</h2>
+              </div>
+              <div class="case-section__content">
+                <p><a href="https://thijnperd.github.io/obsidian-cortex/">Open de live demo</a> om met de voorbeeldkluis door de zes weergaven te bewegen, of bekijk <a href="https://github.com/thijnperd/obsidian-cortex">de broncode</a>.</p>
+              </div>
+            </section>
+          </div>
+
+          <nav class="case-pager" aria-label="Project pagination">
+            <a class="case-pager__card" href="/nl/work/dither-studio/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">Dither Studio</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/nl/work/w3plan/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">W3Plan</span>
+            </a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <p>© <span data-year>2026</span> Thijn Köhne</p>
+        <p>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/" data-i18n="ui.home">Home</a>
+        </p>
+        <div class="footer__social">
+          <a
+            class="footer__icon-link"
+            href="https://github.com/thijnperd"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            title="github.com/thijnperd"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+            </svg>
+          </a>
+          <a
+            class="footer__icon-link"
+            href="https://www.linkedin.com/in/thijn-k%C3%B6hne-85893625a"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            title="linkedin.com/in/thijn-köhne-85893625a"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M8 11v5" />
+              <path d="M8 8v.01" />
+              <path d="M12 16v-5" />
+              <path d="M16 16v-3a2 2 0 1 0 -4 0" />
+              <path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <nav class="mobile-tabbar" data-tabbar data-i18n-attr="aria-label:ui.navMobile" aria-label="Mobile navigation">
+      <div class="tabbar__track" data-tabbar-track>
+        <ul class="tabbar__list tabbar__list--base">
+          <li>
+            <a class="tabbar__item" href="/#work" data-tab-id="work" aria-current="page">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="4" y="4" width="6" height="6" rx="1" />
+                <rect x="14" y="4" width="6" height="6" rx="1" />
+                <rect x="4" y="14" width="6" height="6" rx="1" />
+                <rect x="14" y="14" width="6" height="6" rx="1" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWork">Work</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/writing/" data-tab-id="writing">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                <path d="M9 13h6" />
+                <path d="M9 17h6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navWriting">Writing</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/cv/" data-tab-id="cv">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="4" width="18" height="16" rx="3" />
+                <circle cx="9" cy="10" r="2" />
+                <path d="M15 8h2" />
+                <path d="M15 12h2" />
+                <path d="M7 16h10" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navCvTab">CV</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#about" data-tab-id="about">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="7" r="4" />
+                <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navAbout">About</span>
+            </a>
+          </li>
+          <li>
+            <a class="tabbar__item" href="/#contact" data-tab-id="contact">
+              <svg class="tabbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6l9 -6" />
+              </svg>
+              <span class="tabbar__label" data-i18n="ui.navContact">Contact</span>
+            </a>
+          </li>
+        </ul>
+        <div class="tabbar__indicator" data-tabbar-indicator aria-hidden="true"></div>
+      </div>
+    </nav>
+    <script type="module" src="/src/page.js"></script>
+  </body>
+</html>
