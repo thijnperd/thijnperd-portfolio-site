@@ -1,15 +1,131 @@
 import * as THREE from 'three';
 
 /**
- * Day-to-night atmosphere state machine driven by normalized scalar `t` (0 to 1).
- * Four keyframes sit at 0.0 (daylight), 0.46 (golden dusk), 0.66 (deep twilight),
- * and 1.0 (midnight), interpolated piecewise so sunset transitions smoothly into
- * indigo twilight and starry night without muddy grey midtones.
+ * 24-hour day-to-night-to-day atmosphere state machine driven by normalized clock
+ * scalar `t` (0.00 = 00:00 midnight -> 0.275 = 06:36 dawn -> 0.50 = 12:00 daylight
+ * -> 0.76 = 18:15 golden dusk -> 0.84 = twilight -> 1.00 = 24:00 midnight).
  */
 
 const RAW_STOPS = [
   {
     t: 0.0,
+    key: 'night',
+    label: 'midnight',
+    status: 'midnight',
+    background: '#050810',
+    fog: '#070b12',
+    skyTop: '#010206',
+    skyMid: '#040812',
+    skyHorizon: '#09121e',
+    sunGlowColor: '#1f2e45',
+    cloudColor: '#0e1624',
+    cloudStrength: 0.03,
+    starOpacity: 1.0,
+    fogDensity: 0.024,
+    sunColor: '#9db6db',
+    sunIntensity: 0.7,
+    sunPosition: [7.6, 4.6, -5.2],
+    ambientColor: '#1e2b3e',
+    ambientIntensity: 0.62,
+    hemiSky: '#162131',
+    hemiGround: '#05080d',
+    hemiIntensity: 0.3,
+    waterDeep: '#03060b',
+    waterShallow: '#102030',
+    waterSky: '#0b1622',
+    screenLight: 3.6,
+    screenTint: '#ffc089',
+    coreLight: 3.3,
+    coreTint: '#ffb08a',
+    coreColor: '#ff7a3d',
+    shadowStrength: 0.5,
+    exposure: 1.12,
+    ink: '#e9eae4',
+    paper: '#0a0d10',
+    accent: '#f07443',
+    accentWarm: '#ffb273',
+    night: 1,
+  },
+  {
+    t: 0.2,
+    key: 'night',
+    label: 'midnight',
+    status: 'midnight',
+    background: '#161b2a',
+    fog: '#252538',
+    skyTop: '#0d1526',
+    skyMid: '#2a334e',
+    skyHorizon: '#625060',
+    sunGlowColor: '#db7454',
+    cloudColor: '#565068',
+    cloudStrength: 0.14,
+    starOpacity: 0.56,
+    fogDensity: 0.023,
+    sunColor: '#d0bed8',
+    sunIntensity: 1.15,
+    sunPosition: [-5.8, 2.2, 3.2],
+    ambientColor: '#3a4664',
+    ambientIntensity: 0.68,
+    hemiSky: '#3b4868',
+    hemiGround: '#11141c',
+    hemiIntensity: 0.38,
+    waterDeep: '#090e19',
+    waterShallow: '#283852',
+    waterSky: '#3e3548',
+    screenLight: 2.7,
+    screenTint: '#ffbe9c',
+    coreLight: 2.6,
+    coreTint: '#ffbaa6',
+    coreColor: '#e87e66',
+    shadowStrength: 0.46,
+    exposure: 1.07,
+    ink: '#eceee8',
+    paper: '#141925',
+    accent: '#f07443',
+    accentWarm: '#ffb28a',
+    night: 0.72,
+  },
+  {
+    t: 0.275,
+    key: 'dawn',
+    label: 'dawn',
+    status: 'dawn',
+    background: '#d4c9cc',
+    fog: '#dfcfd0',
+    skyTop: '#5d7b98',
+    skyMid: '#c49899',
+    skyHorizon: '#f0d7c9',
+    sunGlowColor: '#ff9b7a',
+    cloudColor: '#fae4da',
+    cloudStrength: 0.3,
+    starOpacity: 0.04,
+    fogDensity: 0.02,
+    sunColor: '#ffd4be',
+    sunIntensity: 2.75,
+    sunPosition: [-8.2, 2.8, 3.6],
+    ambientColor: '#d5c7cc',
+    ambientIntensity: 0.88,
+    hemiSky: '#f0dde0',
+    hemiGround: '#6d626a',
+    hemiIntensity: 0.58,
+    waterDeep: '#122634',
+    waterShallow: '#7196a3',
+    waterSky: '#dbc7cb',
+    screenLight: 1.45,
+    screenTint: '#ffd8cb',
+    coreLight: 1.65,
+    coreTint: '#ffd1c2',
+    coreColor: '#e88c74',
+    shadowStrength: 0.41,
+    exposure: 1.02,
+    ink: '#181c22',
+    paper: '#e2e5ea',
+    accent: '#a63a35',
+    accentWarm: '#d4715a',
+    night: 0.24,
+  },
+  {
+    t: 0.5,
     key: 'day',
     label: 'daylight',
     status: 'daylight',
@@ -48,7 +164,7 @@ const RAW_STOPS = [
     night: 0,
   },
   {
-    t: 0.46,
+    t: 0.76,
     key: 'dusk',
     label: 'dusk',
     status: 'dusk',
@@ -64,7 +180,7 @@ const RAW_STOPS = [
     fogDensity: 0.021,
     sunColor: '#ff9650',
     sunIntensity: 3.15,
-    sunPosition: [-8.4, 2.3, 2.2],
+    sunPosition: [8.4, 2.3, -2.2],
     ambientColor: '#df9f74',
     ambientIntensity: 0.72,
     hemiSky: '#ffd3a8',
@@ -87,7 +203,7 @@ const RAW_STOPS = [
     night: 0.3,
   },
   {
-    t: 0.66,
+    t: 0.84,
     key: 'dusk',
     label: 'dusk',
     status: 'dusk',
@@ -248,8 +364,16 @@ export function sampleAtmosphere(t, out = createAtmosphereState()) {
   for (const key of NUMBER_KEYS) out[key] = THREE.MathUtils.lerp(a[key], b[key], eased);
 
   out.sunPosition.lerpVectors(a.sunPosition, b.sunPosition, eased);
-  out.key = clamped < 0.34 ? 'day' : clamped < 0.72 ? 'dusk' : 'night';
-  out.label = clamped < 0.34 ? 'daylight' : clamped < 0.72 ? 'dusk' : 'midnight';
+  const key = (clamped < 0.21 || clamped >= 0.855)
+    ? 'night'
+    : clamped < 0.36
+      ? 'dawn'
+      : clamped < 0.70
+        ? 'day'
+        : 'dusk';
+  const labels = { dawn: 'dawn', day: 'daylight', dusk: 'dusk', night: 'midnight' };
+  out.key = key;
+  out.label = labels[key];
   out.status = out.label;
   out.t = clamped;
 

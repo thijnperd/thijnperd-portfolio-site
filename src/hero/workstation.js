@@ -56,16 +56,19 @@ export function createTerminalTexture() {
   return terminal;
 }
 
-function drawTerminal(terminal, elapsed, timeOfDay) {
+const TIERS = {
+  dawn: { idx: 0, glow: 8, accent: '#f3a696', ink: '#f8ebe7', dim: 'rgba(248,214,205,0.44)', status: 'dawn' },
+  day: { idx: 1, glow: 0, accent: '#5fd2ae', ink: '#dcf3e8', dim: 'rgba(190,230,216,0.42)', status: 'daylight' },
+  dusk: { idx: 2, glow: 12, accent: '#ffb27a', ink: '#ffe9d5', dim: 'rgba(255,214,180,0.44)', status: 'dusk' },
+  night: { idx: 3, glow: 18, accent: '#ff9a63', ink: '#fff2e9', dim: 'rgba(255,214,190,0.46)', status: 'midnight' },
+};
+
+function drawTerminal(terminal, elapsed, phaseKey = 'day') {
   const { ctx, canvas } = terminal;
   const w = canvas.width;
   const h = canvas.height;
 
-  const tier = timeOfDay < 0.4 ? 0 : timeOfDay < 0.78 ? 1 : 2;
-  const accent = ['#5fd2ae', '#ffb27a', '#ff9a63'][tier];
-  const ink = ['#dcf3e8', '#ffe9d5', '#fff2e9'][tier];
-  const dim = ['rgba(190,230,216,0.42)', 'rgba(255,214,180,0.44)', 'rgba(255,214,190,0.46)'][tier];
-  const status = ['daylight', 'dusk', 'midnight'][tier];
+  const { glow, accent, ink, dim, status } = TIERS[phaseKey] || TIERS.day;
   const dots = '.'.repeat(1 + (Math.floor(elapsed * 2) % 3));
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -124,9 +127,9 @@ function drawTerminal(terminal, elapsed, timeOfDay) {
   y += 34;
   ctx.font = `600 27px ${MONO}`;
   ctx.fillStyle = accent;
-  if (tier > 0) {
+  if (glow > 0) {
     ctx.shadowColor = accent;
-    ctx.shadowBlur = tier === 2 ? 18 : 10;
+    ctx.shadowBlur = glow;
   }
   ctx.fillText(status, 34, y);
   ctx.shadowBlur = 0;
@@ -180,14 +183,14 @@ function drawTerminal(terminal, elapsed, timeOfDay) {
  * Redraws are throttled to ~9 fps: enough for the cursor / progress to feel live,
  * but far cheaper on texture uploads than redrawing at 60 fps.
  */
-export function updateTerminalTexture(terminal, elapsed, timeOfDay) {
-  const tier = timeOfDay < 0.4 ? 0 : timeOfDay < 0.78 ? 1 : 2;
+export function updateTerminalTexture(terminal, elapsed, phaseKey = 'day') {
+  const tier = (TIERS[phaseKey] || TIERS.day).idx;
   const due = elapsed - terminal.lastDraw > 1 / 9 || tier !== terminal.lastTier;
   if (!due) return;
 
   terminal.lastDraw = elapsed;
   terminal.lastTier = tier;
-  drawTerminal(terminal, elapsed, timeOfDay);
+  drawTerminal(terminal, elapsed, phaseKey);
   terminal.texture.needsUpdate = true;
 }
 
@@ -590,7 +593,7 @@ export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, at
   workstation.screenGlow.material.color.copy(atm.screenTint);
   workstation.screenGlow.material.opacity = 0.04 + timeOfDay * 0.28;
 
-  updateTerminalTexture(terminal, elapsed, timeOfDay);
+  updateTerminalTexture(terminal, elapsed, atm.key || 'day');
 }
 
 /* ------------------------------------------------------------------ */

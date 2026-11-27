@@ -3,7 +3,7 @@ import { createAdaptiveUI, getTimeOfDayFromClock } from './ui/adaptiveUI.js';
 import { initSite } from './ui/site.js';
 import { initAnalytics, track } from './analytics.js';
 
-const PHASE_PRESETS = { day: 0.02, dusk: 0.47, night: 0.94 };
+const PHASE_PRESETS = { dawn: 0.275, day: 0.5, dusk: 0.76, night: 0.96 };
 const INITIAL_TIME = getTimeOfDayFromClock();
 
 initSite();
@@ -95,7 +95,8 @@ if (saveData) {
 if (phaseCycleBtn) {
   phaseCycleBtn.addEventListener('click', () => {
     const phase = document.documentElement.dataset.phase || 'day';
-    const nextPhase = phase === 'day' ? 'dusk' : phase === 'dusk' ? 'night' : 'day';
+    const order = { dawn: 'day', day: 'dusk', dusk: 'night', night: 'dawn' };
+    const nextPhase = order[phase] || 'day';
     track(`phase-${nextPhase}`);
     setTime(PHASE_PRESETS[nextPhase]);
   });

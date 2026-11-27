@@ -1,36 +1,31 @@
 /**
- * Interactive vertical day-to-night slider with pointer drag, clickable Sun/Moon/
- * Dusk preset stops, and full keyboard support (`role="slider"` and `aria-valuetext`).
- * 0.0 sits at the bottom (daylight) and 1.0 at the top (midnight).
+ * Interactive vertical 00:00–24:00 day/night slider with pointer drag, preset
+ * stops (Midnight / Dawn / Daylight / Dusk / Midnight), and keyboard support.
+ * `0.00` sits at the bottom (`00:00`) and `1.00` at the top (`24:00`).
  */
 
 import { t } from './i18n.js';
 
-const SUN_ICON = `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
-       stroke-linecap="round" aria-hidden="true" focusable="false">
-    <circle cx="12" cy="12" r="4.1" />
-    <path d="M12 2.6v2.1M12 19.3v2.1M2.6 12h2.1M19.3 12h2.1M5.4 5.4l1.5 1.5M17.1 17.1l1.5 1.5M18.6 5.4l-1.5 1.5M6.9 17.1l-1.5 1.5" />
-  </svg>
-`;
-
-const MOON_ICON = `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
-       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-    <path d="M20.2 14.6A8.6 8.6 0 0 1 9.4 3.8a8.6 8.6 0 1 0 10.8 10.8Z" />
-  </svg>
-`;
-
 const clamp01 = (value) => Math.min(Math.max(value, 0), 1);
 
-export function timeOfDayLabel(value) {
-  const pct = Math.round(clamp01(value) * 100);
-  if (value < 0.34) return `${t('phase.day')}, ${pct}%`;
-  if (value < 0.72) return `${t('phase.dusk')}, ${pct}%`;
-  return `${t('phase.night')}, ${pct}%`;
+export function formatSliderHour(value) {
+  const v = clamp01(value);
+  if (v >= 0.995) return '24:00';
+  const totalMins = Math.round((v * 24 * 60) / 5) * 5;
+  const h = Math.floor(totalMins / 60) % 24;
+  const m = totalMins % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
-export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
+export function timeOfDayLabel(value) {
+  const clock = formatSliderHour(value);
+  if (value < 0.21 || value >= 0.855) return `${clock} · ${t('phase.night')}`;
+  if (value < 0.36) return `${clock} · ${t('phase.dawn')}`;
+  if (value < 0.70) return `${clock} · ${t('phase.day')}`;
+  return `${clock} · ${t('phase.dusk')}`;
+}
+
+export function initTimeSlider(host, { value = 0.5, onChange = () => {} } = {}) {
   if (!host) {
     return { setValue() {}, destroy() {}, element: null };
   }
@@ -39,15 +34,17 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
     <div class="ts" role="slider" tabindex="0"
          aria-label="${t('phase.sliderLabel')}"
          aria-orientation="vertical"
-         aria-valuemin="0" aria-valuemax="100"
-         aria-valuenow="0" aria-valuetext="${t('phase.day')}, 0%">
-      <span class="ts__icon ts__icon--moon" aria-hidden="true">${MOON_ICON}</span>
+         aria-valuemin="0" aria-valuemax="24"
+         aria-valuenow="12" aria-valuetext="${timeOfDayLabel(value)}">
+      <span class="ts__end ts__end--top" aria-hidden="true">24</span>
       <div class="ts__track">
         <div class="ts__fill" aria-hidden="true"></div>
-        <span class="ts__tick" aria-hidden="true"></span>
+        <span class="ts__tick ts__tick--dawn" aria-hidden="true"></span>
+        <span class="ts__tick ts__tick--noon" aria-hidden="true"></span>
+        <span class="ts__tick ts__tick--dusk" aria-hidden="true"></span>
         <div class="ts__thumb" aria-hidden="true"><span class="ts__thumb-grip"></span></div>
       </div>
-      <span class="ts__icon ts__icon--sun" aria-hidden="true">${SUN_ICON}</span>
+      <span class="ts__end ts__end--bottom" aria-hidden="true">00</span>
     </div>
     <span class="ts__caption" aria-hidden="true">${t('phase.sliderCaption')}</span>
   `;
@@ -55,8 +52,8 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
   const element = host.querySelector('.ts');
   const caption = host.querySelector('.ts__caption');
   const track = host.querySelector('.ts__track');
-  const sunIcon = host.querySelector('.ts__icon--sun');
-  const moonIcon = host.querySelector('.ts__icon--moon');
+  const topEnd = host.querySelector('.ts__end--top');
+  const bottomEnd = host.querySelector('.ts__end--bottom');
   const controller = new AbortController();
   const { signal } = controller;
 
@@ -66,7 +63,7 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
   function paint(next, notify) {
     current = clamp01(next);
     element.style.setProperty('--p', current.toFixed(4));
-    element.setAttribute('aria-valuenow', String(Math.round(current * 100)));
+    element.setAttribute('aria-valuenow', (current * 24).toFixed(1));
     element.setAttribute('aria-valuetext', timeOfDayLabel(current));
     if (notify) onChange(current);
   }
@@ -74,11 +71,15 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
   function valueFromPointer(clientY) {
     const rect = track.getBoundingClientRect();
     if (!rect.height) return current;
-    if (clientY <= moonIcon.getBoundingClientRect().bottom + 4) return 0.96;
-    if (clientY >= sunIcon.getBoundingClientRect().top - 4) return 0.02;
-    const midY = rect.top + rect.height / 2;
-    if (!dragging && Math.abs(clientY - midY) <= 8) return 0.47;
-    return clamp01(1 - (clientY - rect.top) / rect.height);
+    if (clientY <= topEnd.getBoundingClientRect().bottom + 4) return 0.98;
+    if (clientY >= bottomEnd.getBoundingClientRect().top - 4) return 0.02;
+    const raw = clamp01(1 - (clientY - rect.top) / rect.height);
+    if (!dragging) {
+      if (Math.abs(raw - 0.275) <= 0.045) return 0.275;
+      if (Math.abs(raw - 0.5) <= 0.045) return 0.5;
+      if (Math.abs(raw - 0.76) <= 0.045) return 0.76;
+    }
+    return raw;
   }
 
   element.addEventListener('pointerdown', (event) => {

@@ -236,13 +236,13 @@ export class HeroScene {
       this.compact,
     );
     updateSkyDome(this.skyDome, atm, this.celestial, motionTime);
-    updateStarfield(this.starfield, atm, motionTime, timeOfDay, this.reducedMotion);
+    updateStarfield(this.starfield, atm, motionTime, atm.night, this.reducedMotion);
 
     updateWorkstation(
       this.workstation,
       motionTime,
       motionDt,
-      timeOfDay,
+      atm.night,
       atm,
       this.reducedMotion ? null : this.pointerCurrent,
     );

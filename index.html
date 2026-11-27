@@ -36,16 +36,12 @@
     <script>
       (function () {
         var now = new Date();
-        var h = now.getHours() + now.getMinutes() / 60;
-        var t = 0.94;
-        if (h >= 6 && h < 7.5) t = 0.54 - ((h - 6) / 1.5) * 0.16;
-        else if (h >= 7.5 && h < 17) {
-          t = h < 10 ? 0.24 - ((h - 7.5) / 2.5) * 0.22 : h <= 15 ? 0.02 : 0.02 + ((h - 15) / 2) * 0.22;
-        } else if (h >= 17 && h < 20.5) t = 0.38 + ((h - 17) / 3.5) * 0.24;
-        var scheme = t < 0.55 ? 'day' : 'night';
+        var t = (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
         document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
         document.documentElement.dataset.scheme = scheme;
-        document.documentElement.dataset.phase = t < 0.34 ? 'day' : t < 0.72 ? 'dusk' : 'night';
+        document.documentElement.dataset.phase = phase;
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -216,6 +212,7 @@
                 <a href="https://github.com/thijnperd" target="_blank" rel="noopener noreferrer">GitHub</a>.
               </p>
               <div class="light-switch" role="group" data-i18n-attr="aria-label:phase.lightGroup" aria-label="Reading light and project notes">
+                <button type="button" data-phase-set="dawn" aria-pressed="false" data-i18n="phase.dawn">Dawn</button>
                 <button type="button" data-phase-set="day" aria-pressed="true" data-i18n="phase.day">Daylight</button>
                 <button type="button" data-phase-set="dusk" aria-pressed="false" data-i18n="phase.dusk">Dusk</button>
                 <button type="button" data-phase-set="night" aria-pressed="false" data-i18n="phase.night">Midnight</button>
@@ -380,7 +377,7 @@
                 <ul class="project__stats">
                   <li><strong>6</strong><span data-i18n="home.cortexStat0">views</span></li>
                   <li><strong>5,523</strong><span data-i18n="home.cortexStat1">notes benchmarked</span></li>
-                  <li><strong>0</strong><span data-i18n="home.cortexStat2">accounts</span></li>
+                  <li><strong>100%</strong><span data-i18n="home.cortexStat2">local-first</span></li>
                 </ul>
                 <div
                   class="project__lens"
@@ -849,8 +846,11 @@
               rel="noopener noreferrer"
               data-track="contact-github"
             >
+              <svg class="contact__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+              </svg>
               <span>github.com/thijnperd</span>
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false">
+              <svg class="contact__arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false">
                 <path d="M5.5 14.5 14.5 5.5M6.5 5.5h8v8" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </a>
@@ -861,8 +861,15 @@
               rel="noopener noreferrer"
               data-track="contact-linkedin"
             >
+              <svg class="contact__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M8 11v5" />
+                <path d="M8 8v.01" />
+                <path d="M12 16v-5" />
+                <path d="M16 16v-3a2 2 0 1 0 -4 0" />
+                <path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" />
+              </svg>
               <span>linkedin.com/in/thijn-köhne-85893625a</span>
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false">
+              <svg class="contact__arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false">
                 <path d="M5.5 14.5 14.5 5.5M6.5 5.5h8v8" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </a>
@@ -878,7 +885,39 @@
           <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
           <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a>
         </p>
-        <p><a href="#top" data-i18n="ui.backToTop">Back to top ↑</a></p>
+        <div class="footer__right">
+          <div class="footer__social">
+            <a
+              class="footer__icon-link"
+              href="https://github.com/thijnperd"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              title="github.com/thijnperd"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+              </svg>
+            </a>
+            <a
+              class="footer__icon-link"
+              href="https://www.linkedin.com/in/thijn-k%C3%B6hne-85893625a"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              title="linkedin.com/in/thijn-köhne-85893625a"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M8 11v5" />
+                <path d="M8 8v.01" />
+                <path d="M12 16v-5" />
+                <path d="M16 16v-3a2 2 0 1 0 -4 0" />
+                <path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" />
+              </svg>
+            </a>
+          </div>
+          <p><a href="#top" data-i18n="ui.backToTop">Back to top ↑</a></p>
+        </div>
       </div>
     </footer>
 

@@ -320,8 +320,10 @@ export function createCelestialSystem() {
 }
 
 /**
- * Compute camera-relative orbital arc positions so the Sun sets smoothly across
- * the sky and slips beneath the sea horizon as the Moon emerges on the right.
+ * Compute camera-relative orbital arc positions across a full 24h cycle (`0.0 = 00:00`,
+ * `0.275 = 06:36 dawn`, `0.50 = 12:00 noon`, `0.76 = 18:15 dusk`, `1.0 = 24:00`):
+ * the Sun rises out of the sea at dawn, arcs across noon, and sets into dusk while
+ * the Moon spans the wrapped overnight arc.
  */
 export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook, t, elapsed, compact) {
   const forward = celestial._forward
@@ -330,18 +332,18 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
   const right = celestial._right.crossVectors(forward, celestial._up).normalize();
 
   // Place celestial bodies near the far ocean edge so the water plane clips
-  // sunset and moonrise behind the real sea horizon on both desktop and mobile.
+  // sunrise, sunset, and moonrise cleanly behind the sea horizon.
   const dist = 114;
   const distRatio = dist / 54;
   const xSpan = (compact ? 0.34 : 1.0) * distRatio;
   const ySpan = (compact ? 0.72 : 1.0) * distRatio;
   const horizonY = cameraBase.y * Math.max(1 - dist / 130, 0.06);
 
-  // 1. Sun trajectory (t = 0.0 -> 0.64): high right -> setting left behind horizon.
-  const sunU = clamp01(t / 0.64);
+  // 1. Sun trajectory (t = 0.21 -> 0.81): rises left-east at dawn -> high noon -> sets right-west at dusk.
+  const sunU = clamp01((t - 0.21) / 0.60);
   const sunEased = sunU * sunU * (3 - 2 * sunU);
-  const sunRight = THREE.MathUtils.lerp(11.5, -14.8, sunEased) * xSpan;
-  const sunArcY = (12.0 * Math.cos(sunU * Math.PI * 0.56) - (sunU > 0.72 ? (sunU - 0.72) * 14.0 : 0)) * ySpan;
+  const sunRight = THREE.MathUtils.lerp(-14.2, 14.2, sunEased) * xSpan;
+  const sunArcY = THREE.MathUtils.lerp(-3.2, 12.0, Math.sin(sunU * Math.PI)) * ySpan;
 
   celestial._anchor
     .copy(cameraBase)
@@ -350,18 +352,21 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
   celestial.sunMesh.position.set(celestial._anchor.x, sunArcY, celestial._anchor.z);
   celestial.sunMesh.quaternion.copy(camera.quaternion);
 
-  // Subtle refractive enlargement as the sun approaches the horizon.
-  const duskProximity = Math.exp(-Math.pow((t - 0.44) / 0.14, 2));
-  const sunScale = ((compact ? 10.5 : 13.5) + duskProximity * 2.8) * distRatio;
+  // Horizon atmospheric glow & refractive enlargement at both Dawn and Dusk.
+  const dawnProx = Math.exp(-Math.pow((t - 0.275) / 0.075, 2));
+  const duskProx = Math.exp(-Math.pow((t - 0.76) / 0.08, 2));
+  const horizonProximity = Math.max(dawnProx, duskProx);
+  const sunScale = ((compact ? 10.5 : 13.5) + horizonProximity * 2.8) * distRatio;
   celestial.sunMesh.scale.setScalar(sunScale);
 
+  const warmBlend = clamp01(horizonProximity * 0.92);
   const sunColorDay = celestial.sunMat.uniforms.uColor.value;
-  sunColorDay.set('#fff4d6').lerp(new THREE.Color('#ff8947'), smoothstep(0.18, 0.52, t));
+  sunColorDay.set('#fff4d6').lerp(new THREE.Color('#ff8e52'), warmBlend);
   celestial.sunMat.uniforms.uCoronaColor.value
     .set('#ffcf86')
-    .lerp(new THREE.Color('#e84a28'), smoothstep(0.22, 0.54, t));
+    .lerp(new THREE.Color('#e8502e'), warmBlend);
 
-  const sunOpacity = 1.0 - smoothstep(0.55, 0.64, t);
+  const sunOpacity = smoothstep(0.22, 0.27, t) * (1.0 - smoothstep(0.76, 0.81, t));
   celestial.sunMat.uniforms.uOpacity.value = sunOpacity;
   celestial.sunMat.uniforms.uTime.value = elapsed;
   celestial.sunMat.uniforms.uHorizonY.value = horizonY;
@@ -369,13 +374,16 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
 
   celestial.sunDir.copy(celestial.sunMesh.position).sub(cameraBase).normalize();
   celestial.sunElevation = clamp01((sunArcY / ySpan + 1.0) / 12.0);
-  celestial.sunGlowStrength = (0.2 + 0.9 * duskProximity) * (1.0 - smoothstep(0.58, 0.74, t));
+  celestial.sunGlowStrength = (0.18 + 0.92 * horizonProximity) * sunOpacity;
 
-  // 2. Moon trajectory (t = 0.46 -> 1.0): rises out of the sea on the right into upper-right sky.
-  const moonU = clamp01((t - 0.46) / 0.54);
-  const moonEased = moonU * moonU * (3 - 2 * moonU);
-  const moonRight = THREE.MathUtils.lerp(13.2, 9.6, moonEased) * xSpan;
-  const moonY = THREE.MathUtils.lerp(-3.2, 9.8, Math.sin(moonU * Math.PI * 0.5)) * ySpan;
+  // 2. Moon wrapped overnight trajectory (t = 0.76 -> 1.00 / 0.00 -> 0.27).
+  const inMoonSpan = t >= 0.76 || t <= 0.27;
+  const moonT = inMoonSpan
+    ? clamp01(t >= 0.76 ? (t - 0.76) / 0.51 : (t + 0.24) / 0.51)
+    : 0;
+  const moonEased = moonT * moonT * (3 - 2 * moonT);
+  const moonRight = THREE.MathUtils.lerp(13.2, -12.4, moonEased) * xSpan;
+  const moonY = THREE.MathUtils.lerp(-3.2, 9.8, Math.sin(moonT * Math.PI)) * ySpan;
 
   celestial._anchor
     .copy(cameraBase)
@@ -385,7 +393,9 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
   celestial.moonMesh.quaternion.copy(camera.quaternion);
   celestial.moonMesh.scale.setScalar((compact ? 5.6 : 6.8) * distRatio);
 
-  const moonVis = smoothstep(0.47, 0.62, t);
+  const moonVis = inMoonSpan
+    ? smoothstep(0.03, 0.16, moonT) * (1.0 - smoothstep(0.84, 0.97, moonT))
+    : 0;
   celestial.moonMat.uniforms.uOpacity.value = moonVis;
   celestial.moonMat.uniforms.uHorizonY.value = horizonY;
   celestial.moonMesh.visible = moonVis > 0.005;
@@ -395,7 +405,7 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
   celestial.moonElevation = clamp01((moonY / ySpan + 1.0) / 10.5);
 
   // 3. Unified celestial light direction for water glitter & scene highlights.
-  const handoff = smoothstep(0.5, 0.66, t);
+  const handoff = moonVis / Math.max(sunOpacity + moonVis, 0.001);
   celestial._sunLightDir.copy(celestial.sunDir);
   celestial._sunLightDir.y = Math.max(celestial._sunLightDir.y, 0.08);
   celestial._moonLightDir.copy(celestial.moonDir);
@@ -411,7 +421,7 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
     .lerp(new THREE.Color('#b9d2f4'), handoff);
 
   celestial.celestialPower = THREE.MathUtils.lerp(
-    0.85 + duskProximity * 0.75,
+    0.85 + horizonProximity * 0.75,
     0.72 * moonVis,
     handoff,
   );
