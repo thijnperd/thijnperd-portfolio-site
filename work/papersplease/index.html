@@ -32,10 +32,11 @@
     <script>
       (function () {
         var h = new Date().getHours() + new Date().getMinutes() / 60;
-        var night = h < 6.5 || h >= 19.5;
+        var night = h < 6 || h >= 19.5;
         document.documentElement.dataset.scheme = night ? 'night' : 'day';
         document.documentElement.dataset.phase = night ? 'night' : 'day';
         document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = night ? '#0a0d10' : '#e4e6e1';
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -71,7 +72,9 @@
     <main class="page-main" id="main" tabindex="-1">
       <div class="page-shell">
         <article>
-          <p class="kicker">Selected work · 04</p>
+          <nav class="crumb" aria-label="Breadcrumb">
+            <a href="/#work">Work</a><span aria-hidden="true">/</span><span>04</span>
+          </nav>
           <h1 class="article__title">PapersPlease</h1>
           <p class="article__lede">
             A literature crawler that searches five academic APIs, reads the abstracts, and keeps the
@@ -199,7 +202,8 @@
       <div class="page-footer__inner">
         <p>© <span data-year>2026</span> Thijn Köhne</p>
         <p>
-          <a href="/writing/">Writing</a> · <a href="/colophon/">Colophon</a> ·
+          <a href="/writing/">Writing</a> · <a href="/cv/">CV</a> ·
+          <a href="/colophon/">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
           <a href="/">Home</a>
         </p>
       </div>

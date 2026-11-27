@@ -48,8 +48,8 @@
         document.documentElement.dataset.phase = t < 0.34 ? 'day' : t < 0.72 ? 'dusk' : 'night';
       })();
     </script>
-    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <link
       rel="alternate"
@@ -128,7 +128,6 @@
               <a href="/writing/" data-track="nav-writing">Writing</a>
               <a href="/cv/">CV</a>
               <a href="#about">About</a>
-              <a href="#skills">Stack</a>
               <a href="#contact">Contact</a>
             </nav>
 
@@ -149,7 +148,6 @@
               <a href="/writing/">Writing <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
               <a href="/cv/">CV <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
               <a href="#about">About <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
-              <a href="#skills">Stack <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
               <a href="#contact">Contact <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
             </nav>
           </header>
@@ -225,8 +223,8 @@
                 >
                   <picture>
                     <img
-                      src="./work/dither.jpg"
-                      srcset="./work/dither-720.jpg 720w, ./work/dither.jpg 1440w"
+                      src="/work/dither.jpg"
+                      srcset="/work/dither-720.jpg 720w, /work/dither.jpg 1440w"
                       sizes="(max-width: 900px) 92vw, 820px"
                       width="1440"
                       height="900"
@@ -250,10 +248,9 @@
                   <span class="project__kind">Web &amp; Desktop</span>
                 </div>
                 <p class="project__desc">
-                  An offline dithering press for images and video. Supports 46 dither algorithms,
-                  built-in and custom palettes, per-object layers on the desktop build, an effects
-                  stack, text mode, and video in a zero-dependency web app that opens from its own
-                  folder.
+                  An offline dithering press for images, video, and text grids with built-in and
+                  custom palettes, desktop layer masking, and tunable pipelines that open straight
+                  from a folder.
                 </p>
                 <ul class="project__stats">
                   <li><strong>46</strong><span>algorithms</span></li>
@@ -332,12 +329,12 @@
                   <picture>
                     <source
                       type="image/webp"
-                      srcset="./work/cortex-720.webp 720w, ./work/cortex.webp 1440w"
+                      srcset="/work/cortex-720.webp 720w, /work/cortex.webp 1440w"
                       sizes="(max-width: 900px) 92vw, 640px"
                     />
                     <img
-                      src="./work/cortex.jpg"
-                      srcset="./work/cortex-720.jpg 720w, ./work/cortex.jpg 1440w"
+                      src="/work/cortex.jpg"
+                      srcset="/work/cortex-720.jpg 720w, /work/cortex.jpg 1440w"
                       sizes="(max-width: 900px) 92vw, 640px"
                       width="1440"
                       height="900"
@@ -361,13 +358,12 @@
                   <span class="project__kind">Desktop &amp; Web</span>
                 </div>
                 <p class="project__desc">
-                  Turns a folder of Markdown into six views — graph, brain, timeline, atlas, bento,
-                  and decisions — and keeps the reasoning trail behind every choice.
+                  Turns a folder of Markdown into graph, brain, timeline, atlas, bento, and
+                  decisions workspaces while keeping the reasoning trail behind every choice.
                 </p>
                 <ul class="project__stats">
                   <li><strong>6</strong><span>views</span></li>
                   <li><strong>5,523</strong><span>notes benchmarked</span></li>
-                  <li><strong>500</strong><span>note daily vault</span></li>
                   <li><strong>0</strong><span>accounts</span></li>
                 </ul>
                 <div
@@ -434,12 +430,12 @@
                   <picture>
                     <source
                       type="image/webp"
-                      srcset="./work/w3plan-720.webp 720w, ./work/w3plan.webp 1440w"
+                      srcset="/work/w3plan-720.webp 720w, /work/w3plan.webp 1440w"
                       sizes="(max-width: 900px) 92vw, 640px"
                     />
                     <img
-                      src="./work/w3plan.jpg"
-                      srcset="./work/w3plan-720.jpg 720w, ./work/w3plan.jpg 1440w"
+                      src="/work/w3plan.jpg"
+                      srcset="/work/w3plan-720.jpg 720w, /work/w3plan.jpg 1440w"
                       sizes="(max-width: 900px) 92vw, 640px"
                       width="1440"
                       height="900"
@@ -535,12 +531,12 @@
                   <picture>
                     <source
                       type="image/webp"
-                      srcset="./work/papers-720.webp 720w, ./work/papers.webp 1440w"
+                      srcset="/work/papers-720.webp 720w, /work/papers.webp 1440w"
                       sizes="(max-width: 900px) 92vw, 760px"
                     />
                     <img
-                      src="./work/papers.jpg"
-                      srcset="./work/papers-720.jpg 720w, ./work/papers.jpg 1440w"
+                      src="/work/papers.jpg"
+                      srcset="/work/papers-720.jpg 720w, /work/papers.jpg 1440w"
                       sizes="(max-width: 900px) 92vw, 760px"
                       width="1440"
                       height="900"
@@ -626,16 +622,6 @@
             <ul class="archive__list">
               <li class="archive__row">
                 <div class="archive__info">
-                  <span class="archive__name">h-AI-pergamy</span>
-                  <span class="archive__desc">Speed-dating neural network, 10x10 map, and local desktop calculator.</span>
-                </div>
-                <div class="archive__links">
-                  <a href="https://thijnperd.github.io/h-AI-pergamy/" target="_blank" rel="noopener noreferrer">Site ↗</a>
-                  <a href="https://github.com/thijnperd/h-AI-pergamy" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-                </div>
-              </li>
-              <li class="archive__row">
-                <div class="archive__info">
                   <span class="archive__name">coding-etc</span>
                   <span class="archive__desc">Self-contained browser sims, games, and generative art with zero dependencies.</span>
                 </div>
@@ -652,15 +638,6 @@
                 <div class="archive__links">
                   <a href="https://thijnperd.github.io/WhiteNoiseFields/" target="_blank" rel="noopener noreferrer">Live ↗</a>
                   <a href="https://github.com/thijnperd/WhiteNoiseFields" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-                </div>
-              </li>
-              <li class="archive__row">
-                <div class="archive__info">
-                  <span class="archive__name">PolyTAS</span>
-                  <span class="archive__desc">Chrome MV3 frame-by-frame TAS editor and input recorder for PolyTrack.</span>
-                </div>
-                <div class="archive__links">
-                  <a href="https://github.com/thijnperd/PolyTAS" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
                 </div>
               </li>
               <li class="archive__row">
@@ -725,10 +702,12 @@
                 you can inspect or back up without an account.
               </p>
               <p>
-                I also write about how these tools are built: the dithering pass behind this page,
-                and the case for <a href="/writing/plain-files/">plain files over accounts</a>. The
-                project case studies live under <a href="/#work">work</a>; the notes on how they are
-                built live under <a href="/writing/">writing</a>.
+                I also write about how these tools are built:
+                <a href="/writing/dithering-the-hero/">the dithering pass behind this page</a>,
+                shipping a <a href="/writing/school-planner-distribution/">school planner</a>, and
+                the case for <a href="/writing/plain-files/">plain files over accounts</a>. The
+                project case studies live under <a href="/#work">work</a>; the essays live under
+                <a href="/writing/">writing</a>.
               </p>
             </div>
 

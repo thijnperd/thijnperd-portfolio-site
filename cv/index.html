@@ -32,10 +32,11 @@
     <script>
       (function () {
         var h = new Date().getHours() + new Date().getMinutes() / 60;
-        var night = h < 6.5 || h >= 19.5;
+        var night = h < 6 || h >= 19.5;
         document.documentElement.dataset.scheme = night ? 'night' : 'day';
         document.documentElement.dataset.phase = night ? 'night' : 'day';
         document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = night ? '#0a0d10' : '#e4e6e1';
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -72,9 +73,8 @@
       <div class="page-shell">
         <article class="cv">
           <header class="cv__head">
-            <p class="kicker">Curriculum vitae</p>
             <h1 class="cv__name">Thijn Köhne</h1>
-            <p class="cv__role">Student &amp; software developer · Netherlands</p>
+            <p class="cv__role">Curriculum vitae · Student &amp; software developer · Netherlands</p>
             <p class="cv__intro">
               I build local-first tools: offline image editors, visual browsers for plain-text notes,
               school planners and command-line utilities. I prefer software that opens quickly and
@@ -199,7 +199,8 @@
         <p>© <span data-year>2026</span> Thijn Köhne</p>
         <p>
           <a href="/writing/">Writing</a> · <a href="/cv/">CV</a> ·
-          <a href="/colophon/">Colophon</a> · <a href="/">Home</a>
+          <a href="/colophon/">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/">Home</a>
         </p>
       </div>
     </footer>

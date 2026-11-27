@@ -4,7 +4,7 @@ function initMobileMenu() {
   if (!toggle || !menu) return;
 
   const label = toggle.querySelector('.menu-toggle__label');
-  const desktopQuery = window.matchMedia('(min-width: 901px)');
+  const desktopQuery = window.matchMedia('(min-width: 961px)');
   const controller = new AbortController();
   const { signal } = controller;
   let open = false;
