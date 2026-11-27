@@ -302,9 +302,10 @@
 
             <section class="case-section">
               <div class="case-section__head">
-                <h2 class="case-section__title">Shipping to real students</h2>
+                <h2 class="case-section__title">Two decisions</h2>
               </div>
               <div class="case-section__content">
+                <h3>Builds that update themselves</h3>
                 <p>
                   The desktop builds auto-update, and ship as a Windows installer and as a DMG or
                   ZIP on macOS (the ZIP is what the updater uses). Distribution is the least
@@ -317,14 +318,8 @@
                     >More on why the distribution was the hard part →</a
                   >
                 </p>
-              </div>
-            </section>
 
-            <section class="case-section">
-              <div class="case-section__head">
-                <h2 class="case-section__title">The MCP bridge</h2>
-              </div>
-              <div class="case-section__content">
+                <h3>A bridge, not an autopilot</h3>
                 <p>
                   W3Plan ships with a local MCP bridge so an assistant can read the week and propose
                   study blocks. The proposals land in the calendar, where a student can review them
@@ -350,15 +345,24 @@
 
             <section class="case-section">
               <div class="case-section__head">
-                <h2 class="case-section__title">Built with two others</h2>
+                <h2 class="case-section__title">What it cannot do</h2>
               </div>
               <div class="case-section__content">
                 <p>
-                  W3Plan is a team project. Billie, Yannis Raijmakers and I built the base app
-                  together as a trio, and Yannis and I kept developing it further for senior
-                  secondary students at Were Di Drie—which meant the data model had to survive
-                  contact with a real school calendar rather than a sample one. The walkthrough
-                  linked above shows the app with that data.
+                  There is no account and no sync: a schedule lives on the machine the app runs on.
+                  That is the trade for keeping student data off a server — no login, no cloud copy,
+                  nothing to expire — but it also means the week does not follow you to another
+                  computer.
+                </p>
+                <p>
+                  The PTA dataset is Were Di Drie's: 643 components across 29 subjects, bundled
+                  read-only with the build. Another school means another dataset, and a new school
+                  year means shipping the app with the new one.
+                </p>
+                <p>
+                  The MCP bridge is deliberately not an autopilot. It can read the week and suggest
+                  study blocks, but it cannot put them on the calendar; a student still approves
+                  each one.
                 </p>
               </div>
             </section>
@@ -368,6 +372,12 @@
                 <h2 class="case-section__title">In use</h2>
               </div>
               <div class="case-section__content">
+                <p>
+                  W3Plan is a team project. Billie, Yannis Raijmakers and I built the base app
+                  together as a trio, and Yannis and I kept developing it further for senior
+                  secondary students at Were Di Drie — which meant the data model had to survive
+                  contact with a real school calendar rather than a sample one.
+                </p>
                 <div class="quotes">
                   <figure class="quote">
                     <blockquote>
