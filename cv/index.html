@@ -84,6 +84,11 @@
               <div class="cv__head-copy">
                 <h1 class="cv__name">Thijn Köhne</h1>
                 <p class="cv__role" data-i18n="cv.role">Curriculum vitae · Student &amp; software developer · Netherlands</p>
+                <ul class="cv__contacts" data-i18n-attr="aria-label:cv.contactsAria" aria-label="Contact links">
+                  <li><a href="mailto:Thijnfigo@gmail.com">Thijnfigo@gmail.com</a></li>
+                  <li><a href="https://github.com/thijnperd" target="_blank" rel="noopener noreferrer">github.com/thijnperd</a></li>
+                  <li><a href="https://www.linkedin.com/in/thijn-k%C3%B6hne-85893625a" target="_blank" rel="noopener noreferrer">linkedin.com/in/thijn-köhne-85893625a</a></li>
+                </ul>
                 <p class="cv__intro" data-i18n="cv.intro">
                   I build local-first tools: offline image editors, visual browsers for plain-text notes,
                   school planners and command-line utilities. I prefer software that opens quickly and
@@ -131,7 +136,7 @@
                 </p>
                 <p class="cv__item-meta">
                   Vanilla JS, Canvas 2D, Electron ·
-                  <a href="/work/dither-studio/" data-i18n="cv.caseStudyLink">Case study</a>
+                  <a href="https://thijnperd.github.io/work/dither-studio/" target="_blank" rel="noopener noreferrer"><span data-i18n="cv.caseStudyLink">Case study</span> <span aria-hidden="true">↗</span></a>
                 </p>
               </article>
 
@@ -147,7 +152,7 @@
                 </p>
                 <p class="cv__item-meta">
                   Rust, axum, WebGL2, Three.js ·
-                  <a href="/work/cortex/" data-i18n="cv.caseStudyLink">Case study</a>
+                  <a href="https://thijnperd.github.io/work/cortex/" target="_blank" rel="noopener noreferrer"><span data-i18n="cv.caseStudyLink">Case study</span> <span aria-hidden="true">↗</span></a>
                 </p>
               </article>
 
@@ -163,7 +168,7 @@
                 </p>
                 <p class="cv__item-meta">
                   React, TypeScript, Supabase ·
-                  <a href="/work/w3plan/" data-i18n="cv.caseStudyLink">Case study</a>
+                  <a href="https://thijnperd.github.io/work/w3plan/" target="_blank" rel="noopener noreferrer"><span data-i18n="cv.caseStudyLink">Case study</span> <span aria-hidden="true">↗</span></a>
                 </p>
               </article>
 
@@ -178,7 +183,7 @@
                 </p>
                 <p class="cv__item-meta">
                   Python, CLI/TUI, MCP ·
-                  <a href="/work/papersplease/" data-i18n="cv.caseStudyLink">Case study</a>
+                  <a href="https://thijnperd.github.io/work/papersplease/" target="_blank" rel="noopener noreferrer"><span data-i18n="cv.caseStudyLink">Case study</span> <span aria-hidden="true">↗</span></a>
                 </p>
               </article>
             </div>
@@ -197,11 +202,26 @@
             </div>
           </section>
 
+          <section class="cv__section" aria-labelledby="cv-education">
+            <h2 id="cv-education" data-i18n="cv.secEducation">Education</h2>
+            <div class="cv__items">
+              <article class="cv__item">
+                <div class="cv__item-head">
+                  <h3 data-i18n="cv.eduTitle">SG Were Di, Valkenswaard</h3>
+                  <span data-i18n="cv.eduDate">Present</span>
+                </div>
+                <p data-i18n="cv.eduDesc">
+                  VWO (Pre-university education) — Nature &amp; Technology (N&amp;T) &amp; Computer Science (Informatica).
+                </p>
+              </article>
+            </div>
+          </section>
+
           <section class="cv__section" aria-labelledby="cv-skills">
             <h2 id="cv-skills" data-i18n="cv.secSkills">Skills</h2>
             <div class="cv__skills">
               <div>
-                <h3 data-i18n="cv.skillLang">Languages</h3>
+                <h3 data-i18n="cv.skillLang">Programming</h3>
                 <p>TypeScript, JavaScript, Python, Rust, HTML/CSS, GLSL</p>
               </div>
               <div>
@@ -211,6 +231,10 @@
               <div>
                 <h3 data-i18n="cv.skillTools">Tools</h3>
                 <p>React, Vite, Node, Electron, Supabase, MCP, Git</p>
+              </div>
+              <div class="cv__skills-spoken">
+                <h3 data-i18n="cv.skillSpoken">Spoken</h3>
+                <p data-i18n="cv.skillSpokenList">Dutch (Native), English (Fluent)</p>
               </div>
             </div>
           </section>

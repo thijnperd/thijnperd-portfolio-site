@@ -2359,6 +2359,35 @@ html[data-phase="night"] .ts__icon--moon {
   color: var(--muted);
 }
 
+.cv__contacts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1rem;
+  margin-top: 0.45rem;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.cv__contacts li {
+  display: inline-flex;
+  align-items: center;
+}
+
+.cv__contacts a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--line-strong);
+  transition: color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+}
+
+.cv__contacts a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 .cv__intro {
   max-width: 33rem;
   margin-top: 1rem;
@@ -2468,6 +2497,20 @@ html[data-phase="night"] .ts__icon--moon {
   color: var(--muted);
 }
 
+.cv__skills-spoken {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.875rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.cv__skills-spoken p {
+  margin-top: 0;
+}
+
 @media (max-width: 640px) {
   .quotes {
     grid-template-columns: 1fr;
@@ -2498,13 +2541,16 @@ html[data-phase="night"] .ts__icon--moon {
 @media print {
   @page {
     size: A4;
-    margin: 14mm 15mm;
+    margin: 0;
   }
 
   html,
   body {
+    margin: 0 !important;
     background: #fff !important;
     color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .page-bar,
@@ -2516,15 +2562,43 @@ html[data-phase="night"] .ts__icon--moon {
   }
 
   .page-main {
-    padding: 0 !important;
+    padding: 14mm 15mm !important;
   }
 
   .page-shell {
     max-width: none !important;
   }
 
+  .cv__head {
+    padding-bottom: 10pt;
+    border-color: #d4d6d1 !important;
+  }
+
   .cv__name {
-    font-size: 30pt;
+    margin-top: 0;
+    font-size: 28pt;
+    color: #000 !important;
+  }
+
+  .cv__role {
+    margin-top: 4pt;
+    font-size: 8pt;
+    color: #262626 !important;
+  }
+
+  .cv__contacts {
+    margin-top: 3.5pt;
+    font-size: 7.75pt;
+    gap: 2pt 10pt;
+    color: #262626 !important;
+  }
+
+  .cv__intro {
+    max-width: none;
+    margin-top: 7pt;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    color: #262626 !important;
   }
 
   .cv__head-grid {
@@ -2533,36 +2607,89 @@ html[data-phase="night"] .ts__icon--moon {
 
   .cv__portrait {
     order: 0;
-    width: 26mm;
+    width: 25mm;
     margin-top: 0;
-    border-color: #bbb;
+    border-color: #bbb !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  .cv__intro,
-  .cv__item p,
-  .cv__skills p,
-  .cv__role,
-  .cv__item-head > span {
-    color: #222 !important;
+  .cv__section {
+    grid-template-columns: 28mm minmax(0, 1fr);
+    gap: 9pt;
+    margin-top: 10.5pt;
+    padding-top: 9pt;
+    border-color: #d4d6d1 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
-  .cv__section > h2,
-  .cv__item-meta,
+  .cv__section > h2 {
+    padding-top: 1.5pt;
+    font-size: 7.25pt;
+    color: #9a3220 !important;
+  }
+
+  .cv__items {
+    gap: 8.5pt;
+  }
+
+  .cv__item h3 {
+    font-size: 10.75pt;
+    color: #000 !important;
+  }
+
+  .cv__item-head > span {
+    font-size: 7.5pt;
+    color: #262626 !important;
+  }
+
+  .cv__item p {
+    max-width: none;
+    margin-top: 2.5pt;
+    font-size: 9pt;
+    line-height: 1.48;
+    color: #262626 !important;
+  }
+
+  .cv__item .cv__item-meta {
+    margin-top: 2.5pt;
+    font-size: 7.5pt;
+    color: #111 !important;
+  }
+
+  .cv__skills {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8pt 12pt;
+  }
+
+  .cv__skills h3 {
+    font-size: 7.5pt;
+    color: #000 !important;
+  }
+
+  .cv__skills p {
+    margin-top: 2pt;
+    font-size: 8.5pt;
+    line-height: 1.42;
+    color: #262626 !important;
+  }
+
+  .cv__skills-spoken {
+    padding-top: 6pt;
+    border-color: #d4d6d1 !important;
+  }
+
+  .cv__contacts a,
   .cv__item-meta a {
     color: #000 !important;
   }
 
-  .cv__section {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    margin-top: 9pt;
-    padding-top: 7pt;
-  }
-
   .cv a {
-    text-decoration: none;
+    text-decoration: underline !important;
+    text-decoration-color: #8a8a8a !important;
+    text-underline-offset: 2px;
+    border-bottom: 0 !important;
   }
 }
 
