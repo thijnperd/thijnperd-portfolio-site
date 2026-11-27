@@ -31,257 +31,384 @@
     <meta name="color-scheme" content="light dark" />
     <script>
       (function () {
-        var h = new Date().getHours() + new Date().getMinutes() / 60;
-        var night = h < 6 || h >= 19.5;
-        document.documentElement.dataset.scheme = night ? 'night' : 'day';
-        document.documentElement.dataset.phase = night ? 'night' : 'day';
-        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
-        document.querySelector('meta[name="theme-color"]').content = night ? '#0a0d10' : '#e4e6e1';
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+  <body class="case-page">
+    <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
 
-    <header class="page-bar">
-      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
-            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
-            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
-            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
-            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
-            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
-          </svg>
-        </span>
-        <span class="page-bar__name">thijnperd</span>
-      </a>
-      <div class="page-bar__right">
-        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
-          <a href="/#work" data-i18n="ui.navWork">Work</a>
-          <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
-          <a href="/cv/" data-i18n="ui.navCv">CV</a>
-          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
-        </nav>
-        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
-          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
-          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
-          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a class="page-bar__brand" href="/" data-i18n-attr="aria-label:ui.homeAria" aria-label="Thijn Köhne, home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" aria-current="page" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
         </div>
       </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
-      <div class="page-shell">
+      <div class="case-shell">
         <article>
-          <nav class="crumb" aria-label="Breadcrumb">
-            <a href="/#work" data-i18n="article.crumbWork">Work</a><span aria-hidden="true">/</span><span>01</span>
-          </nav>
-          <h1 class="article__title">Dither Studio</h1>
-          <p class="article__lede">
-            A dithering press for images and video that runs entirely on the machine it opens on:
-            no account, no upload, no build step.
-          </p>
-
-          <dl class="article__meta">
-            <div><dt data-i18n="article.role">Role</dt><dd>Independent project</dd></div>
-            <div><dt data-i18n="article.stack">Stack</dt><dd>Vanilla JS, Canvas 2D</dd></div>
-            <div><dt data-i18n="article.status">Status</dt><dd>Shipped, web and desktop</dd></div>
-            <div>
-              <dt data-i18n="article.links">Links</dt>
-              <dd>
-                <a href="https://thijnperd.github.io/dither-studio/" target="_blank" rel="noopener noreferrer">Web app ↗</a>
-                · <a href="https://github.com/thijnperd/dither-studio" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-              </dd>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/#work" data-i18n="article.crumbWork">Work</a><span aria-hidden="true">/</span><span>01</span>
+              </nav>
+              <span class="project__kind" data-i18n="home.kindWebDesktop">Web &amp; Desktop</span>
             </div>
-          </dl>
-          <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyCase" hidden></p>
 
-          <figure class="article__figure">
-            <img
-              src="/work/dither.jpg"
-              width="1440"
-              height="900"
-              alt="Dither Studio editor showing a dithered artwork on a dark canvas with algorithm, palette and effect controls in the left panel."
-            />
-            <figcaption>
-              The editor at rest: an ordered dither on the canvas, with the algorithm, palette and
-              effect stack in the left rail.
-            </figcaption>
-          </figure>
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">Dither Studio</h1>
+                <p class="case-hero__lede">
+                  A dithering press for images and video that runs entirely on the machine it opens
+                  on: no account, no upload, no build step.
+                </p>
 
-          <div class="article__body">
-            <h2>The brief</h2>
-            <p>
-              Dithering is the step between an image and the machine that prints it: reduce the
-              palette, then decide which pixels get to keep which tone. It is the look of newsprint,
-              early Macintosh screens, pixel art and a lot of album covers. The tools that do it are
-              usually either a plugin inside a larger editor or a web converter that uploads your
-              file and hands back a JPEG.
-            </p>
-            <p>
-              Dither Studio is the opposite arrangement. You open a folder, drop in an image or a
-              video, tune the result, and export. Nothing leaves the machine, and the dither is the
-              product rather than an effect buried three menus deep.
-            </p>
+                <ul class="project__stats case-hero__stats">
+                  <li><strong>46</strong><span data-i18n="home.ditherStat0">algorithms</span></li>
+                  <li><strong>25</strong><span data-i18n="home.ditherStat1">effects</span></li>
+                  <li><strong>0</strong><span data-i18n="home.ditherStat2">runtime deps</span></li>
+                </ul>
 
-            <h2>Two rules that shaped everything</h2>
-            <ul>
-              <li>
-                <strong>No build step.</strong> The web build opens straight from
-                <code>index.html</code>: plain scripts loaded from the folder, no bundler, no
-                framework runtime to boot before the first pixel appears.
-              </li>
-              <li>
-                <strong>No runtime dependencies in the web builds.</strong> Every algorithm, palette
-                and export path is code in the folder. Nothing breaks because a package disappeared.
-                The desktop build's only runtime dependency is Electron.
-              </li>
-            </ul>
-            <p>
-              Those rules are why the app can be handed over as a folder. They also set the ceiling:
-              anything the app needs has to be written, not installed.
-            </p>
+                <div class="case-hero__actions">
+                  <a
+                    class="btn btn--primary"
+                    href="https://thijnperd.github.io/dither-studio/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span data-i18n="home.linkWebApp">Web app</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                  <a
+                    class="btn btn--ghost"
+                    href="https://thijnperd.github.io/Dither-studio_publicity/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span data-i18n="home.linkLaunchFilm">Launch film</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                  <a
+                    class="btn btn--ghost"
+                    href="https://github.com/thijnperd/dither-studio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span data-i18n="ui.github">GitHub</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
 
-            <h2>What is actually in it</h2>
-            <ul>
-              <li>46 dither algorithms, from ordered patterns to error diffusion.</li>
-              <li>30 built-in ink sets, plus five installable palette packs that add 25 palettes.</li>
-              <li>
-                Per-object layers on the desktop build, so a subject and a background can dither
-                differently.
-              </li>
-              <li>A stack of up to 25 effects, each with its own amount and mode.</li>
-              <li>Text mode, for turning an image into a grid of characters.</li>
-              <li>Video in, WebM out, with the same stack applied per frame.</li>
-              <li>Exports: PNG up to 8×, text grids, WebM, and a JSON recipe of the whole setup.</li>
-            </ul>
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.role">Role</dt>
+                      <dd>Independent project</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.stack">Stack</dt>
+                      <dd>Vanilla JS, Canvas 2D</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.status">Status</dt>
+                      <dd>Shipped, web and desktop</dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
 
-            <figure class="article__figure article__figure--compact">
+            <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyCase" hidden></p>
+
+            <figure class="case-hero__media">
               <img
-                src="/work/dither-portrait-quad.webp"
-                width="1024"
-                height="1024"
-                alt="Four Dither Studio passes on the same portrait: radial glow, vertical CRT halftone, thermal posterization, and coarse warm ordered dither."
-                loading="lazy"
-              />
-              <figcaption>
-                Four passes on the same portrait — radial glow, vertical CRT halftone, thermal
-                posterization, and coarse warm ordered dither — produced with Dither Studio's
-                algorithm, ink palette, and effect stack.
-              </figcaption>
-            </figure>
-
-            <figure class="article__figure">
-              <img
-                src="/work/dither-screens.webp"
-                width="1032"
-                height="518"
-                alt="1:1 crop comparison of three structure-aware screens on the same photograph: Matrix Rain, Ice Dot Field, and Smooth Diffusion."
-                loading="lazy"
-              />
-              <figcaption>
-                1:1 crop comparison of three structure-aware screens on the same photograph — Matrix
-                Rain, Ice Dot Field, and Smooth Diffusion.
-              </figcaption>
-            </figure>
-
-            <h2>Three decisions</h2>
-
-            <h3>Canvas 2D, not WebGL</h3>
-            <p>
-              The engine is plain JavaScript working on pixel buffers: <code>process()</code> takes a
-              source image and settings and returns the dithered result as data. Canvas 2D is only
-              the surface it is drawn onto — one canvas pixel per working pixel, with
-              <code>putImageData</code>, and zoom handled in CSS so a render is a single paste. No
-              shader, no GPU-specific path. That is what lets the same engine file run unchanged in
-              the web demo, the launcher and the desktop app.
-            </p>
-
-            <figure class="article__figure">
-              <img
-                src="/work/dither-pipeline.webp"
+                src="/work/dither.jpg"
                 width="1440"
-                height="830"
-                alt="Diagram of the pixel-buffer pipeline from PREPARE (RGBA source, tone adjustments, blur/sharpen, downsampling) through PRESS (dither and tone map) to FINISH (effects stack, glow, alpha, nearest-neighbour upscale)."
-                loading="lazy"
+                height="900"
+                fetchpriority="high"
+                decoding="async"
+                alt="Dither Studio editor showing a dithered artwork on a dark canvas with algorithm, palette and effect controls in the left panel."
               />
               <figcaption>
-                The pixel-buffer pipeline (PREPARE → PRESS → FINISH) running inside
-                <code>process()</code>, from tone prep and downsampling through dithering and the
-                post-effect stack.
+                The editor at rest: an ordered dither on the canvas, with the algorithm, palette and
+                effect stack in the left rail.
               </figcaption>
             </figure>
+          </header>
 
-            <h3>A recipe is a file</h3>
-            <p>
-              The settings serialise into a plain JSON recipe: algorithm, palette, layer geometry
-              and the effect stack. That makes a result reproducible without
-              screenshots or notes, and it means the app's state is inspectable with a text editor.
-              Recipes are also the closest thing the app has to a preset format — there is no account
-              or cloud library to sync them through.
-            </p>
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">The brief</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  Dithering is the step between an image and the machine that prints it: reduce the
+                  palette, then decide which pixels get to keep which tone. It is the look of
+                  newsprint, early Macintosh screens, pixel art and a lot of album covers. The tools
+                  that do it are usually either a plugin inside a larger editor or a web converter
+                  that uploads your file and hands back a JPEG.
+                </p>
+                <p>
+                  Dither Studio is the opposite arrangement. You open a folder, drop in an image or
+                  a video, tune the result, and export. Nothing leaves the machine, and the dither
+                  is the product rather than an effect buried three menus deep.
+                </p>
+              </div>
+            </section>
 
-            <h3>Three builds, one engine</h3>
-            <p>
-              The web demo, the launcher and the desktop app share the engine, the sample table and
-              the video clock byte for byte, and a sync script fails the build if a copy drifts. The
-              shells are separate: the demo is tuned for a browser and ships six recipes with no
-              plugins or custom palette import, while the desktop app adds native menus and dialogs,
-              the full catalogue and the tutorial. Same engine, different amounts of app around it.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Two rules that shaped everything</h2>
+              </div>
+              <div class="case-section__content">
+                <ul>
+                  <li>
+                    <strong>No build step.</strong> The web build opens straight from
+                    <code>index.html</code>: plain scripts loaded from the folder, no bundler, no
+                    framework runtime to boot before the first pixel appears.
+                  </li>
+                  <li>
+                    <strong>No runtime dependencies in the web builds.</strong> Every algorithm,
+                    palette and export path is code in the folder. Nothing breaks because a package
+                    disappeared. The desktop build's only runtime dependency is Electron.
+                  </li>
+                </ul>
+                <p>
+                  Those rules are why the app can be handed over as a folder. They also set the
+                  ceiling: anything the app needs has to be written, not installed.
+                </p>
+              </div>
+            </section>
 
-            <figure class="article__figure">
-              <img
-                src="/work/dither-desktop.webp"
-                width="1440"
-                height="948"
-                alt="Dither Studio Electron desktop app running Bayer 8×8 on a 4-color Game Boy palette with native application menus and the 21-recipe inspector panel."
-                loading="lazy"
-              />
-              <figcaption>
-                The Electron desktop shell running the same engine with native menus, Bayer 8×8 on a
-                4-color Game Boy ink set, and the 21-recipe inspector.
-              </figcaption>
-            </figure>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">What is actually in it</h2>
+              </div>
+              <div class="case-section__content">
+                <ul>
+                  <li>46 dither algorithms, from ordered patterns to error diffusion.</li>
+                  <li>30 built-in ink sets, plus five installable palette packs that add 25 palettes.</li>
+                  <li>
+                    Per-object layers on the desktop build, so a subject and a background can dither
+                    differently.
+                  </li>
+                  <li>A stack of up to 25 effects, each with its own amount and mode.</li>
+                  <li>Text mode, for turning an image into a grid of characters.</li>
+                  <li>Video in, WebM out, with the same stack applied per frame.</li>
+                  <li>Exports: PNG up to 8×, text grids, WebM, and a JSON recipe of the whole setup.</li>
+                </ul>
 
-            <h2>What local-only costs</h2>
-            <p>
-              No sync, no shared preset library, no collaborative editing. Those are features I chose
-              not to have, but they are not free: every one of them is something a user has to do by
-              hand, usually by sending a file. The compensation is that the app opens instantly,
-              works on a train, and cannot lose your work to a session expiry.
-            </p>
-            <p>
-              The launch film was the best test of that promise: 40 seconds at 1080p and 24 fps,
-              rendered directly from real engine exports rather than a mock-up. If the export path
-              had a weak frame, it would be in the film.
-            </p>
+                <figure class="article__figure article__figure--compact">
+                  <img
+                    src="/work/dither-portrait-quad.webp"
+                    width="1024"
+                    height="1024"
+                    alt="Four Dither Studio passes on the same portrait: radial glow, vertical CRT halftone, thermal posterization, and coarse warm ordered dither."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    Four passes on the same portrait — radial glow, vertical CRT halftone, thermal
+                    posterization, and coarse warm ordered dither — produced with Dither Studio's
+                    algorithm, ink palette, and effect stack.
+                  </figcaption>
+                </figure>
 
-            <h2>Try it</h2>
-            <p>
-              The <a href="https://thijnperd.github.io/dither-studio/" target="_blank" rel="noopener noreferrer">web app</a>
-              opens with a sample image and no sign-in. The
-              <a href="https://github.com/thijnperd/dither-studio" target="_blank" rel="noopener noreferrer">source</a>
-              is public, and the
-              <a href="https://thijnperd.github.io/Dither-studio_publicity/" target="_blank" rel="noopener noreferrer">launch film</a>
-              shows the video path end to end.
-            </p>
+                <figure class="article__figure">
+                  <img
+                    src="/work/dither-screens.webp"
+                    width="1032"
+                    height="518"
+                    alt="1:1 crop comparison of three structure-aware screens on the same photograph: Matrix Rain, Ice Dot Field, and Smooth Diffusion."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    1:1 crop comparison of three structure-aware screens on the same photograph —
+                    Matrix Rain, Ice Dot Field, and Smooth Diffusion.
+                  </figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Three decisions</h2>
+              </div>
+              <div class="case-section__content">
+                <h3>Canvas 2D, not WebGL</h3>
+                <p>
+                  The engine is plain JavaScript working on pixel buffers: <code>process()</code>
+                  takes a source image and settings and returns the dithered result as data. Canvas
+                  2D is only the surface it is drawn onto — one canvas pixel per working pixel, with
+                  <code>putImageData</code>, and zoom handled in CSS so a render is a single paste.
+                  No shader, no GPU-specific path. That is what lets the same engine file run
+                  unchanged in the web demo, the launcher and the desktop app.
+                </p>
+
+                <figure class="article__figure">
+                  <img
+                    src="/work/dither-pipeline.webp"
+                    width="1440"
+                    height="830"
+                    alt="Diagram of the pixel-buffer pipeline from PREPARE (RGBA source, tone adjustments, blur/sharpen, downsampling) through PRESS (dither and tone map) to FINISH (effects stack, glow, alpha, nearest-neighbour upscale)."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    The pixel-buffer pipeline (PREPARE → PRESS → FINISH) running inside
+                    <code>process()</code>, from tone prep and downsampling through dithering and
+                    the post-effect stack.
+                  </figcaption>
+                </figure>
+
+                <h3>A recipe is a file</h3>
+                <p>
+                  The settings serialise into a plain JSON recipe: algorithm, palette, layer
+                  geometry and the effect stack. That makes a result reproducible without screenshots
+                  or notes, and it means the app's state is inspectable with a text editor. Recipes
+                  are also the closest thing the app has to a preset format — there is no account or
+                  cloud library to sync them through.
+                </p>
+
+                <h3>Three builds, one engine</h3>
+                <p>
+                  The web demo, the launcher and the desktop app share the engine, the sample table
+                  and the video clock byte for byte, and a sync script fails the build if a copy
+                  drifts. The shells are separate: the demo is tuned for a browser and ships six
+                  recipes with no plugins or custom palette import, while the desktop app adds
+                  native menus and dialogs, the full catalogue and the tutorial. Same engine,
+                  different amounts of app around it.
+                </p>
+
+                <figure class="article__figure">
+                  <img
+                    src="/work/dither-desktop.webp"
+                    width="1440"
+                    height="948"
+                    alt="Dither Studio Electron desktop app running Bayer 8×8 on a 4-color Game Boy palette with native application menus and the 21-recipe inspector panel."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    The Electron desktop shell running the same engine with native menus, Bayer 8×8
+                    on a 4-color Game Boy ink set, and the 21-recipe inspector.
+                  </figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">What local-only costs</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  No sync, no shared preset library, no collaborative editing. Those are features I
+                  chose not to have, but they are not free: every one of them is something a user
+                  has to do by hand, usually by sending a file. The compensation is that the app
+                  opens instantly, works on a train, and cannot lose your work to a session expiry.
+                </p>
+                <p>
+                  The launch film was the best test of that promise: 40 seconds at 1080p and 24 fps,
+                  rendered directly from real engine exports rather than a mock-up. If the export
+                  path had a weak frame, it would be in the film.
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Try it</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The <a href="https://thijnperd.github.io/dither-studio/" target="_blank" rel="noopener noreferrer">web app</a>
+                  opens with a sample image and no sign-in. The
+                  <a href="https://github.com/thijnperd/dither-studio" target="_blank" rel="noopener noreferrer">source</a>
+                  is public, and the
+                  <a href="https://thijnperd.github.io/Dither-studio_publicity/" target="_blank" rel="noopener noreferrer">launch film</a>
+                  shows the video path end to end.
+                </p>
+              </div>
+            </section>
           </div>
 
-          <nav class="article__end" aria-label="Project pagination">
-            <a href="/#work" data-i18n="article.allWork">← All work</a>
-            <a href="/work/cortex/">Next: Cortex →</a>
+          <nav class="case-pager" aria-label="Project pagination">
+            <a class="case-pager__card" href="/#work">
+              <span class="case-pager__dir" data-i18n="article.allWork">← All work</span>
+              <span class="case-pager__title" data-i18n="home.workTitle">Selected work</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/work/cortex/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">Cortex</span>
+            </a>
           </nav>
         </article>
       </div>
@@ -295,6 +422,36 @@
           <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
           <a href="/" data-i18n="ui.home">Home</a>
         </p>
+        <div class="footer__social">
+          <a
+            class="footer__icon-link"
+            href="https://github.com/thijnperd"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            title="github.com/thijnperd"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+            </svg>
+          </a>
+          <a
+            class="footer__icon-link"
+            href="https://www.linkedin.com/in/thijn-k%C3%B6hne-85893625a"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            title="linkedin.com/in/thijn-köhne-85893625a"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M8 11v5" />
+              <path d="M8 8v.01" />
+              <path d="M12 16v-5" />
+              <path d="M16 16v-3a2 2 0 1 0 -4 0" />
+              <path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" />
+            </svg>
+          </a>
+        </div>
       </div>
     </footer>
     <nav class="mobile-tabbar" data-tabbar data-i18n-attr="aria-label:ui.navMobile" aria-label="Mobile navigation">

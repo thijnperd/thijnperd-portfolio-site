@@ -31,256 +31,390 @@
     <meta name="color-scheme" content="light dark" />
     <script>
       (function () {
-        var h = new Date().getHours() + new Date().getMinutes() / 60;
-        var night = h < 6 || h >= 19.5;
-        document.documentElement.dataset.scheme = night ? 'night' : 'day';
-        document.documentElement.dataset.phase = night ? 'night' : 'day';
-        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
-        document.querySelector('meta[name="theme-color"]').content = night ? '#0a0d10' : '#e4e6e1';
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+  <body class="case-page">
+    <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
 
-    <header class="page-bar">
-      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
-            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
-            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
-            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
-            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
-            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
-          </svg>
-        </span>
-        <span class="page-bar__name">thijnperd</span>
-      </a>
-      <div class="page-bar__right">
-        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
-          <a href="/#work" data-i18n="ui.navWork">Work</a>
-          <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
-          <a href="/cv/" data-i18n="ui.navCv">CV</a>
-          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
-        </nav>
-        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
-          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
-          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
-          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a class="page-bar__brand" href="/" data-i18n-attr="aria-label:ui.homeAria" aria-label="Thijn Köhne, home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" aria-current="page" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
         </div>
       </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
-      <div class="page-shell">
+      <div class="case-shell">
         <article>
-          <nav class="crumb" aria-label="Breadcrumb">
-            <a href="/#work" data-i18n="article.crumbWork">Work</a><span aria-hidden="true">/</span><span>03</span>
-          </nav>
-          <h1 class="article__title">W3Plan</h1>
-          <p class="article__lede">
-            A study and exam planner that starts from the school's actual test calendar instead of a
-            blank week—started as a base app built by the three of us with Yannis Raijmakers and
-            Billie, then developed further by Yannis and me for students at Were Di Drie.
-          </p>
-
-          <dl class="article__meta">
-            <div><dt data-i18n="article.role">Role</dt><dd>Team project · base app built with Yannis Raijmakers &amp; Billie; continued by Yannis &amp; me</dd></div>
-            <div><dt data-i18n="article.stack">Stack</dt><dd>React 19, TypeScript, Supabase</dd></div>
-            <div><dt data-i18n="article.status">Status</dt><dd>Built for Were Di Drie students</dd></div>
-            <div>
-              <dt data-i18n="article.links">Links</dt>
-              <dd>
-                <a href="https://yannis-raijmakers.github.io/W3Plan-desktop/" target="_blank" rel="noopener noreferrer">Walkthrough ↗</a>
-                · <a href="https://github.com/Yannis-Raijmakers/W3Plan-desktop" target="_blank" rel="noopener noreferrer">Installers ↗</a>
-              </dd>
-            </div>
-          </dl>
-          <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyCase" hidden></p>
-
-          <p class="article__outcome">
-            <span>Outcome</span>
-            Adopted by 8+ final-year students and praised by teachers.
-          </p>
-
-          <figure class="article__figure">
-            <img
-              src="/work/w3plan.webp"
-              width="1440"
-              height="900"
-              alt="W3Plan weekly calendar showing scheduled school exams, domain study blocks and upcoming test cards in the left sidebar."
-            />
-            <figcaption>
-              A week with the school's exams already on it: domain study blocks on the calendar,
-              tests and how many study hours are already planned in the sidebar.
-            </figcaption>
-          </figure>
-
-          <div class="article__body">
-            <h2>Generic planners start too late</h2>
-            <p>
-              A planner app assumes you already know what has to be done. At school, the hardest part
-              comes earlier: the test calendar is published by the school, the study hours are
-              supposed to be divided across subjects, and the two live in different places. Most
-              students resolve this with a paper agenda and a screenshot.
-            </p>
-            <p>
-              W3Plan starts from the school's PTA data and builds the week around it: exams, domain
-              hours, per-test checklists and grade calculators in one place.
-            </p>
-
-            <h2>Public school data, private student data</h2>
-            <p>
-              The split is deliberate. PTA data is published by the school, so it is loaded read-only
-              from Supabase or from a local JSON file. A student's own schedule never leaves the
-              device and there are no student accounts, which removes both the login flow and the
-              reason to store anyone's data centrally.
-            </p>
-            <p>
-              The import covers 643 PTA components across 29 subjects, 291 of which carry a date; a
-              separate SE overview adds 133 test moments. That is small enough to ship as a
-              read-only dataset and large enough that manual entry was never realistic.
-            </p>
-
-            <figure class="article__figure">
-              <img
-                src="/work/w3plan-overview.webp"
-                width="1440"
-                height="900"
-                alt="W3Plan Period 2 overview spanning weeks 42 to 49 with a weekly busy-week workload indicator above chronological PTA exam rows."
-                loading="lazy"
-              />
-              <figcaption>
-                Period 2 overview (wk 42–wk 49) combining a weekly workload bar (druk busy weeks)
-                with chronological PTA exam moments, weights, and laatste kans markers.
-              </figcaption>
-            </figure>
-
-            <h2>What a week looks like</h2>
-            <ul>
-              <li>A weekly calendar with school exams and study blocks side by side.</li>
-              <li>Domain hours, so time is divided across subjects rather than by mood.</li>
-              <li>Per-test checklists for what actually has to be learned.</li>
-              <li>Grade calculators, because the next question after a test is what it did to the average.</li>
-            </ul>
-
-            <figure class="article__figure">
-              <img
-                src="/work/w3plan-checklist.webp"
-                width="1440"
-                height="900"
-                alt="W3Plan per-test modal for SE3 Straling, Quantum en Kern- en deeltjesprocessen (PTA 1605) showing study progress and split Doen and Kennen checklists."
-                loading="lazy"
-              />
-              <figcaption>
-                A per-test workspace (SE3: Straling, Quantum en Kern- en deeltjesprocessen, PTA 1605)
-                with progress tracking and split Doen (practice) and Kennen (theory) checklists.
-              </figcaption>
-            </figure>
-
-            <figure class="article__figure">
-              <img
-                src="/work/w3plan-grades.webp"
-                width="1440"
-                height="900"
-                alt="W3Plan Cijfers tab listing recommended exam retakes ordered by how much each point raises the SE average above the weighted target-grade calculator."
-                loading="lazy"
-              />
-              <figcaption>
-                The Cijfers tab ranking recommended retakes by how much each point raises the SE
-                average (+0,35 for Nederlands, +0,25 for Wiskunde B), above the weighted target-grade
-                calculator.
-              </figcaption>
-            </figure>
-
-            <h2>Shipping to real students</h2>
-            <p>
-              The desktop builds auto-update, and ship as a Windows installer and as a DMG or ZIP on
-              macOS (the ZIP is what the updater uses). Distribution is the least glamorous and most
-              fragile part of a desktop app: installers, update channels and two platforms that fail
-              in different ways. It is also the part that turns a project into something classmates
-              can actually use.
-            </p>
-            <p>
-              <a href="/writing/school-planner-distribution/"
-                >More on why the distribution was the hard part →</a
-              >
-            </p>
-
-            <h2>The MCP bridge</h2>
-            <p>
-              W3Plan ships with a local MCP bridge so an assistant can read the week and propose study
-              blocks. The proposals land in the calendar, where a student can review them like any
-              other entry — the planner stays the place where the decision is made.
-            </p>
-
-            <figure class="article__figure">
-              <img
-                src="/work/w3plan-today.webp"
-                width="1440"
-                height="900"
-                alt="W3Plan Vandaag view displaying dashed Voorstel study block suggestions with one-click Zet erin confirmation buttons beside current study topics."
-                loading="lazy"
-              />
-              <figcaption>
-                The Vandaag view showing proposed study blocks (Voorstel) waiting for one-click
-                approval (✓ Zet erin) before entering the calendar.
-              </figcaption>
-            </figure>
-
-            <h2>Built with two others</h2>
-            <p>
-              W3Plan is a team project. Billie, Yannis Raijmakers and I built the base app together
-              as a trio, and Yannis and I kept developing it further for senior secondary students at
-              Were Di Drie—which meant the data model had to survive contact with a real school
-              calendar rather than a sample one. The walkthrough linked above shows the app with
-              that data.
-            </p>
-
-            <h2>In use</h2>
-            <div class="quotes">
-              <figure class="quote">
-                <blockquote>
-                  “This replaced my whole planning workflow, and it’s even easier now.”
-                </blockquote>
-                <figcaption>
-                  <strong>Yannis Raijmakers</strong>
-                  <span>Co-creator</span>
-                </figcaption>
-              </figure>
-              <figure class="quote">
-                <blockquote>
-                  “You can tell this was built on six years of learning to plan. It’s all in one
-                  app.”
-                </blockquote>
-                <figcaption>
-                  <strong>Maths teacher</strong>
-                  <span>Were Di Drie</span>
-                </figcaption>
-              </figure>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/#work" data-i18n="article.crumbWork">Work</a><span aria-hidden="true">/</span><span>03</span>
+              </nav>
+              <span class="project__kind" data-i18n="home.kindDesktopWeb">Desktop &amp; Web</span>
             </div>
 
-            <h2>Try it</h2>
-            <p>
-              Watch the <a href="https://yannis-raijmakers.github.io/W3Plan-desktop/" target="_blank" rel="noopener noreferrer">walkthrough</a>
-              or get the builds from the
-              <a href="https://github.com/Yannis-Raijmakers/W3Plan-desktop" target="_blank" rel="noopener noreferrer">installers repository</a>.
-            </p>
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">W3Plan</h1>
+                <p class="case-hero__lede">
+                  A study and exam planner that starts from the school's actual test calendar instead
+                  of a blank week—started as a base app built by the three of us with Yannis
+                  Raijmakers and Billie, then developed further by Yannis and me for students at Were
+                  Di Drie.
+                </p>
+
+                <ul class="project__stats case-hero__stats">
+                  <li><strong>643</strong><span data-i18n="home.w3planStat0">PTA components</span></li>
+                  <li><strong>29</strong><span data-i18n="home.w3planStat1">subjects</span></li>
+                  <li><strong>8+</strong><span data-i18n="home.w3planStat2">final-year students</span></li>
+                </ul>
+
+                <div class="case-hero__actions">
+                  <a
+                    class="btn btn--primary"
+                    href="https://yannis-raijmakers.github.io/W3Plan-desktop/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span data-i18n="home.linkWalkthrough">Walkthrough</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                  <a
+                    class="btn btn--ghost"
+                    href="https://github.com/Yannis-Raijmakers/W3Plan-desktop"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>Installers</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.role">Role</dt>
+                      <dd>Team project · base app built with Yannis Raijmakers &amp; Billie; continued by Yannis &amp; me</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.stack">Stack</dt>
+                      <dd>React 19, TypeScript, Electron</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.status">Status</dt>
+                      <dd>Built for Were Di Drie students</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <p class="article__outcome">
+                  <span data-i18n="article.outcome">Outcome</span>
+                  Adopted by 8+ final-year students and praised by teachers.
+                </p>
+              </div>
+            </div>
+
+            <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyCase" hidden></p>
+
+            <figure class="case-hero__media">
+              <img
+                src="/work/w3plan.webp"
+                width="1440"
+                height="900"
+                fetchpriority="high"
+                decoding="async"
+                alt="W3Plan weekly calendar showing scheduled school exams, domain study blocks and upcoming test cards in the left sidebar."
+              />
+              <figcaption>
+                A week with the school's exams already on it: domain study blocks on the calendar,
+                tests and how many study hours are already planned in the sidebar.
+              </figcaption>
+            </figure>
+          </header>
+
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Generic planners start too late</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  A planner app assumes you already know what has to be done. At school, the hardest
+                  part comes earlier: the test calendar is published by the school, the study hours
+                  are supposed to be divided across subjects, and the two live in different places.
+                  Most students resolve this with a paper agenda and a screenshot.
+                </p>
+                <p>
+                  W3Plan starts from the school's PTA data and builds the week around it: exams,
+                  domain hours, per-test checklists and grade calculators in one place.
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Public school data, private student data</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The split is deliberate. PTA data is published by the school, so it ships as a
+                  read-only local JSON dataset bundled with the app. A student's own schedule never
+                  leaves the device and there are no student accounts, which removes both the login
+                  flow and the reason to store anyone's data centrally.
+                </p>
+                <p>
+                  The import covers 643 PTA components across 29 subjects, 291 of which carry a
+                  date; a separate SE overview adds 133 test moments. That is small enough to ship
+                  as a read-only dataset and large enough that manual entry was never realistic.
+                </p>
+
+                <figure class="article__figure">
+                  <img
+                    src="/work/w3plan-overview.webp"
+                    width="1440"
+                    height="900"
+                    alt="W3Plan Period 2 overview spanning weeks 42 to 49 with a weekly busy-week workload indicator above chronological PTA exam rows."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    Period 2 overview (wk 42–wk 49) combining a weekly workload bar (druk busy weeks)
+                    with chronological PTA exam moments, weights, and laatste kans markers.
+                  </figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">What a week looks like</h2>
+              </div>
+              <div class="case-section__content">
+                <ul>
+                  <li>A weekly calendar with school exams and study blocks side by side.</li>
+                  <li>Domain hours, so time is divided across subjects rather than by mood.</li>
+                  <li>Per-test checklists for what actually has to be learned.</li>
+                  <li>Grade calculators, because the next question after a test is what it did to the average.</li>
+                </ul>
+
+                <div class="case-gallery">
+                  <figure class="article__figure">
+                    <img
+                      src="/work/w3plan-checklist.webp"
+                      width="1440"
+                      height="900"
+                      alt="W3Plan per-test modal for SE3 Straling, Quantum en Kern- en deeltjesprocessen (PTA 1605) showing study progress and split Doen and Kennen checklists."
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <figcaption>
+                      A per-test workspace (SE3: Straling, Quantum en Kern- en deeltjesprocessen, PTA
+                      1605) with progress tracking and split Doen (practice) and Kennen (theory)
+                      checklists.
+                    </figcaption>
+                  </figure>
+
+                  <figure class="article__figure">
+                    <img
+                      src="/work/w3plan-grades.webp"
+                      width="1440"
+                      height="900"
+                      alt="W3Plan Cijfers tab listing recommended exam retakes ordered by how much each point raises the SE average above the weighted target-grade calculator."
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <figcaption>
+                      The Cijfers tab ranking recommended retakes by how much each point raises the
+                      SE average (+0,35 for Nederlands, +0,25 for Wiskunde B), above the weighted
+                      target-grade calculator.
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Shipping to real students</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The desktop builds auto-update, and ship as a Windows installer and as a DMG or
+                  ZIP on macOS (the ZIP is what the updater uses). Distribution is the least
+                  glamorous and most fragile part of a desktop app: installers, update channels and
+                  two platforms that fail in different ways. It is also the part that turns a
+                  project into something classmates can actually use.
+                </p>
+                <p>
+                  <a href="/writing/school-planner-distribution/"
+                    >More on why the distribution was the hard part →</a
+                  >
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">The MCP bridge</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  W3Plan ships with a local MCP bridge so an assistant can read the week and propose
+                  study blocks. The proposals land in the calendar, where a student can review them
+                  like any other entry — the planner stays the place where the decision is made.
+                </p>
+
+                <figure class="article__figure">
+                  <img
+                    src="/work/w3plan-today.webp"
+                    width="1440"
+                    height="900"
+                    alt="W3Plan Vandaag view displaying dashed Voorstel study block suggestions with one-click Zet erin confirmation buttons beside current study topics."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    The Vandaag view showing proposed study blocks (Voorstel) waiting for one-click
+                    approval (✓ Zet erin) before entering the calendar.
+                  </figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Built with two others</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  W3Plan is a team project. Billie, Yannis Raijmakers and I built the base app
+                  together as a trio, and Yannis and I kept developing it further for senior
+                  secondary students at Were Di Drie—which meant the data model had to survive
+                  contact with a real school calendar rather than a sample one. The walkthrough
+                  linked above shows the app with that data.
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">In use</h2>
+              </div>
+              <div class="case-section__content">
+                <div class="quotes">
+                  <figure class="quote">
+                    <blockquote>
+                      “This replaced my whole planning workflow, and it’s even easier now.”
+                    </blockquote>
+                    <figcaption>
+                      <strong>Yannis Raijmakers</strong>
+                      <span>Co-creator</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="quote">
+                    <blockquote>
+                      “You can tell this was built on six years of learning to plan. It’s all in one
+                      app.”
+                    </blockquote>
+                    <figcaption>
+                      <strong>Maths teacher</strong>
+                      <span>Were Di Drie</span>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Try it</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  Watch the <a href="https://yannis-raijmakers.github.io/W3Plan-desktop/" target="_blank" rel="noopener noreferrer">walkthrough</a>
+                  or get the builds from the
+                  <a href="https://github.com/Yannis-Raijmakers/W3Plan-desktop" target="_blank" rel="noopener noreferrer">installers repository</a>.
+                </p>
+              </div>
+            </section>
           </div>
 
-          <nav class="article__end" aria-label="Project pagination">
-            <a href="/work/cortex/">← Cortex</a>
-            <a href="/work/papersplease/">Next: PapersPlease →</a>
+          <nav class="case-pager" aria-label="Project pagination">
+            <a class="case-pager__card" href="/work/cortex/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">Cortex</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/work/papersplease/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">PapersPlease</span>
+            </a>
           </nav>
         </article>
       </div>
@@ -294,6 +428,36 @@
           <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
           <a href="/" data-i18n="ui.home">Home</a>
         </p>
+        <div class="footer__social">
+          <a
+            class="footer__icon-link"
+            href="https://github.com/thijnperd"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            title="github.com/thijnperd"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+            </svg>
+          </a>
+          <a
+            class="footer__icon-link"
+            href="https://www.linkedin.com/in/thijn-k%C3%B6hne-85893625a"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            title="linkedin.com/in/thijn-köhne-85893625a"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M8 11v5" />
+              <path d="M8 8v.01" />
+              <path d="M12 16v-5" />
+              <path d="M16 16v-3a2 2 0 1 0 -4 0" />
+              <path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" />
+            </svg>
+          </a>
+        </div>
       </div>
     </footer>
     <nav class="mobile-tabbar" data-tabbar data-i18n-attr="aria-label:ui.navMobile" aria-label="Mobile navigation">

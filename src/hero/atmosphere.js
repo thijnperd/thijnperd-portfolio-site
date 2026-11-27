@@ -1,11 +1,5 @@
 import * as THREE from 'three';
 
-/**
- * 24-hour day-to-night-to-day atmosphere state machine driven by normalized clock
- * scalar `t` (0.00 = 00:00 midnight -> 0.275 = 06:36 dawn -> 0.50 = 12:00 daylight
- * -> 0.76 = 18:15 golden dusk -> 0.84 = twilight -> 1.00 = 24:00 midnight).
- */
-
 const RAW_STOPS = [
   {
     t: 0.0,
@@ -320,7 +314,6 @@ const NUMBER_KEYS = [
   'night',
 ];
 
-/** Pre-convert every palette colour to linear working space exactly once. */
 const STOPS = RAW_STOPS.map((stop) => {
   const prepared = { ...stop };
   for (const key of COLOR_KEYS) prepared[key] = new THREE.Color(stop[key]);
@@ -343,9 +336,6 @@ export function createAtmosphereState() {
   return state;
 }
 
-/**
- * Piecewise, 4-stop palette sampling across Daylight -> Dusk -> Twilight -> Midnight.
- */
 export function sampleAtmosphere(t, out = createAtmosphereState()) {
   const clamped = THREE.MathUtils.clamp(Number.isFinite(t) ? t : 0, 0, 1);
 
@@ -380,9 +370,6 @@ export function sampleAtmosphere(t, out = createAtmosphereState()) {
   return out;
 }
 
-/**
- * Drive the Three.js light rig from the sampled atmosphere and live celestial arc.
- */
 export function updateLightRig(lights, atm, celestial) {
   const { sun, ambient, hemi, screen, core } = lights;
 

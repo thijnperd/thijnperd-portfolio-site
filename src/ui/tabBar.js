@@ -1,15 +1,7 @@
 import { track } from '../analytics.js';
 
-/**
- * Floating mobile pill tab bar with an M3 Expressive spring-physics pill selector
- * (`k = 800, zeta = 0.6` Fast Spatial) and real-time Bayer icon dithering inside
- * the selector pill. On the home page the bar stays tucked below the viewport
- * until leaving `.hero` (with focus + `inert` management); on subpages it shows
- * immediately.
- */
-
-const SPRING_K = 800;
-const SPRING_ZETA = 0.6;
+const SPRING_K = 620;
+const SPRING_ZETA = 0.85;
 const SPRING_C = 2 * SPRING_ZETA * Math.sqrt(SPRING_K);
 
 export function initTabBar() {
@@ -68,13 +60,13 @@ export function initTabBar() {
 
   let scrubbing = false;
   let scrubStartX = 0;
-  let scrubStartLeft = 0;
+  let scrubStartY = 0;
   let scrubPointerId = -1;
   let suppressClick = false;
   let scrubPreviewIndex = -1;
   let lastPointerX = 0;
-  let lastPointerTs = 0;
-  let scrubVelX = 0;
+  let holdTimer = 0;
+  let scrollLockUntil = 0;
 
   function resolveInitialIndex() {
     const preMarked = links.findIndex((a) => a.getAttribute('aria-current') === 'page');
@@ -91,6 +83,10 @@ export function initTabBar() {
       if (idx >= 0) return idx;
     }
     return 0;
+  }
+
+  function lockScrollSpy(ms = 850) {
+    scrollLockUntil = performance.now() + ms;
   }
 
   function setBarVisible(next) {
@@ -110,43 +106,47 @@ export function initTabBar() {
     }
   }
 
+  // Transform-invariant padding-box measurement so `scale(0.94)` reveal or
+  // borders can never skew indicator placement or leak dither onto neighbors.
   function measure() {
-    const trackRect = trackEl.getBoundingClientRect();
-    if (!trackRect.width) return false;
+    const trackW = trackEl.clientWidth;
+    if (!trackW) return false;
     trackPad = parseFloat(getComputedStyle(trackEl).paddingLeft) || 5;
+    const baseOffset = baseList.offsetLeft;
     boxes = links.map((link) => {
-      const r = link.getBoundingClientRect();
+      const slot = link.parentElement || link;
       return {
-        x: r.left - trackRect.left,
-        w: r.width,
+        x: baseOffset + slot.offsetLeft,
+        w: slot.offsetWidth,
       };
     });
     const box = boxes[Math.max(0, Math.min(activeIndex, boxes.length - 1))];
     if (box) {
       targetX = box.x;
       targetW = box.w;
-      if (!initialized) {
+      if (!initialized || (!scrubbing && !rafId)) {
         currentX = targetX;
         currentW = targetW;
         velX = 0;
         velW = 0;
         initialized = true;
       }
-      applyVisual(currentX, currentW, trackRect.width);
+      applyVisual(currentX, currentW, trackW);
     }
     return true;
   }
 
-  function applyVisual(x, w, trackWidth = trackEl.getBoundingClientRect().width) {
+  function applyVisual(x, w, trackWidth = trackEl.clientWidth) {
     if (!trackWidth || !w) return;
-    // Allow minor M3 spring overshoot inside middle track while staying cleanly inside outer pill border
-    const minLeft = Math.max(2, trackPad - 2);
-    const maxRight = Math.max(minLeft + w, trackWidth - Math.max(2, trackPad - 2));
-    const stretch = reducedMotion.matches ? 0 : Math.min(8, Math.abs(velX) * 0.011);
+    const minLeft = trackPad;
+    const maxRight = Math.max(trackPad + w, trackWidth - trackPad);
+    const stretch = (reducedMotion.matches || scrubbing || Math.abs(velX) < 12)
+      ? 0
+      : Math.min(3, Math.abs(velX) * 0.004);
     const stretchedW = Math.min(w + stretch, maxRight - minLeft);
     const center = x + w / 2;
     const renderX = Math.max(minLeft, Math.min(center - stretchedW / 2, maxRight - stretchedW));
-    const rightInset = Math.max(0, trackWidth - (renderX + stretchedW));
+    const rightInset = Math.max(trackPad, trackWidth - (renderX + stretchedW));
 
     indicator.style.transform = `translate3d(${renderX.toFixed(2)}px, 0, 0)`;
     indicator.style.width = `${stretchedW.toFixed(2)}px`;
@@ -164,7 +164,7 @@ export function initTabBar() {
     const dtTotal = lastTs ? Math.min(0.05, Math.max(0.001, (now - lastTs) / 1000)) : 1 / 60;
     lastTs = now;
 
-    const trackWidth = trackEl.getBoundingClientRect().width;
+    const trackWidth = trackEl.clientWidth;
     if (reducedMotion.matches) {
       currentX = targetX;
       currentW = targetW;
@@ -175,7 +175,6 @@ export function initTabBar() {
       return;
     }
 
-    // Semi-implicit Euler integration in <= 8ms sub-steps for stable k=800 spring across refresh rates
     const steps = Math.max(1, Math.ceil(dtTotal / 0.008));
     const dt = dtTotal / steps;
     for (let i = 0; i < steps; i += 1) {
@@ -235,6 +234,10 @@ export function initTabBar() {
     targetX = box.x;
     targetW = box.w;
     if (immediate || reducedMotion.matches) {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
       currentX = targetX;
       currentW = targetW;
       velX = 0;
@@ -259,68 +262,133 @@ export function initTabBar() {
     return best;
   }
 
-  // Horizontal thumb-scrubbing across the floating pill with momentum handoff into M3 spring
+  function clientXToLocal(clientX) {
+    const rect = trackEl.getBoundingClientRect();
+    const layoutW = trackEl.clientWidth;
+    if (!rect.width || !layoutW) return trackPad;
+    return (clientX - rect.left) / (rect.width / layoutW);
+  }
+
+  function navigateToTab(idx) {
+    const link = links[idx];
+    if (!link) return;
+    lockScrollSpy(850);
+    velX = 0;
+    setActiveIndex(idx);
+    track(`tab-${link.dataset.tabId || idx}`);
+
+    const href = link.getAttribute('href') || '';
+    if (href.startsWith('#')) {
+      const targetEl = document.getElementById(href.slice(1));
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'start' });
+      }
+      try {
+        history.replaceState(null, '', href);
+      } catch {
+        /* ignore restricted history */
+      }
+    } else if (link.href) {
+      window.location.assign(link.href);
+    }
+  }
+
+  function updateScrubPosition(clientX) {
+    if (!boxes.length && !measure()) return;
+    const trackW = trackEl.clientWidth;
+    if (!trackW) return;
+    const localX = clientXToLocal(clientX);
+    const idx = indexAtCenterX(localX);
+    const slot = boxes[idx];
+    if (!slot) return;
+
+    const slotW = slot.w;
+    const rawCenter = localX;
+    const slotCenter = slot.x + slotW / 2;
+    // Magnetic detent: blend finger tracking with soft snap toward nearest slot center.
+    const blendedCenter = rawCenter * 0.7 + slotCenter * 0.3;
+    const minLeft = trackPad;
+    const maxLeft = Math.max(minLeft, trackW - trackPad - slotW);
+    currentX = Math.max(minLeft, Math.min(maxLeft, blendedCenter - slotW / 2));
+    currentW = slotW;
+    velX = 0;
+    velW = 0;
+    scrubPreviewIndex = idx;
+    applyVisual(currentX, currentW, trackW);
+  }
+
+  function beginScrub(pointerId, clientX) {
+    if (scrubbing || !mobileQuery.matches) return;
+    if (!boxes.length && !measure()) return;
+    scrubbing = true;
+    suppressClick = true;
+    trackEl.classList.add('is-scrubbing');
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+    try {
+      trackEl.setPointerCapture(pointerId);
+    } catch {
+      /* pointer capture can fail on synthetic events */
+    }
+    updateScrubPosition(clientX);
+  }
+
+  trackEl.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+  }, { signal });
+
   trackEl.addEventListener('pointerdown', (event) => {
     if (event.button !== undefined && event.button !== 0) return;
     if (isHome && !barVisible) return;
     if (!boxes.length && !measure()) return;
+    clearTimeout(holdTimer);
     scrubPointerId = event.pointerId;
     scrubStartX = event.clientX;
+    scrubStartY = event.clientY;
     lastPointerX = event.clientX;
-    lastPointerTs = performance.now();
-    scrubVelX = 0;
-    scrubStartLeft = currentX;
     scrubPreviewIndex = -1;
     suppressClick = false;
+    holdTimer = window.setTimeout(() => {
+      holdTimer = 0;
+      if (scrubPointerId === event.pointerId) {
+        beginScrub(event.pointerId, lastPointerX);
+      }
+    }, 220);
   }, { signal });
 
   trackEl.addEventListener('pointermove', (event) => {
     if (event.pointerId !== scrubPointerId) return;
-    const dx = event.clientX - scrubStartX;
-    if (!scrubbing && Math.abs(dx) < 8) return;
-
-    const now = performance.now();
-    const dt = Math.max(0.008, (now - lastPointerTs) / 1000);
-    const instantVel = (event.clientX - lastPointerX) / dt;
-    scrubVelX = Math.max(-1200, Math.min(1200, scrubVelX * 0.4 + instantVel * 0.6));
     lastPointerX = event.clientX;
-    lastPointerTs = now;
-
     if (!scrubbing) {
-      scrubbing = true;
-      suppressClick = true;
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = 0;
+      const dx = event.clientX - scrubStartX;
+      const dy = event.clientY - scrubStartY;
+      if (Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(dx)) {
+        clearTimeout(holdTimer);
+        holdTimer = 0;
+        scrubPointerId = -1;
+        return;
       }
-      try {
-        trackEl.setPointerCapture(event.pointerId);
-      } catch {
-        /* pointer capture can fail on synthetic events */
-      }
+      if (Math.abs(dx) < 6) return;
+      clearTimeout(holdTimer);
+      holdTimer = 0;
+      beginScrub(event.pointerId, event.clientX);
+      return;
     }
-
-    const trackWidth = trackEl.getBoundingClientRect().width;
-    const w = boxes[activeIndex]?.w || currentW;
-    const minLeft = trackPad;
-    const maxLeft = Math.max(minLeft, trackWidth - trackPad - w);
-    const nextX = Math.max(minLeft, Math.min(maxLeft, scrubStartLeft + dx));
-    currentX = nextX;
-    currentW = w;
-    velX = scrubVelX * 0.45;
-    applyVisual(currentX, currentW, trackWidth);
-    scrubPreviewIndex = indexAtCenterX(currentX + w / 2);
+    updateScrubPosition(event.clientX);
   }, { signal });
 
-  const endScrub = (event) => {
-    if (event.pointerId !== scrubPointerId) return;
+  const finishScrub = (event, { commit }) => {
+    clearTimeout(holdTimer);
+    holdTimer = 0;
+    if (event.pointerId !== scrubPointerId && !scrubbing) return;
     const wasScrubbing = scrubbing;
     const chosen = scrubPreviewIndex;
-    const handoffVel = scrubVelX;
     scrubbing = false;
     scrubPointerId = -1;
     scrubPreviewIndex = -1;
-    scrubVelX = 0;
+    trackEl.classList.remove('is-scrubbing');
 
     try {
       if (trackEl.hasPointerCapture(event.pointerId)) trackEl.releasePointerCapture(event.pointerId);
@@ -328,11 +396,19 @@ export function initTabBar() {
       /* ignore */
     }
 
-    if (wasScrubbing && chosen >= 0 && links[chosen]) {
-      velX = Math.max(-900, Math.min(900, handoffVel * 0.65));
-      setActiveIndex(chosen);
-      track(`tab-${links[chosen].dataset.tabId || chosen}`);
-      links[chosen].click();
+    if (wasScrubbing && commit && chosen >= 0 && links[chosen]) {
+      const href = links[chosen].getAttribute('href') || '';
+      const isPageLink = !href.startsWith('#') && !href.startsWith('/#');
+      velX = 0;
+      if (chosen !== activeIndex || isPageLink) {
+        navigateToTab(chosen);
+      } else {
+        setActiveIndex(activeIndex, { updateAria: false });
+      }
+      setTimeout(() => { suppressClick = false; }, 0);
+    } else if (wasScrubbing) {
+      velX = 0;
+      setActiveIndex(activeIndex, { updateAria: false });
       setTimeout(() => { suppressClick = false; }, 0);
     } else {
       velX = 0;
@@ -340,8 +416,11 @@ export function initTabBar() {
     }
   };
 
-  trackEl.addEventListener('pointerup', endScrub, { signal });
-  trackEl.addEventListener('pointercancel', endScrub, { signal });
+  trackEl.addEventListener('pointerup', (e) => finishScrub(e, { commit: true }), { signal });
+  trackEl.addEventListener('pointercancel', (e) => finishScrub(e, { commit: false }), { signal });
+  trackEl.addEventListener('lostpointercapture', (e) => {
+    if (scrubbing) finishScrub(e, { commit: false });
+  }, { signal });
 
   baseList.addEventListener('click', (event) => {
     if (suppressClick) {
@@ -352,6 +431,8 @@ export function initTabBar() {
     if (!link) return;
     const idx = links.indexOf(link);
     if (idx >= 0) {
+      lockScrollSpy(850);
+      velX = 0;
       setActiveIndex(idx);
       track(`tab-${link.dataset.tabId || idx}`);
     }
@@ -391,7 +472,7 @@ export function initTabBar() {
     const supportsScrollTargetGroup = typeof CSS !== 'undefined' && CSS.supports?.('scroll-target-group', 'auto');
 
     const syncFromScrollTarget = () => {
-      if (scrubbing) return;
+      if (scrubbing || performance.now() < scrollLockUntil) return;
       const targetLink = baseList.querySelector('a:target-current');
       if (targetLink) {
         const idx = links.indexOf(targetLink);
@@ -412,7 +493,7 @@ export function initTabBar() {
     if ('IntersectionObserver' in window && sections.length > 0) {
       const visible = new Set();
       const observer = new IntersectionObserver((entries) => {
-        if (scrubbing) return;
+        if (scrubbing || performance.now() < scrollLockUntil) return;
         for (const entry of entries) {
           if (entry.isIntersecting) visible.add(entry.target);
           else visible.delete(entry.target);
@@ -475,11 +556,13 @@ export function initTabBar() {
   });
 
   window.addEventListener('pagehide', () => {
+    clearTimeout(holdTimer);
     if (rafId) cancelAnimationFrame(rafId);
     controller.abort();
   }, { signal, once: true });
 
   return () => {
+    clearTimeout(holdTimer);
     if (rafId) cancelAnimationFrame(rafId);
     controller.abort();
   };

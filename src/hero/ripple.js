@@ -1,10 +1,5 @@
 import * as THREE from 'three';
 
-/**
- * Infinite rippling water surface with analytic finite-difference normals,
- * synchronized sun/moon shimmer path, and up to 4 interactive click impulses.
- */
-
 const MAX_IMPULSES = 4;
 
 const vertexShader = /* glsl */ `

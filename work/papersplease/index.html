@@ -31,211 +31,320 @@
     <meta name="color-scheme" content="light dark" />
     <script>
       (function () {
-        var h = new Date().getHours() + new Date().getMinutes() / 60;
-        var night = h < 6 || h >= 19.5;
-        document.documentElement.dataset.scheme = night ? 'night' : 'day';
-        document.documentElement.dataset.phase = night ? 'night' : 'day';
-        document.querySelector('meta[name="color-scheme"]').content = night ? 'dark' : 'light';
-        document.querySelector('meta[name="theme-color"]').content = night ? '#0a0d10' : '#e4e6e1';
+        var stored = null;
+        try { stored = sessionStorage.getItem('thijnperd-time'); } catch (e) {}
+        var now = new Date();
+        var t = stored !== null && isFinite(Number(stored))
+          ? Math.min(Math.max(Number(stored), 0), 1)
+          : (now.getHours() + now.getMinutes() / 60) / 24;
+        var scheme = t >= 0.24 && t < 0.80 ? 'day' : 'night';
+        var phase = (t < 0.21 || t >= 0.855) ? 'night' : t < 0.36 ? 'dawn' : t < 0.70 ? 'day' : 'dusk';
+        document.documentElement.dataset.scheme = scheme;
+        document.documentElement.dataset.phase = phase;
+        document.querySelector('meta[name="color-scheme"]').content = scheme === 'night' ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = scheme === 'night' ? '#0a0d10' : '#e4e6e1';
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+  <body class="case-page">
+    <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
 
-    <header class="page-bar">
-      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" focusable="false">
-            <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
-            <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
-            <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
-            <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
-            <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
-            <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
-            <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
-            <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
-          </svg>
-        </span>
-        <span class="page-bar__name">thijnperd</span>
-      </a>
-      <div class="page-bar__right">
-        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
-          <a href="/#work" data-i18n="ui.navWork">Work</a>
-          <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
-          <a href="/cv/" data-i18n="ui.navCv">CV</a>
-          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
-        </nav>
-        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
-          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
-          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
-          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+    <header class="page-bar page-bar--wide">
+      <div class="page-bar__inner">
+        <div class="page-bar__left">
+          <a class="page-bar__brand" href="/" data-i18n-attr="aria-label:ui.homeAria" aria-label="Thijn Köhne, home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="4" stroke-width="1.5" />
+                <polygon class="brand-mark__dot" points="16,5.5 25.1,10.75 16,16 6.9,10.75" />
+                <polygon class="brand-mark__fg" points="6.9,10.75 16,16 16,26.5 6.9,21.25" />
+                <polygon class="brand-mark__fg" points="16,16 25.1,10.75 25.1,21.25 16,26.5" opacity=".14" />
+                <rect class="brand-mark__fg" x="16.2" y="16.4" width="2" height="2" />
+                <rect class="brand-mark__fg" x="16.2" y="20.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="17.3" width="2" height="2" />
+                <rect class="brand-mark__fg" x="18.4" y="21.7" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="13.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="20.6" y="18.2" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="14.8" width="2" height="2" />
+                <rect class="brand-mark__fg" x="22.8" y="19.2" width="2" height="2" />
+              </svg>
+            </span>
+            <span class="page-bar__name">thijnperd</span>
+          </a>
+          <button
+            class="phase-btn"
+            type="button"
+            data-phase-cycle
+            aria-label="Cycle time of day, currently Daylight"
+          >
+            <span class="phase-btn__icon" data-status-icon aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round">
+                <circle cx="8" cy="8" r="2.8" />
+                <path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" />
+              </svg>
+            </span>
+            <span class="phase-btn__clock" data-sky-clock>12:00</span>
+            <span class="phase-btn__sep" aria-hidden="true">·</span>
+            <span class="phase-btn__label" data-status-text>Daylight</span>
+          </button>
+        </div>
+        <div class="page-bar__right">
+          <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+            <a href="/#work" aria-current="page" data-i18n="ui.navWork">Work</a>
+            <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
+            <a href="/cv/" data-i18n="ui.navCv">CV</a>
+            <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+          </nav>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+            <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+            <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+          </div>
         </div>
       </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
-      <div class="page-shell">
+      <div class="case-shell">
         <article>
-          <nav class="crumb" aria-label="Breadcrumb">
-            <a href="/#work" data-i18n="article.crumbWork">Work</a><span aria-hidden="true">/</span><span>04</span>
-          </nav>
-          <h1 class="article__title">PapersPlease</h1>
-          <p class="article__lede">
-            A literature crawler that searches five academic APIs, reads the abstracts, and keeps the
-            papers that actually answer the question — for people and for coding agents.
-          </p>
-
-          <dl class="article__meta">
-            <div><dt data-i18n="article.role">Role</dt><dd>Independent project</dd></div>
-            <div><dt data-i18n="article.stack">Stack</dt><dd>Python 3.10+, standard library</dd></div>
-            <div><dt data-i18n="article.status">Status</dt><dd>Open source</dd></div>
-            <div>
-              <dt data-i18n="article.links">Links</dt>
-              <dd>
-                <a href="https://github.com/thijnperd/PapersPlease" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-              </dd>
+          <header class="case-hero">
+            <div class="case-hero__eyebrow">
+              <nav class="crumb" aria-label="Breadcrumb">
+                <a href="/#work" data-i18n="article.crumbWork">Work</a><span aria-hidden="true">/</span><span>04</span>
+              </nav>
+              <span class="project__kind" data-i18n="home.kindCliTuiMcp">CLI, TUI &amp; MCP</span>
             </div>
-          </dl>
-          <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyCase" hidden></p>
 
-          <figure class="article__figure">
-            <img
-              src="/work/papers.webp"
-              width="1440"
-              height="900"
-              alt="PapersPlease terminal UI showing six in-scope research papers, relevance scores, open-access and Sci-Hub links, and the abstract detail pane."
-            />
-            <figcaption>
-              The terminal browser: in-scope papers with relevance scores, access links, and the
-              abstract kept in view while deciding.
-            </figcaption>
-          </figure>
+            <div class="case-hero__grid">
+              <div class="case-hero__intro">
+                <h1 class="case-hero__title">PapersPlease</h1>
+                <p class="case-hero__lede">
+                  A literature crawler that searches five academic APIs, reads the abstracts, and
+                  keeps the papers that actually answer the question — for people and for coding
+                  agents.
+                </p>
 
-          <div class="article__body">
-            <h2>Search is not screening</h2>
-            <p>
-              Academic search is good at finding papers that share vocabulary with a query and bad at
-              knowing what the query meant. A search for strength training in older adults returns
-              work on strength in children, work where strength is an outcome rather than an
-              intervention, and reviews that cite the papers you actually wanted.
-            </p>
-            <p>
-              PapersPlease adds the step that usually happens by hand: read the title and abstract,
-              decide whether the paper is in scope, adjacent or irrelevant, and only then follow the
-              link.
-            </p>
+                <ul class="project__stats case-hero__stats">
+                  <li><strong>5</strong><span data-i18n="home.papersStat0">academic APIs</span></li>
+                  <li><strong>4</strong><span data-i18n="home.papersStat1">surfaces</span></li>
+                  <li><strong>0</strong><span data-i18n="home.papersStat2">runtime deps</span></li>
+                </ul>
 
-            <h2>One pipeline, four surfaces</h2>
-            <p>
-              The same core sits behind four ways to use it:
-            </p>
-            <ul>
-              <li>A <strong>CLI</strong> for a single query, with flags for count and interactivity.</li>
-              <li>A <strong>TUI</strong> for moving through results and abstracts without leaving the terminal.</li>
-              <li>A <strong>Python library</strong> for putting the pipeline inside another script.</li>
-              <li>An <strong>MCP server</strong> so a coding agent can search literature as a tool call.</li>
-            </ul>
-            <p>
-              Four surfaces is a constraint on the design: the screening logic cannot live in the
-              CLI's output formatting or the TUI's widgets, so it sits in one place and every surface
-              renders the same verdicts.
-            </p>
+                <div class="case-hero__actions">
+                  <a
+                    class="btn btn--primary"
+                    href="https://github.com/thijnperd/PapersPlease"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span data-i18n="ui.github">GitHub</span>
+                    <span class="btn__arrow" aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
 
-            <figure class="article__figure">
+              <div class="case-hero__aside">
+                <div class="case-spec">
+                  <dl class="case-spec__list">
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.role">Role</dt>
+                      <dd>Independent project</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.stack">Stack</dt>
+                      <dd>Python 3.10+, standard library</dd>
+                    </div>
+                    <div class="case-spec__row">
+                      <dt data-i18n="article.status">Status</dt>
+                      <dd>Open source</dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+            <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyCase" hidden></p>
+
+            <figure class="case-hero__media">
               <img
-                src="/work/papers-pipeline.webp"
-                width="1008"
-                height="371"
-                alt="PapersPlease terminal live pipeline showing candidate counts arriving from epmc, crossref, openalex, and arxiv before abstract screening."
-                loading="lazy"
+                src="/work/papers.webp"
+                width="1440"
+                height="900"
+                fetchpriority="high"
+                decoding="async"
+                alt="PapersPlease terminal UI showing six in-scope research papers, relevance scores, open-access and Sci-Hub links, and the abstract detail pane."
               />
               <figcaption>
-                Live progress across the five pipeline stages as epmc, crossref, openalex, and arxiv
-                return candidates before abstract screening.
+                The terminal browser: in-scope papers with relevance scores, access links, and the
+                abstract kept in view while deciding.
               </figcaption>
             </figure>
+          </header>
 
-            <h2>Reading before downloading</h2>
-            <p>
-              PapersPlease queries Europe PMC, Crossref, arXiv, Semantic Scholar and OpenAlex, then
-              screens each candidate's title and abstract for scope: does it study the population,
-              intervention and outcome the query asked about, and does the causal direction match?
-              Results are grouped as in-scope, adjacent or rejected, with a relevance score.
-            </p>
-            <p>
-              For the papers that survive, it resolves open-access links and verifies that a download
-              is actually a PDF rather than a landing page. A link that 404s is worse than no link,
-              because it costs the same attention and returns nothing.
-            </p>
-            <pre><code>papersplease find "muscle strength in older adults since 2015" -i</code></pre>
+          <div class="case-sections">
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Search is not screening</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  Academic search is good at finding papers that share vocabulary with a query and
+                  bad at knowing what the query meant. A search for strength training in older adults
+                  returns work on strength in children, work where strength is an outcome rather than
+                  an intervention, and reviews that cite the papers you actually wanted.
+                </p>
+                <p>
+                  PapersPlease adds the step that usually happens by hand: read the title and
+                  abstract, decide whether the paper is in scope, adjacent or irrelevant, and only
+                  then follow the link.
+                </p>
+              </div>
+            </section>
 
-            <figure class="article__figure">
-              <img
-                src="/work/papers-explain.webp"
-                width="1048"
-                height="646"
-                alt="Output of papersplease explain showing expanded synonym facets for unhealthy diet and type 1 diabetes, coverage threshold, and causal direction."
-                loading="lazy"
-              />
-              <figcaption>
-                <code>papersplease explain</code> inspecting the offline scope contract — expanded
-                synonym facets, coverage guard (≥ 0.70), and causal direction (unhealthy diet → type
-                1 diabetes).
-              </figcaption>
-            </figure>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">One pipeline, four surfaces</h2>
+              </div>
+              <div class="case-section__content">
+                <p>The same core sits behind four ways to use it:</p>
+                <ul>
+                  <li>A <strong>CLI</strong> for a single query, with flags for count and interactivity.</li>
+                  <li>A <strong>TUI</strong> for moving through results and abstracts without leaving the terminal.</li>
+                  <li>A <strong>Python library</strong> for putting the pipeline inside another script.</li>
+                  <li>An <strong>MCP server</strong> so a coding agent can search literature as a tool call.</li>
+                </ul>
+                <p>
+                  Four surfaces is a constraint on the design: the screening logic cannot live in
+                  the CLI's output formatting or the TUI's widgets, so it sits in one place and
+                  every surface renders the same verdicts.
+                </p>
 
-            <h2>Zero dependencies</h2>
-            <p>
-              The core runs on the Python standard library: HTTP, JSON, the CLI and the terminal
-              interface. The only optional extra is PDF text extraction. That makes it installable
-              anywhere Python exists, with no lockfile to rot and no transitive surprises. The
-              trade-off is real — HTTP retries, terminal
-              layout and argument parsing are written rather than imported — but it keeps the tool
-              small enough to read in an afternoon.
-            </p>
+                <figure class="article__figure">
+                  <img
+                    src="/work/papers-pipeline.webp"
+                    width="1008"
+                    height="371"
+                    alt="PapersPlease terminal live pipeline showing candidate counts arriving from epmc, crossref, openalex, and arxiv before abstract screening."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    Live progress across the five pipeline stages as epmc, crossref, openalex, and
+                    arxiv return candidates before abstract screening.
+                  </figcaption>
+                </figure>
+              </div>
+            </section>
 
-            <h2>What it cannot do</h2>
-            <p>
-              This is a screening aid, not a systematic review. Abstracts omit methods, overstate
-              findings and sometimes lie; the heuristics will put a relevant paper in the rejected
-              group. Coverage is limited to the five sources it queries, and the final judgement is
-              still reading the paper. The tool's job is to make that pile smaller and better
-              labelled, not to replace it.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Reading before downloading</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  PapersPlease queries Europe PMC, Crossref, arXiv, Semantic Scholar and OpenAlex,
+                  then screens each candidate's title and abstract for scope: does it study the
+                  population, intervention and outcome the query asked about, and does the causal
+                  direction match? Results are grouped as in-scope, adjacent or rejected, with a
+                  relevance score.
+                </p>
+                <p>
+                  For the papers that survive, it resolves open-access links and verifies that a
+                  download is actually a PDF rather than a landing page. A link that 404s is worse
+                  than no link, because it costs the same attention and returns nothing.
+                </p>
+                <pre><code>papersplease find "muscle strength in older adults since 2015" -i</code></pre>
 
-            <figure class="article__figure article__figure--compact">
-              <img
-                src="/work/papers-report.webp"
-                width="1048"
-                height="1771"
-                alt="Full PapersPlease CLI scope report grouping candidates into IN SCOPE, ADJACENT, and REJECTED buckets with explanation lines for domain-sense exclusions."
-                loading="lazy"
-              />
-              <figcaption>
-                The full CLI scope report separating IN SCOPE, ADJACENT, and REJECTED candidates —
-                including domain-sense rejections like filtering out cardiac hypertrophy on a
-                muscle-hypertrophy query.
-              </figcaption>
-            </figure>
+                <figure class="article__figure">
+                  <img
+                    src="/work/papers-explain.webp"
+                    width="1048"
+                    height="646"
+                    alt="Output of papersplease explain showing expanded synonym facets for unhealthy diet and type 1 diabetes, coverage threshold, and causal direction."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    <code>papersplease explain</code> inspecting the offline scope contract — expanded
+                    synonym facets, coverage guard (≥ 0.70), and causal direction (unhealthy diet →
+                    type 1 diabetes).
+                  </figcaption>
+                </figure>
+              </div>
+            </section>
 
-            <h2>Try it</h2>
-            <p>
-              The <a href="https://github.com/thijnperd/PapersPlease" target="_blank" rel="noopener noreferrer">repository</a>
-              has the install line, the CLI and TUI usage, and the MCP configuration.
-            </p>
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Zero dependencies</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The core runs on the Python standard library: HTTP, JSON, the CLI and the terminal
+                  interface. The only optional extra is PDF text extraction. That makes it
+                  installable anywhere Python exists, with no lockfile to rot and no transitive
+                  surprises. The trade-off is real — HTTP retries, terminal layout and argument
+                  parsing are written rather than imported — but it keeps the tool small enough to
+                  read in an afternoon.
+                </p>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">What it cannot do</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  This is a screening aid, not a systematic review. Abstracts omit methods,
+                  overstate findings and sometimes lie; the heuristics will put a relevant paper in
+                  the rejected group. Coverage is limited to the five sources it queries, and the
+                  final judgement is still reading the paper. The tool's job is to make that pile
+                  smaller and better labelled, not to replace it.
+                </p>
+
+                <figure class="article__figure article__figure--compact">
+                  <img
+                    src="/work/papers-report.webp"
+                    width="1048"
+                    height="1771"
+                    alt="Full PapersPlease CLI scope report grouping candidates into IN SCOPE, ADJACENT, and REJECTED buckets with explanation lines for domain-sense exclusions."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    The full CLI scope report separating IN SCOPE, ADJACENT, and REJECTED
+                    candidates — including domain-sense rejections like filtering out cardiac
+                    hypertrophy on a muscle-hypertrophy query.
+                  </figcaption>
+                </figure>
+              </div>
+            </section>
+
+            <section class="case-section">
+              <div class="case-section__head">
+                <h2 class="case-section__title">Try it</h2>
+              </div>
+              <div class="case-section__content">
+                <p>
+                  The <a href="https://github.com/thijnperd/PapersPlease" target="_blank" rel="noopener noreferrer">repository</a>
+                  has the install line, the CLI and TUI usage, and the MCP configuration.
+                </p>
+              </div>
+            </section>
           </div>
 
-          <nav class="article__end" aria-label="Project pagination">
-            <a href="/work/w3plan/">← W3Plan</a>
-            <a href="/writing/dithering-the-hero/">Next: How the hero is dithered →</a>
+          <nav class="case-pager" aria-label="Project pagination">
+            <a class="case-pager__card" href="/work/w3plan/">
+              <span class="case-pager__dir">← <span data-i18n="article.prevProject">Previous</span></span>
+              <span class="case-pager__title">W3Plan</span>
+            </a>
+            <a class="case-pager__card case-pager__card--next" href="/writing/dithering-the-hero/">
+              <span class="case-pager__dir"><span data-i18n="article.nextProject">Next</span> →</span>
+              <span class="case-pager__title">How the hero is dithered</span>
+            </a>
           </nav>
         </article>
       </div>
@@ -249,6 +358,36 @@
           <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
           <a href="/" data-i18n="ui.home">Home</a>
         </p>
+        <div class="footer__social">
+          <a
+            class="footer__icon-link"
+            href="https://github.com/thijnperd"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            title="github.com/thijnperd"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+            </svg>
+          </a>
+          <a
+            class="footer__icon-link"
+            href="https://www.linkedin.com/in/thijn-k%C3%B6hne-85893625a"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            title="linkedin.com/in/thijn-köhne-85893625a"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M8 11v5" />
+              <path d="M8 8v.01" />
+              <path d="M12 16v-5" />
+              <path d="M16 16v-3a2 2 0 1 0 -4 0" />
+              <path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" />
+            </svg>
+          </a>
+        </div>
       </div>
     </footer>
     <nav class="mobile-tabbar" data-tabbar data-i18n-attr="aria-label:ui.navMobile" aria-label="Mobile navigation">

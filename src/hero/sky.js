@@ -1,10 +1,5 @@
 import * as THREE from 'three';
 
-/**
- * Procedural sky dome, synchronized Sun & Moon arc with horizon clipping,
- * drifting cloud wisps, twinkling starfield, and subtle shooting star.
- */
-
 const DOME_VERTEX = /* glsl */ `
   varying vec3 vWorldPosition;
   void main() {
@@ -128,10 +123,7 @@ export function updateSkyDome(dome, atm, celestial, elapsed) {
   u.uTime.value = elapsed;
 }
 
-/* ------------------------------------------------------------------ */
-/* Procedural GLSL Sun & Moon with horizon clipping                    */
-/* ------------------------------------------------------------------ */
-
+/* Sun & moon billboards */
 const CELESTIAL_VERTEX = /* glsl */ `
   varying vec2 vUv;
   varying vec3 vWorldPos;
@@ -319,12 +311,6 @@ export function createCelestialSystem() {
   return state;
 }
 
-/**
- * Compute camera-relative orbital arc positions across a full 24h cycle (`0.0 = 00:00`,
- * `0.275 = 06:36 dawn`, `0.50 = 12:00 noon`, `0.76 = 18:15 dusk`, `1.0 = 24:00`):
- * the Sun rises out of the sea at dawn, arcs across noon, and sets into dusk while
- * the Moon spans the wrapped overnight arc.
- */
 export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook, t, elapsed, compact) {
   const forward = celestial._forward
     .set(cameraLook.x - cameraBase.x, 0, cameraLook.z - cameraBase.z)
@@ -339,7 +325,7 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
   const ySpan = (compact ? 0.72 : 1.0) * distRatio;
   const horizonY = cameraBase.y * Math.max(1 - dist / 130, 0.06);
 
-  // 1. Sun trajectory (t = 0.21 -> 0.81): rises left-east at dawn -> high noon -> sets right-west at dusk.
+  // Sun trajectory (t = 0.21 -> 0.81)
   const sunU = clamp01((t - 0.21) / 0.60);
   const sunEased = sunU * sunU * (3 - 2 * sunU);
   const sunRight = THREE.MathUtils.lerp(-14.2, 14.2, sunEased) * xSpan;
@@ -376,7 +362,7 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
   celestial.sunElevation = clamp01((sunArcY / ySpan + 1.0) / 12.0);
   celestial.sunGlowStrength = (0.18 + 0.92 * horizonProximity) * sunOpacity;
 
-  // 2. Moon wrapped overnight trajectory (t = 0.76 -> 1.00 / 0.00 -> 0.27).
+  // Moon wrapped overnight trajectory (t = 0.76 -> 1.00 / 0.00 -> 0.27)
   const inMoonSpan = t >= 0.76 || t <= 0.27;
   const moonT = inMoonSpan
     ? clamp01(t >= 0.76 ? (t - 0.76) / 0.51 : (t + 0.24) / 0.51)
@@ -404,7 +390,7 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
   celestial.moonVisibility = moonVis;
   celestial.moonElevation = clamp01((moonY / ySpan + 1.0) / 10.5);
 
-  // 3. Unified celestial light direction for water glitter & scene highlights.
+  // Unified celestial light direction for water glitter & highlights
   const handoff = moonVis / Math.max(sunOpacity + moonVis, 0.001);
   celestial._sunLightDir.copy(celestial.sunDir);
   celestial._sunLightDir.y = Math.max(celestial._sunLightDir.y, 0.08);
@@ -427,10 +413,7 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Twinkling procedural starfield & periodic shooting star             */
-/* ------------------------------------------------------------------ */
-
+/* Starfield & shooting star */
 const STAR_VERTEX = /* glsl */ `
   attribute float aPhase;
   attribute float aSize;
@@ -598,9 +581,7 @@ export function setStarfieldPixelRatio(starfield, ratio) {
   starfield.material.uniforms.uPixelRatio.value = ratio;
 }
 
-/* ------------------------------------------------------------------ */
-/* Additive halos for the laptop screen and geometric core             */
-/* ------------------------------------------------------------------ */
+/* Halos */
 
 export function createGlowSprite({ color = '#ffffff', size = 1, opacity = 0.3 } = {}) {
   const canvas = document.createElement('canvas');

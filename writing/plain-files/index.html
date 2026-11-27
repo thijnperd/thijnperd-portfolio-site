@@ -130,7 +130,7 @@
               </li>
               <li>
                 <strong>W3Plan</strong> keeps a student's schedule on the device. The school's PTA
-                data is the one thing fetched from outside, and it is read-only.
+                data ships as a read-only JSON dataset, kept separate from a student's own schedule.
               </li>
               <li>
                 <strong>PapersPlease</strong> writes nothing to a service at all. It queries public
@@ -188,11 +188,11 @@
 
             <h2>Where the cloud earns its place</h2>
             <p>
-              W3Plan is the useful counterexample. The school's PTA calendar is published data that
-              every student needs and no student should edit. Fetching it read-only from Supabase —
-              with a local JSON fallback — is better than shipping a copy that goes stale. The
-              division is clean because the data has an owner and a direction: published by the
-              school, consumed by the app, never written back.
+              W3Plan is a clean example of that boundary. The school's PTA calendar is published data
+              that every student needs and no student should edit. Shipping it as a read-only JSON
+              dataset — separate from the student's own schedule and updated when the school
+              publishes a new export — keeps the division clear because the data has an owner and a
+              direction: published by the school, consumed by the app, never written back.
             </p>
             <p>
               That is a reasonable rule of thumb. Data a person creates stays local. Data an

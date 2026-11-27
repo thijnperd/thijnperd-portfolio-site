@@ -2,11 +2,6 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { createGlowSprite } from './sky.js';
 
-/**
- * Procedural 3D desk setup: slab, open laptop with live canvas terminal, mug,
- * notebook, pen, and faceted polyhedron core.
- */
-
 const MONO = "'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace";
 
 const COLORS = {
@@ -26,10 +21,7 @@ const COLORS = {
   penTip: '#242a2b',
 };
 
-/* ------------------------------------------------------------------ */
-/* Terminal screen texture (a 2D canvas redrawn at ~9 fps)             */
-/* ------------------------------------------------------------------ */
-
+// Terminal screen texture (~9 fps)
 export function createTerminalTexture() {
   const canvas = document.createElement('canvas');
   canvas.width = 512;
@@ -179,10 +171,7 @@ function drawTerminal(terminal, elapsed, phaseKey = 'day') {
   ctx.fillRect(0, 0, w, h);
 }
 
-/**
- * Redraws are throttled to ~9 fps: enough for the cursor / progress to feel live,
- * but far cheaper on texture uploads than redrawing at 60 fps.
- */
+// Throttled to ~9 fps so cursor/progress feels live without 60 fps texture uploads.
 export function updateTerminalTexture(terminal, elapsed, phaseKey = 'day') {
   const tier = (TIERS[phaseKey] || TIERS.day).idx;
   const due = elapsed - terminal.lastDraw > 1 / 9 || tier !== terminal.lastTier;
@@ -194,9 +183,7 @@ export function updateTerminalTexture(terminal, elapsed, phaseKey = 'day') {
   terminal.texture.needsUpdate = true;
 }
 
-/* ------------------------------------------------------------------ */
-/* Procedural models                                                   */
-/* ------------------------------------------------------------------ */
+/* Procedural models */
 
 function createDesk() {
   const desk = new THREE.Group();
@@ -476,9 +463,7 @@ export function createGeometricCore() {
   };
 }
 
-/* ------------------------------------------------------------------ */
-/* Assembly + per-frame update                                         */
-/* ------------------------------------------------------------------ */
+/* Assembly & per-frame update */
 
 export function createWorkstationGroup({ pixelRatio = 1 } = {}) {
   const group = new THREE.Group();
@@ -596,9 +581,7 @@ export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, at
   updateTerminalTexture(terminal, elapsed, atm.key || 'day');
 }
 
-/* ------------------------------------------------------------------ */
-/* Fake contact shadow decal on the water                              */
-/* ------------------------------------------------------------------ */
+/* Contact shadow decal */
 
 export function createContactShadow() {
   const geometry = new THREE.PlaneGeometry(6.6, 3.0);

@@ -1,11 +1,4 @@
-/**
- * The 404 signal: a live 8×8 Bayer dither of "404" over a dithered horizon.
- *
- * The canvas is rendered at cell resolution (one canvas pixel per dither cell)
- * and scaled up with `image-rendering: pixelated`, so the blocks stay chunky at
- * any viewport. Ink and paper come from the same CSS custom properties the rest
- * of the site uses, so the plate follows the day/night palette.
- */
+// Live 8x8 Bayer plate at 1 canvas pixel per dither cell.
 
 const BAYER8 = (() => {
   const bayer2 = (x, y) => {

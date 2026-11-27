@@ -1,9 +1,6 @@
 import * as THREE from 'three';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
-/**
- * Screen-space ordered Bayer 8×8 dithering post-processing pass.
- */
 export const DitherShader = {
   name: 'DitherShader',
 

@@ -1,10 +1,10 @@
 import { initTimeSlider, initHorizontalTimeSlider } from './ui/timeSlider.js';
-import { createAdaptiveUI, getTimeOfDayFromClock } from './ui/adaptiveUI.js';
+import { createAdaptiveUI, getStoredTimeOfDay, getTimeOfDayFromClock, storeTimeOfDay } from './ui/adaptiveUI.js';
 import { initSite } from './ui/site.js';
 import { initAnalytics, track } from './analytics.js';
 
 const PHASE_PRESETS = { dawn: 0.275, day: 0.5, dusk: 0.76, night: 0.96 };
-const INITIAL_TIME = getTimeOfDayFromClock();
+const INITIAL_TIME = getStoredTimeOfDay() ?? getTimeOfDayFromClock();
 
 initSite();
 initAnalytics();
@@ -23,9 +23,10 @@ let hSlider = null;
 let heroRequested = false;
 let currentTarget = INITIAL_TIME;
 
-function setTime(next, { immediate = false } = {}) {
+function setTime(next, { immediate = false, persist = true } = {}) {
   const clamped = Math.min(Math.max(Number(next) || 0, 0), 1);
   currentTarget = clamped;
+  if (persist) storeTimeOfDay(clamped);
   if (slider) slider.setValue(clamped);
   if (hSlider) hSlider.setValue(clamped);
   if (hero) {
@@ -43,12 +44,7 @@ function showFallback(error, { warn = true } = {}) {
   adaptiveUI.update(currentTarget);
 }
 
-/**
- * Three.js and the scene graph are the heaviest thing on the page, and the
- * above-the-fold content is text. The hero module is loaded on idle so the name
- * and tagline paint first; the scene fades in when it is ready. Save-Data
- * visitors get the static background instead.
- */
+// Defer Three.js scene load so headline & copy paint first.
 async function loadHero() {
   if (heroRequested || hero) return;
   heroRequested = true;

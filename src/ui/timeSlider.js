@@ -1,9 +1,4 @@
-/**
- * Interactive vertical 00:00–24:00 day/night slider with pointer drag, preset
- * stops (Midnight / Dawn / Daylight / Dusk / Midnight), and keyboard support.
- * `0.00` sits at the bottom (`00:00`) and `1.00` at the top (`24:00`).
- */
-
+// 0 at bottom (00:00), 1 at top (24:00)
 import { t } from './i18n.js';
 
 const clamp01 = (value) => Math.min(Math.max(value, 0), 1);
@@ -168,10 +163,6 @@ export function initTimeSlider(host, { value = 0.5, onChange = () => {} } = {}) 
   };
 }
 
-/**
- * Interactive horizontal 00:00–24:00 day/night range slider for mobile, built
- * on a native labeled `<input type="range">` synced with CSS custom properties.
- */
 export function initHorizontalTimeSlider(host, { value = 0.5, onChange = () => {} } = {}) {
   if (!host) {
     return { setValue() {}, destroy() {}, element: null };

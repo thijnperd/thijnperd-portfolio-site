@@ -1,6 +1,3 @@
-/**
- * Multilingual UI, copy, CV, and project lens dictionary (EN / NL / DE).
- */
 export const TRANSLATIONS = {
   en: {
     ui: {
@@ -106,7 +103,7 @@ export const TRANSLATIONS = {
       skillsCatGfx: 'Graphics & UI',
       skillsGfxItems: ['Three.js & WebGL2', 'Canvas 2D', 'Custom shaders & dithering', 'React', 'HTML & CSS layout'],
       skillsCatSys: 'Desktop & Systems',
-      skillsSysItems: ['Electron', 'Node & Vite', 'CLI & TUI apps', 'MCP servers & Supabase'],
+      skillsSysItems: ['Electron', 'Node & Vite', 'CLI & TUI apps', 'MCP servers'],
       contactTitle: 'Get in touch',
       contactNote: 'For questions, collaborations, or bug reports, reach out on GitHub or LinkedIn.',
     },
@@ -185,6 +182,10 @@ export const TRANSLATIONS = {
       projects: 'Projects',
       allWork: '← All work',
       allWriting: '← All writing',
+      prevProject: 'Previous',
+      nextProject: 'Next',
+      outcome: 'Outcome',
+      inDailyUse: 'In daily use',
       enOnlyCase: '',
       enOnlyEssay: '',
     },
@@ -294,7 +295,7 @@ export const TRANSLATIONS = {
       skillsCatGfx: 'Graphics & UI',
       skillsGfxItems: ['Three.js & WebGL2', 'Canvas 2D', 'Eigen shaders & dithering', 'React', 'HTML- & CSS-lay-out'],
       skillsCatSys: 'Desktop & Systemen',
-      skillsSysItems: ['Electron', 'Node & Vite', 'CLI- & TUI-apps', 'MCP-servers & Supabase'],
+      skillsSysItems: ['Electron', 'Node & Vite', 'CLI- & TUI-apps', 'MCP-servers'],
       contactTitle: 'Neem contact op',
       contactNote: 'Voor vragen, samenwerkingen of bugmeldingen kun je terecht op GitHub of LinkedIn.',
     },
@@ -373,6 +374,10 @@ export const TRANSLATIONS = {
       projects: 'Projecten',
       allWork: '← Alle projecten',
       allWriting: '← Alle artikelen',
+      prevProject: 'Vorige',
+      nextProject: 'Volgende',
+      outcome: 'Resultaat',
+      inDailyUse: 'Dagelijks gebruik',
       enOnlyCase: 'Deze uitgebreide casestudy is geschreven in het Engels; het overzicht en het CV zijn wel beschikbaar in het Nederlands.',
       enOnlyEssay: 'Dit artikel is geschreven in het Engels; de hoofdpagina en het CV zijn wel beschikbaar in het Nederlands.',
     },
@@ -482,7 +487,7 @@ export const TRANSLATIONS = {
       skillsCatGfx: 'Grafik & UI',
       skillsGfxItems: ['Three.js & WebGL2', 'Canvas 2D', 'Eigene Shader & Dithering', 'React', 'HTML- & CSS-Layout'],
       skillsCatSys: 'Desktop & Systeme',
-      skillsSysItems: ['Electron', 'Node & Vite', 'CLI- & TUI-Apps', 'MCP-Server & Supabase'],
+      skillsSysItems: ['Electron', 'Node & Vite', 'CLI- & TUI-Apps', 'MCP-Server'],
       contactTitle: 'Kontakt aufnehmen',
       contactNote: 'Für Fragen, Zusammenarbeit oder Fehlerberichte erreichst du mich auf GitHub oder LinkedIn.',
     },
@@ -561,6 +566,10 @@ export const TRANSLATIONS = {
       projects: 'Projekte',
       allWork: '← Alle Projekte',
       allWriting: '← Alle Artikel',
+      prevProject: 'Vorheriges',
+      nextProject: 'Nächstes',
+      outcome: 'Ergebnis',
+      inDailyUse: 'Täglich im Einsatz',
       enOnlyCase: 'Diese ausführliche Fallstudie ist auf Englisch verfasst; Übersicht und Lebenslauf stehen vollständig auf Deutsch bereit.',
       enOnlyEssay: 'Dieser Essay ist auf Englisch verfasst; Startseite und Lebenslauf stehen vollständig auf Deutsch bereit.',
     },

@@ -1,11 +1,5 @@
 import * as THREE from 'three';
 
-/**
- * Two lightweight point systems drawn with a soft radial falloff shader:
- * rising embers/sparks between the laptop and floating core, and steam curls
- * off the coffee mug. Both advance smoothly via deltaTime.
- */
-
 const STEAM_WHITE = new THREE.Color('#ffffff');
 
 const POINT_VERTEX = /* glsl */ `

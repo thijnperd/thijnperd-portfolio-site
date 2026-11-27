@@ -1,10 +1,4 @@
-/**
- * Internal link check for the built site.
- *
- * It verifies hrefs, image sources (including srcset), fragments and every
- * sitemap URL against dist/. External URLs are deliberately not fetched: the
- * deploy should not fail because a third-party site rate-limits CI.
- */
+// Verify internal links, images, and sitemap URLs against dist/.
 import { existsSync, statSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";

@@ -4,9 +4,7 @@ import { fileURLToPath } from 'node:url';
 const page = (path) => fileURLToPath(new URL(path, import.meta.url));
 
 export default defineConfig({
-  // The site is a GitHub Pages user site served from the domain root, and the
-  // case-study pages live two levels deep. A root base keeps every asset URL
-  // correct on all of them.
+  // Root base keeps asset URLs valid on two-level case study routes.
   base: '/',
   build: {
     rollupOptions: {

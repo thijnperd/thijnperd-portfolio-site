@@ -1,8 +1,3 @@
-/**
- * Synchronizes page palette tokens, portrait duotone colors, tab favicon, real-time
- * local clock, phase control, and hero hint with the 3D hero time-of-day scalar.
- */
-
 import { t } from './i18n.js';
 
 const LIGHT_STOPS = [
@@ -58,6 +53,29 @@ export function formatLocalClock(date = new Date()) {
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   return `${hours}:${minutes}`;
+}
+
+const TIME_STORAGE_KEY = 'thijnperd-time';
+
+export function getStoredTimeOfDay() {
+  try {
+    const raw = sessionStorage.getItem(TIME_STORAGE_KEY);
+    if (raw === null) return null;
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed)) return null;
+    return Math.min(Math.max(parsed, 0), 1);
+  } catch {
+    return null;
+  }
+}
+
+export function storeTimeOfDay(value) {
+  try {
+    const clamped = Math.min(Math.max(Number(value) || 0, 0), 1);
+    sessionStorage.setItem(TIME_STORAGE_KEY, String(clamped));
+  } catch {
+    /* ignore blocked storage */
+  }
 }
 
 export function getTimeOfDayFromClock(date = new Date()) {

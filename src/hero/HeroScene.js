@@ -24,12 +24,6 @@ import {
 } from './workstation.js';
 import { createPromptParticles, createSteamParticles } from './particles.js';
 
-/**
- * Owns the WebGL renderer, scene graph, post-processing chain, and render loop.
- *   new HeroScene(container, { initialTime })
- *   scene.setTimeOfDay(t)  // 0 daylight · 0.46 dusk · 0.66 twilight · 1 midnight
- *   scene.start() / stop() / dispose()
- */
 export class HeroScene {
   constructor(container, { initialTime = 0 } = {}) {
     if (!container) throw new Error('HeroScene needs a container element.');
