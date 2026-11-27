@@ -1944,56 +1944,6 @@ html[data-phase="dawn"] .ts__end--bottom {
   background: linear-gradient(180deg, var(--paper) 0%, var(--paper) 52%, rgba(var(--accent-rgb), 0.16) 100%);
 }
 
-/* Selection inside a heading is painted as a dither pattern by ditherSelection.js;
-   the native highlight underneath would read as a flat block. */
-/* `color: inherit` is not resolved against the heading in Blink: the glyphs kept the
-   flat highlight's paper colour. `currentColor` does resolve per element, and the
-   `!important` is what actually beats the global rule above. */
-h1::selection,
-h2::selection,
-h3::selection,
-.hero__title::selection,
-.case-hero__title::selection,
-h1 ::selection,
-h2 ::selection,
-h3 ::selection,
-.hero__title ::selection,
-.case-hero__title ::selection {
-  background: transparent !important;
-  color: currentColor !important;
-}
-
-/* Sits under the heading's own text, not over it: the pattern reads through the gaps
-   between strokes while the letters stay pure ink, which a blend over the text cannot
-   do without eating the glyphs. The blocks are children of the heading, so they stay
-   behind its text whatever stacking context the page puts around it. */
-.dither-selection-target {
-  position: relative;
-  isolation: isolate;
-}
-
-.dither-selection-block {
-  position: absolute;
-  z-index: -1;
-  border-radius: 2px;
-  pointer-events: none;
-  background-color: rgba(var(--accent-rgb), 0.55);
-  background-image: repeating-conic-gradient(
-    from 0deg,
-    rgba(0, 0, 0, 0.4) 0 25%,
-    transparent 0 50%
-  );
-  background-size: 4px 4px;
-}
-
-/* Whatever element the heading really is, its native highlight has to go: the
-   pattern is the highlight. */
-.dither-selection-target::selection,
-.dither-selection-target ::selection {
-  background: transparent !important;
-  color: currentColor !important;
-}
-
 /* RESPONSIVE */
 
 @media (max-width: 960px) {

@@ -1,7 +1,6 @@
 import { initTimeSlider, initHorizontalTimeSlider } from './ui/timeSlider.js';
 import { createAdaptiveUI, getStoredTimeOfDay, getTimeOfDayFromClock, storeTimeOfDay } from './ui/adaptiveUI.js';
 import { initSite } from './ui/site.js';
-import { initDitherSelection } from './ui/ditherSelection.js';
 import { initAnalytics, track } from './analytics.js';
 
 const PHASE_PRESETS = { dawn: 0.275, day: 0.5, dusk: 0.76, night: 0.96 };
@@ -9,7 +8,6 @@ const INITIAL_TIME = getStoredTimeOfDay() ?? getTimeOfDayFromClock();
 
 initSite();
 initAnalytics();
-initDitherSelection();
 
 const adaptiveUI = createAdaptiveUI(INITIAL_TIME);
 
