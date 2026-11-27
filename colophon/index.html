@@ -43,11 +43,11 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+  <body data-i18n-page="colophon">
+    <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
 
     <header class="page-bar">
-      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
+      <a class="page-bar__brand" href="/" data-i18n-attr="aria-label:ui.homeAria" aria-label="Thijn Köhne, home">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" focusable="false">
             <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
@@ -61,18 +61,26 @@
         </span>
         <span class="page-bar__name">thijnperd</span>
       </a>
-      <nav class="page-nav" aria-label="Primary">
-        <a href="/#work">Work</a>
-        <a href="/writing/">Writing</a>
-        <a href="/cv/">CV</a>
-        <a href="/colophon/" aria-current="page" data-hide-mobile>Colophon</a>
-      </nav>
+      <div class="page-bar__right">
+        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+          <a href="/#work" data-i18n="ui.navWork">Work</a>
+          <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
+          <a href="/cv/" data-i18n="ui.navCv">CV</a>
+          <a href="/colophon/" aria-current="page" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+        </nav>
+        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+        </div>
+      </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
       <div class="page-shell">
         <article>
-          <h1 class="article__title">How this site is built</h1>
+          <h1 class="article__title" data-i18n="colophon.title">How this site is built</h1>
+          <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyEssay" hidden></p>
           <p class="article__lede">
             A static portfolio with one procedural scene, a small hand-written design system and no
             runtime framework.
@@ -95,9 +103,9 @@
 
             <h2>By the numbers</h2>
             <ul>
-              <li>Initial JavaScript for the page: about 15 kB, or 6 kB gzipped.</li>
+              <li>Initial JavaScript for the page: about 52 kB, or 18 kB gzipped (including the three-language dictionary).</li>
               <li>The scene chunk: 626 kB, 158 kB gzipped, requested after the page is usable.</li>
-              <li>One stylesheet: 38 kB, 8 kB gzipped.</li>
+              <li>One stylesheet: 40 kB, 8 kB gzipped.</li>
               <li>Seven font files: 136 kB in total, served from this origin.</li>
               <li>Third-party font, script or style requests: none.</li>
             </ul>
@@ -170,9 +178,9 @@
       <div class="page-footer__inner">
         <p>© <span data-year>2026</span> Thijn Köhne</p>
         <p>
-          <a href="/writing/">Writing</a> · <a href="/cv/">CV</a> ·
-          <a href="/colophon/">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
-          <a href="/">Home</a>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/" data-i18n="ui.home">Home</a>
         </p>
       </div>
     </footer>

@@ -20,11 +20,11 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+  <body data-i18n-page="notFound">
+    <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
 
     <header class="page-bar">
-      <a class="page-bar__brand" href="/" aria-label="Thijn Köhne, home">
+      <a class="page-bar__brand" href="/" data-i18n-attr="aria-label:ui.homeAria" aria-label="Thijn Köhne, home">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" focusable="false">
             <rect class="brand-mark__bg" x="0.75" y="0.75" width="30.5" height="30.5" rx="6" stroke-width="1.5" />
@@ -38,30 +38,37 @@
         </span>
         <span class="page-bar__name">thijnperd</span>
       </a>
-      <nav class="page-nav" aria-label="Primary">
-        <a href="/#work">Work</a>
-        <a href="/writing/">Writing</a>
-        <a href="/cv/">CV</a>
-        <a href="/colophon/" data-hide-mobile>Colophon</a>
-      </nav>
+      <div class="page-bar__right">
+        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+          <a href="/#work" data-i18n="ui.navWork">Work</a>
+          <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
+          <a href="/cv/" data-i18n="ui.navCv">CV</a>
+          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+        </nav>
+        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+        </div>
+      </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
       <div class="page-shell page-shell--wide">
         <article class="notfound">
           <header class="notfound__head">
-            <p class="notfound__code">404 · Signal lost</p>
-            <h1 class="notfound__title">Off the map.</h1>
-            <p class="notfound__note">
+            <p class="notfound__code" data-i18n="notFound.code">404 · Signal lost</p>
+            <h1 class="notfound__title" data-i18n="notFound.title">Off the map.</h1>
+            <p class="notfound__note" data-i18n="notFound.note">
               This page does not exist, or it moved. The work, the writing and the colophon are
               one click away.
             </p>
             <nav class="notfound__links" aria-label="Where to go instead">
-              <a href="/">Home</a>
-              <a href="/#work">Selected work</a>
-              <a href="/writing/">Writing</a>
-              <a href="/cv/">CV</a>
-              <a href="/colophon/">Colophon</a>
+              <a href="/" data-i18n="ui.home">Home</a>
+              <a href="/#work" data-i18n="notFound.navSelectedWork">Selected work</a>
+              <a href="/writing/" data-i18n="ui.writing">Writing</a>
+              <a href="/cv/" data-i18n="ui.cv">CV</a>
+              <a href="/colophon/" data-i18n="ui.colophon">Colophon</a>
             </nav>
           </header>
 
@@ -80,9 +87,9 @@
       <div class="page-footer__inner">
         <p>© <span data-year>2026</span> Thijn Köhne</p>
         <p>
-          <a href="/writing/">Writing</a> · <a href="/cv/">CV</a> ·
-          <a href="/colophon/">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
-          <a href="/">Home</a>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/" data-i18n="ui.home">Home</a>
         </p>
       </div>
     </footer>

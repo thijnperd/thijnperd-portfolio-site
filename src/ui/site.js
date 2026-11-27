@@ -1,3 +1,5 @@
+import { initI18n, t } from './i18n.js';
+
 function initMobileMenu() {
   const toggle = document.querySelector('[data-menu-toggle]');
   const menu = document.querySelector('[data-mobile-menu]');
@@ -9,20 +11,27 @@ function initMobileMenu() {
   const { signal } = controller;
   let open = false;
 
+  const syncToggleCopy = () => {
+    toggle.setAttribute('aria-label', t(open ? 'ui.menuCloseAria' : 'ui.menuOpenAria'));
+    if (label) label.textContent = t(open ? 'ui.close' : 'ui.menu');
+  };
+
   const setOpen = (next, { focusFirst = false } = {}) => {
     if (next && desktopQuery.matches) next = false;
     if (next === open) return;
 
     open = next;
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    if (label) label.textContent = open ? 'Close' : 'Menu';
+    syncToggleCopy();
     menu.hidden = !open;
 
     if (open && focusFirst) {
       menu.querySelector('a')?.focus({ preventScroll: true });
     }
   };
+
+  syncToggleCopy();
+  window.addEventListener('thijnperd:langchange', syncToggleCopy, { signal });
 
   toggle.addEventListener('click', () => {
     setOpen(!open, { focusFirst: !open });
@@ -62,6 +71,8 @@ function initMobileMenu() {
  * immediately, with no scroll-triggered fades.
  */
 export function initSite() {
+  initI18n();
+
   const year = document.querySelector('[data-year]');
   if (year) year.textContent = String(new Date().getFullYear());
 

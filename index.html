@@ -79,8 +79,8 @@
     </script>
   </head>
 
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+  <body data-i18n-page="home">
+    <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
 
     <main id="main" tabindex="-1">
       <!-- ============================================================ -->
@@ -123,12 +123,17 @@
               </button>
             </div>
 
-            <nav class="hero__nav" aria-label="Primary">
-              <a href="#work">Work</a>
-              <a href="/writing/" data-track="nav-writing">Writing</a>
-              <a href="/cv/">CV</a>
-              <a href="#about">About</a>
-              <a href="#contact">Contact</a>
+            <nav class="hero__nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+              <a href="#work" data-i18n="ui.navWork">Work</a>
+              <a href="/writing/" data-track="nav-writing" data-i18n="ui.navWriting">Writing</a>
+              <a href="/cv/" data-i18n="ui.navCv">CV</a>
+              <a href="#about" data-i18n="ui.navAbout">About</a>
+              <a href="#contact" data-i18n="ui.navContact">Contact</a>
+              <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+                <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+                <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+                <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+              </div>
             </nav>
 
             <button
@@ -143,12 +148,19 @@
               <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span></span>
             </button>
 
-            <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile menu" data-mobile-menu hidden>
-              <a href="#work">Work <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
-              <a href="/writing/">Writing <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
-              <a href="/cv/">CV <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
-              <a href="#about">About <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
-              <a href="#contact">Contact <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+            <nav class="mobile-menu" id="mobile-menu" data-i18n-attr="aria-label:ui.navMobile" aria-label="Mobile menu" data-mobile-menu hidden>
+              <a href="#work"><span data-i18n="ui.navWork">Work</span> <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+              <a href="/writing/"><span data-i18n="ui.navWriting">Writing</span> <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+              <a href="/cv/"><span data-i18n="ui.navCv">CV</span> <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+              <a href="#about"><span data-i18n="ui.navAbout">About</span> <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+              <a href="#contact"><span data-i18n="ui.navContact">Contact</span> <span class="mobile-menu__arrow" aria-hidden="true">↘</span></a>
+              <div class="mobile-menu__langs">
+                <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+                  <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+                  <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+                  <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+                </div>
+              </div>
             </nav>
           </header>
 
@@ -160,14 +172,14 @@
               >
             </h1>
 
-            <p class="hero__tagline">
+            <p class="hero__tagline" data-i18n="home.tagline">
               Software developer in the Netherlands building local-first desktop and web tools for
               graphics, notes, planning, and research.
             </p>
 
             <div class="hero__actions">
               <a class="btn btn--primary" href="#work">
-                <span>Selected work</span>
+                <span data-i18n="home.ctaWork">Selected work</span>
                 <svg class="btn__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false">
                   <path d="M3.5 10h12M11 5.5l4.5 4.5-4.5 4.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
@@ -182,7 +194,7 @@
           <div class="hero__bottom">
             <a class="scroll-cue" href="#work">
               <span class="scroll-cue__line" aria-hidden="true"></span>
-              <span>Scroll</span>
+              <span data-i18n="home.scroll">Scroll</span>
             </a>
             <p class="hero__hint" data-hero-hint>Drag the dial for sunset, dark mode &amp; project notes</p>
           </div>
@@ -197,16 +209,16 @@
       <section class="section" id="work">
         <div class="section__grid">
           <header class="section__head">
-            <h2 class="section__title" id="work-title">Selected work</h2>
+            <h2 class="section__title" id="work-title" data-i18n="home.workTitle">Selected work</h2>
             <div class="section__aside">
-              <p class="section__note">
+              <p class="section__note" data-i18n-html="home.workNoteHtml">
                 Four projects across desktop, browser, and terminal. Source code and releases are on
                 <a href="https://github.com/thijnperd" target="_blank" rel="noopener noreferrer">GitHub</a>.
               </p>
-              <div class="light-switch" role="group" aria-label="Reading light and project notes">
-                <button type="button" data-phase-set="day" aria-pressed="true">Daylight</button>
-                <button type="button" data-phase-set="dusk" aria-pressed="false">Dusk</button>
-                <button type="button" data-phase-set="night" aria-pressed="false">Midnight</button>
+              <div class="light-switch" role="group" data-i18n-attr="aria-label:phase.lightGroup" aria-label="Reading light and project notes">
+                <button type="button" data-phase-set="day" aria-pressed="true" data-i18n="phase.day">Daylight</button>
+                <button type="button" data-phase-set="dusk" aria-pressed="false" data-i18n="phase.dusk">Dusk</button>
+                <button type="button" data-phase-set="night" aria-pressed="false" data-i18n="phase.night">Midnight</button>
               </div>
             </div>
           </header>
@@ -219,6 +231,7 @@
                   href="https://thijnperd.github.io/dither-studio/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-i18n-attr="aria-label:home.ditherOpenAria"
                   aria-label="Open Dither Studio web app"
                 >
                   <picture>
@@ -245,34 +258,36 @@
                       >Dither Studio</a
                     >
                   </h3>
-                  <span class="project__kind">Web &amp; Desktop</span>
+                  <span class="project__kind" data-i18n="home.kindWebDesktop">Web &amp; Desktop</span>
                 </div>
-                <p class="project__desc">
+                <p class="project__desc" data-i18n="home.ditherDesc">
                   An offline dithering press for images, video, and text grids with built-in and
                   custom palettes, desktop layer masking, and tunable pipelines that open straight
                   from a folder.
                 </p>
                 <ul class="project__stats">
-                  <li><strong>46</strong><span>algorithms</span></li>
-                  <li><strong>25</strong><span>effects</span></li>
-                  <li><strong>0</strong><span>runtime deps</span></li>
+                  <li><strong>46</strong><span data-i18n="home.ditherStat0">algorithms</span></li>
+                  <li><strong>25</strong><span data-i18n="home.ditherStat1">effects</span></li>
+                  <li><strong>0</strong><span data-i18n="home.ditherStat2">runtime deps</span></li>
                 </ul>
                 <div
                   class="project__lens"
                   data-lens-card
+                  data-lens-key="dither"
                   data-lens-day="Everything runs locally in the browser or desktop app; exports PNG up to 8×, text grids, WebM video, and JSON recipes."
                   data-lens-dusk="46 dither algorithms, 30 ink sets + 25 palettes across five packs, desktop-only object layers, 25-effect stack — zero runtime dependencies in the web builds."
                   data-lens-night="Opens straight from index.html with no build step; the launch film renders 40s at 1080p/24fps directly from real engine exports."
                 >
-                  <div class="project__lens-tabs" role="group" aria-label="Dither Studio notes">
-                    <button type="button" data-lens-pick="day" aria-pressed="true">Overview</button>
-                    <button type="button" data-lens-pick="dusk" aria-pressed="false">Specs</button>
-                    <button type="button" data-lens-pick="night" aria-pressed="false">After-hours</button>
+                  <div class="project__lens-tabs" role="group" data-i18n-attr="aria-label:home.ditherNotesLabel" aria-label="Dither Studio notes">
+                    <button type="button" data-lens-pick="day" aria-pressed="true" data-i18n="lensTabs.day">Overview</button>
+                    <button type="button" data-lens-pick="dusk" aria-pressed="false" data-i18n="lensTabs.dusk">Specs</button>
+                    <button type="button" data-lens-pick="night" aria-pressed="false" data-i18n="lensTabs.night">After-hours</button>
                   </div>
                   <button
                     type="button"
                     class="project__lens-text"
                     data-lens-text
+                    data-i18n-attr="title:lensTabs.nextNoteTitle"
                     title="Show the next note"
                   >
                     Everything runs locally in the browser or desktop app; exports PNG up to 8×, text
@@ -280,21 +295,21 @@
                   </button>
                 </div>
                 <ul class="tags">
-                  <li>Offline</li>
+                  <li data-i18n="home.tagOffline">Offline</li>
                   <li>Canvas 2D</li>
                   <li>Vanilla JS</li>
-                  <li>Image &amp; Video</li>
+                  <li data-i18n="home.tagImageVideo">Image &amp; Video</li>
                 </ul>
                 <div class="project__links">
                   <a href="/work/dither-studio/" data-track="case-dither-studio"
-                    >Case study <span aria-hidden="true">→</span></a
+                    ><span data-i18n="home.linkCaseStudy">Case study</span> <span aria-hidden="true">→</span></a
                   >
                   <a
                     href="https://thijnperd.github.io/dither-studio/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Web app <span class="visually-hidden">for Dither Studio</span
+                    <span data-i18n="home.linkWebApp">Web app</span> <span class="visually-hidden">for Dither Studio</span
                     ><span aria-hidden="true">↗</span>
                   </a>
                   <a
@@ -302,7 +317,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Launch film <span class="visually-hidden">for Dither Studio</span
+                    <span data-i18n="home.linkLaunchFilm">Launch film</span> <span class="visually-hidden">for Dither Studio</span
                     ><span aria-hidden="true">↗</span>
                   </a>
                   <a
@@ -324,6 +339,7 @@
                   href="https://thijnperd.github.io/obsidian-cortex/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-i18n-attr="aria-label:home.cortexOpenAria"
                   aria-label="Open Cortex live demo"
                 >
                   <picture>
@@ -355,33 +371,35 @@
                       >Cortex</a
                     >
                   </h3>
-                  <span class="project__kind">Desktop &amp; Web</span>
+                  <span class="project__kind" data-i18n="home.kindDesktopWeb">Desktop &amp; Web</span>
                 </div>
-                <p class="project__desc">
+                <p class="project__desc" data-i18n="home.cortexDesc">
                   Turns a folder of Markdown into graph, brain, timeline, atlas, bento, and
                   decisions workspaces while keeping the reasoning trail behind every choice.
                 </p>
                 <ul class="project__stats">
-                  <li><strong>6</strong><span>views</span></li>
-                  <li><strong>5,523</strong><span>notes benchmarked</span></li>
-                  <li><strong>0</strong><span>accounts</span></li>
+                  <li><strong>6</strong><span data-i18n="home.cortexStat0">views</span></li>
+                  <li><strong>5,523</strong><span data-i18n="home.cortexStat1">notes benchmarked</span></li>
+                  <li><strong>0</strong><span data-i18n="home.cortexStat2">accounts</span></li>
                 </ul>
                 <div
                   class="project__lens"
                   data-lens-card
+                  data-lens-key="cortex"
                   data-lens-day="Local-first with no account, cloud, or external database; a local Rust server with a WebGL2 interface, plus a Windows installer."
                   data-lens-dusk="Rust backend + axum server · hand-written WebGL2 interface · deterministic layout benchmarked at 5,523 notes."
                   data-lens-night="cargo run -p cortex -- serve ./vault — reads your existing Markdown folder directly as a folded 3D cortical surface."
                 >
-                  <div class="project__lens-tabs" role="group" aria-label="Cortex notes">
-                    <button type="button" data-lens-pick="day" aria-pressed="true">Overview</button>
-                    <button type="button" data-lens-pick="dusk" aria-pressed="false">Specs</button>
-                    <button type="button" data-lens-pick="night" aria-pressed="false">After-hours</button>
+                  <div class="project__lens-tabs" role="group" data-i18n-attr="aria-label:home.cortexNotesLabel" aria-label="Cortex notes">
+                    <button type="button" data-lens-pick="day" aria-pressed="true" data-i18n="lensTabs.day">Overview</button>
+                    <button type="button" data-lens-pick="dusk" aria-pressed="false" data-i18n="lensTabs.dusk">Specs</button>
+                    <button type="button" data-lens-pick="night" aria-pressed="false" data-i18n="lensTabs.night">After-hours</button>
                   </div>
                   <button
                     type="button"
                     class="project__lens-text"
                     data-lens-text
+                    data-i18n-attr="title:lensTabs.nextNoteTitle"
                     title="Show the next note"
                   >
                     Local-first with no account, cloud, or external database; a local Rust server with
@@ -389,21 +407,21 @@
                   </button>
                 </div>
                 <ul class="tags">
-                  <li>Local-first</li>
+                  <li data-i18n="home.tagLocalFirst">Local-first</li>
                   <li>Rust</li>
                   <li>WebGL2</li>
                   <li>Markdown</li>
                 </ul>
                 <div class="project__links">
                   <a href="/work/cortex/" data-track="case-cortex"
-                    >Case study <span aria-hidden="true">→</span></a
+                    ><span data-i18n="home.linkCaseStudy">Case study</span> <span aria-hidden="true">→</span></a
                   >
                   <a
                     href="https://thijnperd.github.io/obsidian-cortex/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Live demo <span class="visually-hidden">for Cortex</span
+                    <span data-i18n="home.linkLiveDemo">Live demo</span> <span class="visually-hidden">for Cortex</span
                     ><span aria-hidden="true">↗</span>
                   </a>
                   <a
@@ -425,6 +443,7 @@
                   href="https://yannis-raijmakers.github.io/W3Plan-desktop/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-i18n-attr="aria-label:home.w3planOpenAria"
                   aria-label="Open W3Plan walkthrough"
                 >
                   <picture>
@@ -456,34 +475,36 @@
                       >W3Plan</a
                     >
                   </h3>
-                  <span class="project__kind">Desktop &amp; Web</span>
+                  <span class="project__kind" data-i18n="home.kindDesktopWeb">Desktop &amp; Web</span>
                 </div>
-                <p class="project__desc">
+                <p class="project__desc" data-i18n="home.w3planDesc">
                   A study and exam planner for senior secondary students at Were Di Drie, built with
                   Yannis Raijmakers on a base co-created by Billie. Combines school PTA exams, weekly
                   domain hours, per-test checklists, and grade calculators.
                 </p>
                 <ul class="project__stats">
-                  <li><strong>643</strong><span>PTA components</span></li>
-                  <li><strong>29</strong><span>subjects</span></li>
-                  <li><strong>8+</strong><span>final-year students</span></li>
+                  <li><strong>643</strong><span data-i18n="home.w3planStat0">PTA components</span></li>
+                  <li><strong>29</strong><span data-i18n="home.w3planStat1">subjects</span></li>
+                  <li><strong>8+</strong><span data-i18n="home.w3planStat2">final-year students</span></li>
                 </ul>
                 <div
                   class="project__lens"
                   data-lens-card
+                  data-lens-key="w3plan"
                   data-lens-day="School PTA data loads read-only from Supabase or local JSON while student schedules stay on device; includes auto-updating desktop builds."
                   data-lens-dusk="643 PTA components across 29 subjects · React 19, TypeScript &amp; Supabase · Windows installer + macOS DMG/ZIP auto-updater."
                   data-lens-night="No student accounts or server sync; ships with a local MCP bridge so students can review weekly study proposals in the calendar."
                 >
-                  <div class="project__lens-tabs" role="group" aria-label="W3Plan notes">
-                    <button type="button" data-lens-pick="day" aria-pressed="true">Overview</button>
-                    <button type="button" data-lens-pick="dusk" aria-pressed="false">Specs</button>
-                    <button type="button" data-lens-pick="night" aria-pressed="false">After-hours</button>
+                  <div class="project__lens-tabs" role="group" data-i18n-attr="aria-label:home.w3planNotesLabel" aria-label="W3Plan notes">
+                    <button type="button" data-lens-pick="day" aria-pressed="true" data-i18n="lensTabs.day">Overview</button>
+                    <button type="button" data-lens-pick="dusk" aria-pressed="false" data-i18n="lensTabs.dusk">Specs</button>
+                    <button type="button" data-lens-pick="night" aria-pressed="false" data-i18n="lensTabs.night">After-hours</button>
                   </div>
                   <button
                     type="button"
                     class="project__lens-text"
                     data-lens-text
+                    data-i18n-attr="title:lensTabs.nextNoteTitle"
                     title="Show the next note"
                   >
                     School PTA data loads read-only from Supabase or local JSON while student schedules
@@ -498,14 +519,14 @@
                 </ul>
                 <div class="project__links">
                   <a href="/work/w3plan/" data-track="case-w3plan"
-                    >Case study <span aria-hidden="true">→</span></a
+                    ><span data-i18n="home.linkCaseStudy">Case study</span> <span aria-hidden="true">→</span></a
                   >
                   <a
                     href="https://yannis-raijmakers.github.io/W3Plan-desktop/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Walkthrough <span class="visually-hidden">for W3Plan</span
+                    <span data-i18n="home.linkWalkthrough">Walkthrough</span> <span class="visually-hidden">for W3Plan</span
                     ><span aria-hidden="true">↗</span>
                   </a>
                   <a
@@ -513,7 +534,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Installers repo <span class="visually-hidden">for W3Plan</span><span aria-hidden="true">↗</span>
+                    <span data-i18n="home.linkInstallersRepo">Installers repo</span> <span class="visually-hidden">for W3Plan</span><span aria-hidden="true">↗</span>
                   </a>
                 </div>
               </div>
@@ -526,6 +547,7 @@
                   href="https://github.com/thijnperd/PapersPlease"
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-i18n-attr="aria-label:home.papersOpenAria"
                   aria-label="Open PapersPlease on GitHub"
                 >
                   <picture>
@@ -557,34 +579,36 @@
                       >PapersPlease</a
                     >
                   </h3>
-                  <span class="project__kind">CLI, TUI &amp; MCP</span>
+                  <span class="project__kind" data-i18n="home.kindCliTuiMcp">CLI, TUI &amp; MCP</span>
                 </div>
-                <p class="project__desc">
+                <p class="project__desc" data-i18n="home.papersDesc">
                   A literature crawler for research queries and coding agents. Searches five academic
                   APIs, reads titles and abstracts to separate in-scope papers from adjacent or
                   rejected results, and resolves open-access links.
                 </p>
                 <ul class="project__stats">
-                  <li><strong>5</strong><span>academic APIs</span></li>
-                  <li><strong>4</strong><span>surfaces</span></li>
-                  <li><strong>0</strong><span>runtime deps</span></li>
+                  <li><strong>5</strong><span data-i18n="home.papersStat0">academic APIs</span></li>
+                  <li><strong>4</strong><span data-i18n="home.papersStat1">surfaces</span></li>
+                  <li><strong>0</strong><span data-i18n="home.papersStat2">runtime deps</span></li>
                 </ul>
                 <div
                   class="project__lens"
                   data-lens-card
+                  data-lens-key="papers"
                   data-lens-day="One Python pipeline with no runtime dependencies behind a CLI, an interactive terminal browser, a Python library, and an MCP server."
                   data-lens-dusk="Searches Europe PMC, Crossref, arXiv, Semantic Scholar &amp; OpenAlex · causal-direction &amp; domain-sense screening · verified %PDF downloads."
                   data-lens-night="papersplease find &quot;muscle strength in older adults since 2015&quot; -i — screens abstracts against intent before surfacing open-access links."
                 >
-                  <div class="project__lens-tabs" role="group" aria-label="PapersPlease notes">
-                    <button type="button" data-lens-pick="day" aria-pressed="true">Overview</button>
-                    <button type="button" data-lens-pick="dusk" aria-pressed="false">Specs</button>
-                    <button type="button" data-lens-pick="night" aria-pressed="false">After-hours</button>
+                  <div class="project__lens-tabs" role="group" data-i18n-attr="aria-label:home.papersNotesLabel" aria-label="PapersPlease notes">
+                    <button type="button" data-lens-pick="day" aria-pressed="true" data-i18n="lensTabs.day">Overview</button>
+                    <button type="button" data-lens-pick="dusk" aria-pressed="false" data-i18n="lensTabs.dusk">Specs</button>
+                    <button type="button" data-lens-pick="night" aria-pressed="false" data-i18n="lensTabs.night">After-hours</button>
                   </div>
                   <button
                     type="button"
                     class="project__lens-text"
                     data-lens-text
+                    data-i18n-attr="title:lensTabs.nextNoteTitle"
                     title="Show the next note"
                   >
                     One Python pipeline with no runtime dependencies behind a CLI, an interactive
@@ -595,11 +619,11 @@
                   <li>Python</li>
                   <li>TUI</li>
                   <li>MCP</li>
-                  <li>Zero runtime deps</li>
+                  <li data-i18n="home.tagZeroRuntimeDeps">Zero runtime deps</li>
                 </ul>
                 <div class="project__links">
                   <a href="/work/papersplease/" data-track="case-papersplease"
-                    >Case study <span aria-hidden="true">→</span></a
+                    ><span data-i18n="home.linkCaseStudy">Case study</span> <span aria-hidden="true">→</span></a
                   >
                   <a
                     href="https://github.com/thijnperd/PapersPlease"
@@ -616,34 +640,34 @@
 
           <div class="archive" aria-labelledby="archive-title">
             <header class="archive__head">
-              <h3 id="archive-title">More tools &amp; experiments</h3>
-              <p>Smaller utilities, hardware bridges, and browser experiments on GitHub.</p>
+              <h3 id="archive-title" data-i18n="home.archiveTitle">More tools &amp; experiments</h3>
+              <p data-i18n="home.archiveSub">Smaller utilities, hardware bridges, and browser experiments on GitHub.</p>
             </header>
             <ul class="archive__list">
               <li class="archive__row">
                 <div class="archive__info">
                   <span class="archive__name">coding-etc</span>
-                  <span class="archive__desc">Self-contained browser sims, games, and generative art with zero dependencies.</span>
+                  <span class="archive__desc" data-i18n="home.archCodingDesc">Self-contained browser sims, games, and generative art with zero dependencies.</span>
                 </div>
                 <div class="archive__links">
-                  <a href="https://thijnperd.github.io/coding-etc/" target="_blank" rel="noopener noreferrer">Index ↗</a>
+                  <a href="https://thijnperd.github.io/coding-etc/" target="_blank" rel="noopener noreferrer" data-i18n="home.archIndex">Index ↗</a>
                   <a href="https://github.com/thijnperd/coding-etc" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
                 </div>
               </li>
               <li class="archive__row">
                 <div class="archive__info">
                   <span class="archive__name">WhiteNoiseFields</span>
-                  <span class="archive__desc">Interactive Perlin-noise flow field canvas with generative Tone.js ambient chords.</span>
+                  <span class="archive__desc" data-i18n="home.archWhiteNoiseDesc">Interactive Perlin-noise flow field canvas with generative Tone.js ambient chords.</span>
                 </div>
                 <div class="archive__links">
-                  <a href="https://thijnperd.github.io/WhiteNoiseFields/" target="_blank" rel="noopener noreferrer">Live ↗</a>
+                  <a href="https://thijnperd.github.io/WhiteNoiseFields/" target="_blank" rel="noopener noreferrer" data-i18n="home.archLive">Live ↗</a>
                   <a href="https://github.com/thijnperd/WhiteNoiseFields" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
                 </div>
               </li>
               <li class="archive__row">
                 <div class="archive__info">
                   <span class="archive__name">PiZero-Elegoo_connector</span>
-                  <span class="archive__desc">Raspberry Pi Zero 2 W bridge and web dashboard for the Elegoo Centauri Carbon.</span>
+                  <span class="archive__desc" data-i18n="home.archPiZeroDesc">Raspberry Pi Zero 2 W bridge and web dashboard for the Elegoo Centauri Carbon.</span>
                 </div>
                 <div class="archive__links">
                   <a href="https://github.com/thijnperd/PiZero-Elegoo_connector" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
@@ -652,27 +676,27 @@
               <li class="archive__row">
                 <div class="archive__info">
                   <span class="archive__name">Dagtekst-Widget</span>
-                  <span class="archive__desc">Visual builder for custom iOS Scriptable Daily Text widgets.</span>
+                  <span class="archive__desc" data-i18n="home.archDagtekstDesc">Visual builder for custom iOS Scriptable Daily Text widgets.</span>
                 </div>
                 <div class="archive__links">
-                  <a href="https://thijnperd.github.io/Dagtekst-Widget/" target="_blank" rel="noopener noreferrer">Live ↗</a>
+                  <a href="https://thijnperd.github.io/Dagtekst-Widget/" target="_blank" rel="noopener noreferrer" data-i18n="home.archLive">Live ↗</a>
                   <a href="https://github.com/thijnperd/Dagtekst-Widget" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
                 </div>
               </li>
               <li class="archive__row">
                 <div class="archive__info">
                   <span class="archive__name">Chinanimatie</span>
-                  <span class="archive__desc">Interactive timeline map of modern China (1842-2011), built with Yannis Raijmakers.</span>
+                  <span class="archive__desc" data-i18n="home.archChinaDesc">Interactive timeline map of modern China (1842-2011), built with Yannis Raijmakers.</span>
                 </div>
                 <div class="archive__links">
-                  <a href="https://thijnperd.github.io/Chinanimatie/" target="_blank" rel="noopener noreferrer">Live ↗</a>
+                  <a href="https://thijnperd.github.io/Chinanimatie/" target="_blank" rel="noopener noreferrer" data-i18n="home.archLive">Live ↗</a>
                   <a href="https://github.com/thijnperd/Chinanimatie" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
                 </div>
               </li>
               <li class="archive__row">
                 <div class="archive__info">
                   <span class="archive__name">Imdb_ML</span>
-                  <span class="archive__desc">Movie rating predictor trained on IMDb metadata and BERT overview embeddings.</span>
+                  <span class="archive__desc" data-i18n="home.archImdbDesc">Movie rating predictor trained on IMDb metadata and BERT overview embeddings.</span>
                 </div>
                 <div class="archive__links">
                   <a href="https://github.com/thijnperd/Imdb_ML" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
@@ -688,20 +712,20 @@
       <!-- ============================================================ -->
       <section class="section" id="about">
         <div class="section__grid">
-          <h2 class="section__title" id="about-title">About</h2>
+          <h2 class="section__title" id="about-title" data-i18n="home.aboutTitle">About</h2>
 
           <div class="about">
             <div class="about__text">
-              <p class="lede">
+              <p class="lede" data-i18n="home.aboutLede">
                 I'm Thijn Köhne, a student and software developer in the Netherlands. I mostly build
                 tools I use myself or with classmates: offline image editors, fast visual browsers
                 for plain-text notes, school planners, and command-line utilities.
               </p>
-              <p>
+              <p data-i18n="home.aboutP2">
                 I prefer software that stays local, opens quickly, and keeps files in plain formats
                 you can inspect or back up without an account.
               </p>
-              <p>
+              <p data-i18n-html="home.aboutP3Html">
                 I also write about how these tools are built:
                 <a href="/writing/dithering-the-hero/">the dithering pass behind this page</a>,
                 shipping a <a href="/writing/school-planner-distribution/">school planner</a>, and
@@ -713,27 +737,27 @@
 
             <dl class="facts">
               <div class="facts__row">
-                <dt>Location</dt>
-                <dd>Netherlands</dd>
+                <dt data-i18n="home.factLocationDt">Location</dt>
+                <dd data-i18n="home.factLocationDd">Netherlands</dd>
               </div>
               <div class="facts__row">
-                <dt>Focus</dt>
-                <dd>Local-first apps, graphics, tooling</dd>
+                <dt data-i18n="home.factFocusDt">Focus</dt>
+                <dd data-i18n="home.factFocusDd">Local-first apps, graphics, tooling</dd>
               </div>
               <div class="facts__row">
-                <dt>Now</dt>
-                <dd>Building local-first tools and writing the notes behind them</dd>
+                <dt data-i18n="home.factNowDt">Now</dt>
+                <dd data-i18n="home.factNowDd">Building local-first tools and writing the notes behind them</dd>
               </div>
               <div class="facts__row">
-                <dt>Projects</dt>
+                <dt data-i18n="home.factProjectsDt">Projects</dt>
                 <dd>Dither Studio, Cortex, W3Plan, PapersPlease</dd>
               </div>
               <div class="facts__row">
                 <dt>CV</dt>
-                <dd><a href="/cv/">One page, print-ready →</a></dd>
+                <dd><a href="/cv/" data-i18n="home.factCvDd">One page, print-ready →</a></dd>
               </div>
               <div class="facts__row">
-                <dt>Light</dt>
+                <dt data-i18n="home.factLightDt">Light</dt>
                 <dd><span data-phase-long>Daylight · 12:00</span></dd>
               </div>
             </dl>
@@ -747,40 +771,40 @@
       <section class="section" id="skills">
         <div class="section__grid">
           <header class="section__head">
-            <h2 class="section__title" id="skills-title">Stack</h2>
-            <p class="section__note">
+            <h2 class="section__title" id="skills-title" data-i18n="home.skillsTitle">Stack</h2>
+            <p class="section__note" data-i18n="home.skillsNote">
               Languages and technologies used across the four projects above.
             </p>
           </header>
 
           <div class="skills">
             <div class="skill">
-              <h3>Languages</h3>
+              <h3 data-i18n="home.skillsCatLang">Languages</h3>
               <ul>
-                <li>JavaScript &amp; TypeScript</li>
-                <li>Python</li>
-                <li>Rust</li>
-                <li>HTML &amp; CSS</li>
-                <li>GLSL</li>
+                <li data-i18n="home.skillsLangItems.0">JavaScript &amp; TypeScript</li>
+                <li data-i18n="home.skillsLangItems.1">Python</li>
+                <li data-i18n="home.skillsLangItems.2">Rust</li>
+                <li data-i18n="home.skillsLangItems.3">HTML &amp; CSS</li>
+                <li data-i18n="home.skillsLangItems.4">GLSL</li>
               </ul>
             </div>
             <div class="skill">
-              <h3>Graphics &amp; UI</h3>
+              <h3 data-i18n="home.skillsCatGfx">Graphics &amp; UI</h3>
               <ul>
-                <li>Three.js &amp; WebGL2</li>
-                <li>Canvas 2D</li>
-                <li>Custom shaders &amp; dithering</li>
-                <li>React</li>
-                <li>HTML &amp; CSS layout</li>
+                <li data-i18n="home.skillsGfxItems.0">Three.js &amp; WebGL2</li>
+                <li data-i18n="home.skillsGfxItems.1">Canvas 2D</li>
+                <li data-i18n="home.skillsGfxItems.2">Custom shaders &amp; dithering</li>
+                <li data-i18n="home.skillsGfxItems.3">React</li>
+                <li data-i18n="home.skillsGfxItems.4">HTML &amp; CSS layout</li>
               </ul>
             </div>
             <div class="skill">
-              <h3>Desktop &amp; Systems</h3>
+              <h3 data-i18n="home.skillsCatSys">Desktop &amp; Systems</h3>
               <ul>
-                <li>Electron</li>
-                <li>Node &amp; Vite</li>
-                <li>CLI &amp; TUI apps</li>
-                <li>MCP servers &amp; Supabase</li>
+                <li data-i18n="home.skillsSysItems.0">Electron</li>
+                <li data-i18n="home.skillsSysItems.1">Node &amp; Vite</li>
+                <li data-i18n="home.skillsSysItems.2">CLI &amp; TUI apps</li>
+                <li data-i18n="home.skillsSysItems.3">MCP servers &amp; Supabase</li>
               </ul>
             </div>
           </div>
@@ -792,9 +816,9 @@
       <!-- ============================================================ -->
       <section class="contact" id="contact">
         <div class="contact__inner">
-          <h2 class="contact__title" id="contact-title">Get in touch</h2>
+          <h2 class="contact__title" id="contact-title" data-i18n="home.contactTitle">Get in touch</h2>
 
-          <p class="contact__note">
+          <p class="contact__note" data-i18n="home.contactNote">
             For questions, collaborations, or bug reports, reach out on GitHub.
           </p>
 
@@ -818,10 +842,10 @@
       <div class="footer">
         <p>© <span data-year>2026</span> Thijn Köhne</p>
         <p>
-          <a href="/writing/">Writing</a> · <a href="/cv/">CV</a> ·
-          <a href="/colophon/">Colophon</a> · <a href="/writing/feed.xml">RSS</a>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a>
         </p>
-        <p><a href="#top">Back to top ↑</a></p>
+        <p><a href="#top" data-i18n="ui.backToTop">Back to top ↑</a></p>
       </div>
     </footer>
 

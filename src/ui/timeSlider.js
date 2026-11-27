@@ -4,6 +4,8 @@
  * 0.0 sits at the bottom (daylight) and 1.0 at the top (midnight).
  */
 
+import { t } from './i18n.js';
+
 const SUN_ICON = `
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
        stroke-linecap="round" aria-hidden="true" focusable="false">
@@ -23,9 +25,9 @@ const clamp01 = (value) => Math.min(Math.max(value, 0), 1);
 
 export function timeOfDayLabel(value) {
   const pct = Math.round(clamp01(value) * 100);
-  if (value < 0.34) return `Daylight, ${pct}%`;
-  if (value < 0.72) return `Dusk, ${pct}%`;
-  return `Midnight, ${pct}%`;
+  if (value < 0.34) return `${t('phase.day')}, ${pct}%`;
+  if (value < 0.72) return `${t('phase.dusk')}, ${pct}%`;
+  return `${t('phase.night')}, ${pct}%`;
 }
 
 export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
@@ -35,10 +37,10 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
 
   host.innerHTML = `
     <div class="ts" role="slider" tabindex="0"
-         aria-label="Time of day"
+         aria-label="${t('phase.sliderLabel')}"
          aria-orientation="vertical"
          aria-valuemin="0" aria-valuemax="100"
-         aria-valuenow="0" aria-valuetext="Daylight, 0%">
+         aria-valuenow="0" aria-valuetext="${t('phase.day')}, 0%">
       <span class="ts__icon ts__icon--moon" aria-hidden="true">${MOON_ICON}</span>
       <div class="ts__track">
         <div class="ts__fill" aria-hidden="true"></div>
@@ -47,10 +49,11 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
       </div>
       <span class="ts__icon ts__icon--sun" aria-hidden="true">${SUN_ICON}</span>
     </div>
-    <span class="ts__caption" aria-hidden="true">time of day</span>
+    <span class="ts__caption" aria-hidden="true">${t('phase.sliderCaption')}</span>
   `;
 
   const element = host.querySelector('.ts');
+  const caption = host.querySelector('.ts__caption');
   const track = host.querySelector('.ts__track');
   const sunIcon = host.querySelector('.ts__icon--sun');
   const moonIcon = host.querySelector('.ts__icon--moon');
@@ -146,6 +149,12 @@ export function initTimeSlider(host, { value = 0, onChange = () => {} } = {}) {
   }, { signal });
 
   paint(current, false);
+
+  window.addEventListener('thijnperd:langchange', () => {
+    element.setAttribute('aria-label', t('phase.sliderLabel'));
+    element.setAttribute('aria-valuetext', timeOfDayLabel(current));
+    if (caption) caption.textContent = t('phase.sliderCaption');
+  }, { signal });
 
   return {
     element,

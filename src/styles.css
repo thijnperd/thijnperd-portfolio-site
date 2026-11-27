@@ -376,6 +376,7 @@ html[data-scheme="night"] .phase-btn__label {
 
 .hero__nav {
   display: flex;
+  align-items: center;
   gap: clamp(0.875rem, 2vw, 1.75rem);
   pointer-events: auto;
 }
@@ -409,6 +410,53 @@ html[data-scheme="night"] .phase-btn__label {
 
 .hero__nav a:hover::after {
   transform: scaleX(1);
+}
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 0.875rem;
+  border-left: 1px solid var(--line);
+  pointer-events: auto;
+}
+
+.lang-switch button {
+  appearance: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 0.125rem 0;
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 160ms var(--ease-out), border-color 160ms var(--ease-out);
+}
+
+.lang-switch button:hover {
+  color: var(--ink);
+}
+
+.lang-switch button[aria-pressed="true"] {
+  color: var(--ink);
+  font-weight: 500;
+  border-bottom-color: var(--accent);
+}
+
+.mobile-menu__langs {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.125rem 0.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.mobile-menu__langs .lang-switch {
+  padding-left: 0;
+  border-left: 0;
+  gap: 0.875rem;
 }
 
 /* Compact mobile section menu -------------------------------------------- */
@@ -1458,6 +1506,8 @@ html[data-phase="night"] .ts__icon--moon {
 
 @media (pointer: coarse) {
   .hero__nav a,
+  .lang-switch button,
+  .page-nav a,
   .phase-btn,
   .light-switch button,
   .project__lens-tabs button,
@@ -1494,7 +1544,8 @@ html[data-phase="night"] .ts__icon--moon {
     color: HighlightText;
   }
 
-  .project__lens-tabs button[aria-pressed="true"] {
+  .project__lens-tabs button[aria-pressed="true"],
+  .lang-switch button[aria-pressed="true"] {
     color: Highlight;
     border-bottom-color: Highlight;
   }
@@ -1778,10 +1829,30 @@ html[data-phase="night"] .ts__icon--moon {
   letter-spacing: 0.04em;
 }
 
+.page-bar__right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem 1.25rem;
+}
+
 .page-nav {
   display: flex;
   align-items: center;
   gap: clamp(0.875rem, 2vw, 1.5rem);
+}
+
+.article__lang-note {
+  max-width: 38rem;
+  margin-top: 1.125rem;
+  padding: 0.625rem 0.875rem;
+  border-left: 2px solid var(--accent);
+  background: var(--surface);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
 }
 
 .page-nav a {
@@ -2354,6 +2425,7 @@ html[data-phase="night"] .ts__icon--moon {
   .page-bar,
   .page-footer,
   .cv__actions,
+  .lang-switch,
   .skip-link {
     display: none !important;
   }
@@ -2526,6 +2598,14 @@ html[data-phase="night"] .ts__icon--moon {
 @media (max-width: 640px) {
   .page-nav a[data-hide-mobile] {
     display: none;
+  }
+
+  .page-bar__right {
+    gap: 0.5rem 0.75rem;
+  }
+
+  .page-bar__right .lang-switch {
+    padding-left: 0.625rem;
   }
 
   .writing-item {

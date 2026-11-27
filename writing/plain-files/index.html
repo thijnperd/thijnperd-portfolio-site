@@ -61,19 +61,26 @@
         </span>
         <span class="page-bar__name">thijnperd</span>
       </a>
-      <nav class="page-nav" aria-label="Primary">
-        <a href="/#work">Work</a>
-        <a href="/writing/" aria-current="page">Writing</a>
-        <a href="/cv/">CV</a>
-        <a href="/colophon/" data-hide-mobile>Colophon</a>
-      </nav>
+      <div class="page-bar__right">
+        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+          <a href="/#work" data-i18n="ui.navWork">Work</a>
+          <a href="/writing/" aria-current="page" data-i18n="ui.navWriting">Writing</a>
+          <a href="/cv/" data-i18n="ui.navCv">CV</a>
+          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+        </nav>
+        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+        </div>
+      </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
       <div class="page-shell">
         <article>
           <nav class="crumb" aria-label="Breadcrumb">
-            <a href="/writing/">Writing</a><span aria-hidden="true">/</span><span>Local-first</span>
+            <a href="/writing/" data-i18n="article.crumbWriting">Writing</a><span aria-hidden="true">/</span><span>Local-first</span>
           </nav>
           <h1 class="article__title">Plain files, no accounts</h1>
           <p class="article__lede">
@@ -82,11 +89,12 @@
           </p>
 
           <dl class="article__meta">
-            <div><dt>Published</dt><dd>27 Nov 2026</dd></div>
-            <div><dt>Reading</dt><dd>7 minutes</dd></div>
-            <div><dt>Topics</dt><dd>Local-first, file formats</dd></div>
-            <div><dt>Projects</dt><dd><a href="/#work">Four</a></dd></div>
+            <div><dt data-i18n="article.published">Published</dt><dd>27 Nov 2026</dd></div>
+            <div><dt data-i18n="article.reading">Reading</dt><dd>7 minutes</dd></div>
+            <div><dt data-i18n="article.topics">Topics</dt><dd>Local-first, file formats</dd></div>
+            <div><dt data-i18n="article.projects">Projects</dt><dd><a href="/#work">Four</a></dd></div>
           </dl>
+          <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyEssay" hidden></p>
 
           <div class="article__body">
             <h2>The default is somebody else's computer</h2>
@@ -212,9 +220,9 @@
       <div class="page-footer__inner">
         <p>© <span data-year>2026</span> Thijn Köhne</p>
         <p>
-          <a href="/writing/">Writing</a> · <a href="/cv/">CV</a> ·
-          <a href="/colophon/">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
-          <a href="/">Home</a>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/" data-i18n="ui.home">Home</a>
         </p>
       </div>
     </footer>

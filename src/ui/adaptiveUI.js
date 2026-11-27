@@ -5,6 +5,8 @@
  * (0 = daylight, 0.46 = dusk, 0.66 = twilight, 1 = midnight).
  */
 
+import { t } from './i18n.js';
+
 const LIGHT_STOPS = [
   { t: 0.0, ink: '#121614', paper: '#e4e6e1', accent: '#a93724', muted: '#464e48' },
   { t: 0.55, ink: '#221609', paper: '#e5d2b0', accent: '#8f3610', muted: '#523f2b' },
@@ -21,22 +23,10 @@ const STATUS_ICONS = {
   night: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 9.6A5.2 5.2 0 0 1 6.4 3.2a5.2 5.2 0 1 0 6.4 6.4Z"/><path d="M11.6 3v1.8M10.7 3.9h1.8"/></svg>',
 };
 
-const PHASE_LABELS = {
-  day: {
-    status: 'Daylight',
-    lensTag: 'Overview',
-    hint: 'Drag the dial for sunset, dark mode & project notes',
-  },
-  dusk: {
-    status: 'Dusk',
-    lensTag: 'Specs',
-    hint: 'Golden hour — pull higher for stars, moonlight & after-hours notes',
-  },
-  night: {
-    status: 'Midnight',
-    lensTag: 'After-hours',
-    hint: 'Midnight — click the water for ripples, or pull down for daylight',
-  },
+const PHASE_KEYS = {
+  day: { status: 'phase.day', hint: 'phase.hintDay' },
+  dusk: { status: 'phase.dusk', hint: 'phase.hintDusk' },
+  night: { status: 'phase.night', hint: 'phase.hintNight' },
 };
 
 const FAVICON_PALETTES = {
@@ -147,9 +137,13 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
   let lastKey = '';
   let switchRaf = 0;
 
+  function phaseStatusText(phase) {
+    return t(PHASE_KEYS[phase]?.status || 'phase.day');
+  }
+
   function syncClockNodes() {
     for (const node of skyClockNodes) node.textContent = currentClock;
-    const label = PHASE_LABELS[activePhase].status;
+    const label = phaseStatusText(activePhase);
     for (const node of phaseLongNodes) node.textContent = `${label} · ${currentClock}`;
   }
 
@@ -163,12 +157,26 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
   function setCardLens(card, lensKey) {
     const key = lensKey === 'dusk' || lensKey === 'night' ? lensKey : 'day';
     const text = card.querySelector('[data-lens-text]');
-    const copy = card.dataset[`lens${key[0].toUpperCase()}${key.slice(1)}`];
+    const projectKey = card.dataset.lensKey;
+    const translated = projectKey ? t(`lens.${projectKey}.${key}`) : null;
+    const fallback = card.dataset[`lens${key[0].toUpperCase()}${key.slice(1)}`];
+    const copy = translated && translated !== `lens.${projectKey}.${key}` ? translated : fallback;
     if (text && copy) text.textContent = copy;
     card.dataset.lensActive = key;
     for (const btn of card.querySelectorAll('[data-lens-pick]')) {
       btn.setAttribute('aria-pressed', String(btn.dataset.lensPick === key));
     }
+  }
+
+  function syncPhaseCopy(phase) {
+    const keys = PHASE_KEYS[phase] || PHASE_KEYS.day;
+    const statusLabel = t(keys.status);
+    if (statusText) statusText.textContent = statusLabel;
+    if (phaseCycleBtn) {
+      phaseCycleBtn.setAttribute('aria-label', `${t('phase.cycleAriaPrefix')} ${statusLabel}`);
+    }
+    if (heroHint) heroHint.textContent = t(keys.hint);
+    syncClockNodes();
   }
 
   for (const card of lensCards) {
@@ -190,6 +198,12 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
   const clockTimer = window.setInterval(refreshClock, 1000);
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) refreshClock();
+  }, { signal });
+  window.addEventListener('thijnperd:langchange', () => {
+    syncPhaseCopy(activePhase);
+    for (const card of lensCards) {
+      setCardLens(card, card.dataset.lensActive || activePhase);
+    }
   }, { signal });
 
   function update(t) {
@@ -242,14 +256,8 @@ export function createAdaptiveUI(initialTime = getTimeOfDayFromClock()) {
       activePhase = phase;
       root.dataset.phase = phase;
 
-      const info = PHASE_LABELS[phase];
-      if (statusText) statusText.textContent = info.status;
       if (statusIcon) statusIcon.innerHTML = STATUS_ICONS[phase];
-      if (phaseCycleBtn) {
-        phaseCycleBtn.setAttribute('aria-label', `Cycle time of day, currently ${info.status}`);
-      }
-      if (heroHint) heroHint.textContent = info.hint;
-      syncClockNodes();
+      syncPhaseCopy(phase);
       for (const btn of phaseSetButtons) {
         btn.setAttribute('aria-pressed', String(btn.dataset.phaseSet === phase));
       }

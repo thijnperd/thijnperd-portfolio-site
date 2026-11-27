@@ -61,19 +61,26 @@
         </span>
         <span class="page-bar__name">thijnperd</span>
       </a>
-      <nav class="page-nav" aria-label="Primary">
-        <a href="/#work">Work</a>
-        <a href="/writing/">Writing</a>
-        <a href="/cv/">CV</a>
-        <a href="/colophon/" data-hide-mobile>Colophon</a>
-      </nav>
+      <div class="page-bar__right">
+        <nav class="page-nav" data-i18n-attr="aria-label:ui.navPrimary" aria-label="Primary">
+          <a href="/#work" data-i18n="ui.navWork">Work</a>
+          <a href="/writing/" data-i18n="ui.navWriting">Writing</a>
+          <a href="/cv/" data-i18n="ui.navCv">CV</a>
+          <a href="/colophon/" data-hide-mobile data-i18n="ui.navColophon">Colophon</a>
+        </nav>
+        <div class="lang-switch" role="group" data-i18n-attr="aria-label:ui.langGroup" aria-label="Language">
+          <button type="button" data-lang-pick="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang-pick="nl" aria-pressed="false">NL</button>
+          <button type="button" data-lang-pick="de" aria-pressed="false">DE</button>
+        </div>
+      </div>
     </header>
 
     <main class="page-main" id="main" tabindex="-1">
       <div class="page-shell">
         <article>
           <nav class="crumb" aria-label="Breadcrumb">
-            <a href="/#work">Work</a><span aria-hidden="true">/</span><span>04</span>
+            <a href="/#work" data-i18n="article.crumbWork">Work</a><span aria-hidden="true">/</span><span>04</span>
           </nav>
           <h1 class="article__title">PapersPlease</h1>
           <p class="article__lede">
@@ -82,16 +89,17 @@
           </p>
 
           <dl class="article__meta">
-            <div><dt>Role</dt><dd>Independent project</dd></div>
-            <div><dt>Stack</dt><dd>Python 3.10+, standard library</dd></div>
-            <div><dt>Status</dt><dd>Open source</dd></div>
+            <div><dt data-i18n="article.role">Role</dt><dd>Independent project</dd></div>
+            <div><dt data-i18n="article.stack">Stack</dt><dd>Python 3.10+, standard library</dd></div>
+            <div><dt data-i18n="article.status">Status</dt><dd>Open source</dd></div>
             <div>
-              <dt>Links</dt>
+              <dt data-i18n="article.links">Links</dt>
               <dd>
                 <a href="https://github.com/thijnperd/PapersPlease" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
               </dd>
             </div>
           </dl>
+          <p class="article__lang-note" data-en-only-note data-i18n="article.enOnlyCase" hidden></p>
 
           <figure class="article__figure">
             <img
@@ -202,9 +210,9 @@
       <div class="page-footer__inner">
         <p>© <span data-year>2026</span> Thijn Köhne</p>
         <p>
-          <a href="/writing/">Writing</a> · <a href="/cv/">CV</a> ·
-          <a href="/colophon/">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
-          <a href="/">Home</a>
+          <a href="/writing/" data-i18n="ui.writing">Writing</a> · <a href="/cv/" data-i18n="ui.cv">CV</a> ·
+          <a href="/colophon/" data-i18n="ui.colophon">Colophon</a> · <a href="/writing/feed.xml">RSS</a> ·
+          <a href="/" data-i18n="ui.home">Home</a>
         </p>
       </div>
     </footer>
