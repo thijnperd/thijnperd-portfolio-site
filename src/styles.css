@@ -1452,6 +1452,13 @@ html[data-phase="night"] .ts__icon--moon {
   text-wrap: pretty;
 }
 
+.contact__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem clamp(1.75rem, 4vw, 3rem);
+}
+
 .contact__link {
   display: inline-flex;
   align-items: center;

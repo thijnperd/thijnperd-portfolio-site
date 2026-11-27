@@ -145,7 +145,7 @@ export const TRANSLATIONS = {
       skillsCatSys: 'Desktop & Systems',
       skillsSysItems: ['Electron', 'Node & Vite', 'CLI & TUI apps', 'MCP servers & Supabase'],
       contactTitle: 'Get in touch',
-      contactNote: 'For questions, collaborations, or bug reports, reach out on GitHub.',
+      contactNote: 'For questions, collaborations, or bug reports, reach out on GitHub or LinkedIn.',
     },
     cv: {
       pageTitle: 'CV · Thijn Köhne',
@@ -370,7 +370,7 @@ export const TRANSLATIONS = {
       skillsCatSys: 'Desktop & Systemen',
       skillsSysItems: ['Electron', 'Node & Vite', 'CLI- & TUI-apps', 'MCP-servers & Supabase'],
       contactTitle: 'Neem contact op',
-      contactNote: 'Voor vragen, samenwerkingen of bugmeldingen kun je terecht op GitHub.',
+      contactNote: 'Voor vragen, samenwerkingen of bugmeldingen kun je terecht op GitHub of LinkedIn.',
     },
     cv: {
       pageTitle: 'CV · Thijn Köhne',
@@ -595,7 +595,7 @@ export const TRANSLATIONS = {
       skillsCatSys: 'Desktop & Systeme',
       skillsSysItems: ['Electron', 'Node & Vite', 'CLI- & TUI-Apps', 'MCP-Server & Supabase'],
       contactTitle: 'Kontakt aufnehmen',
-      contactNote: 'Für Fragen, Zusammenarbeit oder Fehlerberichte erreichst du mich auf GitHub.',
+      contactNote: 'Für Fragen, Zusammenarbeit oder Fehlerberichte erreichst du mich auf GitHub oder LinkedIn.',
     },
     cv: {
       pageTitle: 'Lebenslauf · Thijn Köhne',
