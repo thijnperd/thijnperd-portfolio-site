@@ -142,6 +142,9 @@ export function createSteamParticles({ origin, count = 12, pixelRatio = 1 }) {
     system.sizes[i] = seeds[i].size;
   }
 
+  const baseSizes = seeds.map((seed) => seed.size);
+  let intensity = 1;
+
   function update(elapsed, atm, deltaTime = 0) {
     const dt = Math.min(Math.max(deltaTime, 0), 0.05);
     for (let i = 0; i < seeds.length; i += 1) {
@@ -151,17 +154,28 @@ export function createSteamParticles({ origin, count = 12, pixelRatio = 1 }) {
       const curl = Math.sin(u * 5.2 + seed.phase) * seed.drift * u;
 
       system.positions[i * 3] = origin.x + curl;
-      system.positions[i * 3 + 1] = origin.y + u * seed.rise;
+      system.positions[i * 3 + 1] = origin.y + u * seed.rise * (0.85 + 0.15 * intensity);
       system.positions[i * 3 + 2] = origin.z + Math.cos(u * 4.4 + seed.phase) * seed.drift * u;
 
-      system.alphas[i] = Math.sin(u * Math.PI) * (0.62 - atm.night * 0.16);
+      system.alphas[i] = Math.sin(u * Math.PI) * (0.62 - atm.night * 0.16) * Math.min(intensity, 2.2);
     }
 
     system.geometry.attributes.position.needsUpdate = true;
     system.geometry.attributes.aAlpha.needsUpdate = true;
 
     system.material.uniforms.uColor.value.copy(atm.screenTint).lerp(STEAM_WHITE, 0.55);
-    system.material.uniforms.uOpacity.value = 0.32 + atm.night * 0.12;
+    system.material.uniforms.uOpacity.value = (0.32 + atm.night * 0.12) * Math.min(intensity, 1.6);
+  }
+
+  // Clicking the mug thickens the plume: bigger puffs, brighter and rising further.
+  function setIntensity(value) {
+    const next = Math.max(1, Math.min(2.6, value));
+    if (Math.abs(next - intensity) < 0.001) return;
+    intensity = next;
+    for (let i = 0; i < seeds.length; i += 1) {
+      system.sizes[i] = baseSizes[i] * (0.85 + 0.24 * intensity);
+    }
+    system.geometry.attributes.aSize.needsUpdate = true;
   }
 
   function setPixelRatio(ratio) {
@@ -173,5 +187,5 @@ export function createSteamParticles({ origin, count = 12, pixelRatio = 1 }) {
     system.material.dispose();
   }
 
-  return { points: system.points, update, setPixelRatio, dispose };
+  return { points: system.points, update, setIntensity, setPixelRatio, dispose };
 }

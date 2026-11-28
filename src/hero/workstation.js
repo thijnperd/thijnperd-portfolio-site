@@ -98,6 +98,28 @@ function drawTerminal(terminal, elapsed, phaseKey = 'day') {
   ctx.fillRect(20, 52, 2, h - 92);
   ctx.globalAlpha = 1;
 
+  // The laptop answers a click with the name instead of the build log.
+  if (terminal.signature) {
+    ctx.clearRect(0, 32, w, h - 32);
+    ctx.fillStyle = '#071712';
+    ctx.fillRect(0, 32, w, h - 32);
+
+    ctx.font = `700 88px ${MONO}`;
+    ctx.fillStyle = ink;
+    ctx.shadowColor = accent;
+    ctx.shadowBlur = 26;
+    ctx.fillText('THIJN', 36, h / 2 + 20);
+    ctx.shadowBlur = 0;
+
+    ctx.font = `400 13px ${MONO}`;
+    ctx.fillStyle = dim;
+    ctx.fillText('local-first · 4 projects', 38, h - 44);
+
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    for (let sy = 0; sy < h; sy += 4) ctx.fillRect(0, sy, w, 1);
+    return;
+  }
+
   ctx.font = `500 16px ${MONO}`;
   let y = 84;
 
@@ -174,11 +196,16 @@ function drawTerminal(terminal, elapsed, phaseKey = 'day') {
 // Throttled to ~9 fps so cursor/progress feels live without 60 fps texture uploads.
 export function updateTerminalTexture(terminal, elapsed, phaseKey = 'day') {
   const tier = (TIERS[phaseKey] || TIERS.day).idx;
-  const due = elapsed - terminal.lastDraw > 1 / 9 || tier !== terminal.lastTier;
+  const signature = Boolean(terminal.signature);
+  const due =
+    elapsed - terminal.lastDraw > 1 / 9 ||
+    tier !== terminal.lastTier ||
+    signature !== terminal.lastSignature;
   if (!due) return;
 
   terminal.lastDraw = elapsed;
   terminal.lastTier = tier;
+  terminal.lastSignature = signature;
   drawTerminal(terminal, elapsed, phaseKey);
   terminal.texture.needsUpdate = true;
 }
@@ -481,11 +508,17 @@ export function createWorkstationGroup({ pixelRatio = 1 } = {}) {
   const keyboardWorldLocal = laptopParts.laptop.position.clone().add(laptopParts.keyboardAnchor.position);
   const steamLocal = mugParts.mug.position.clone().add(mugParts.steamAnchor.position);
 
+  // Which part of the scene answers a click, found by walking up from the hit mesh.
+  coreParts.group.userData.interactive = 'orb';
+  mugParts.mug.userData.interactive = 'mug';
+  laptopParts.laptop.userData.interactive = 'laptop';
+
   const workstation = {
     group,
     terminal,
     desk,
     core: coreParts,
+    interact: { ringClicks: 0, steamClicks: 0, signature: false },
     screenAnchor: laptopParts.screenAnchor,
     screenMat: laptopParts.screenMat,
     screenGlow: laptopParts.screenGlow,
@@ -524,8 +557,10 @@ export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, at
   // Integrate rotation angles via deltaTime so time-of-day shifts never jump rotation.
   anim.coreAngle += dt * (0.34 + timeOfDay * 0.72);
   anim.innerAngle += dt * (0.78 + timeOfDay * 1.15);
-  anim.ringAngleA += dt * (0.48 + timeOfDay * 0.34);
-  anim.ringAngleB += dt * (0.38 + timeOfDay * 0.28);
+  // Each click on the orb doubles the ring spin, and the third click is the ceiling.
+  const ringBoost = 2 ** Math.min(3, workstation.interact?.ringClicks ?? 0);
+  anim.ringAngleA += dt * (0.48 + timeOfDay * 0.34) * ringBoost;
+  anim.ringAngleB += dt * (0.38 + timeOfDay * 0.28) * ringBoost;
   anim.orbitAngle += dt * (0.68 + timeOfDay * 0.42);
 
   core.group.position.y = core.baseY + Math.sin(elapsed * 1.25 + 0.8) * 0.055;

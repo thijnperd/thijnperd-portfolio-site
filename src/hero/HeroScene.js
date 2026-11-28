@@ -60,6 +60,7 @@ export class HeroScene {
     this.width = 0;
     this.height = 0;
     this._lastUiCall = 0;
+    this._lastHoverCheck = 0;
     this._lastPhase = '';
 
     this.clock = new THREE.Clock();
@@ -252,6 +253,7 @@ export class HeroScene {
     this.ripple.uniforms.uTime.value = motionTime;
 
     this.promptParticles.update(motionTime, atm, motionDt);
+    this.steamParticles.setIntensity(1 + (this.workstation.interact.steamClicks ?? 0) * 0.7);
     this.steamParticles.update(motionTime, atm, motionDt);
 
     updateContactShadow(this.contactShadow, atm, this.celestial);
@@ -271,7 +273,35 @@ export class HeroScene {
     this.onTimeChange(this.currentTimeOfDay);
   }
 
+  // The orb, the mug and the laptop answer clicks; everything else is water.
+  _pickInteractive() {
+    this._raycaster.setFromCamera(this._ndc, this.camera);
+    const hits = this._raycaster.intersectObject(this.workstation.group, true);
+    for (const hit of hits) {
+      // Decorative points and glow sprites are not clickable props.
+      if (hit.object.isPoints || hit.object.isSprite || hit.object.isLine) continue;
+      let node = hit.object;
+      while (node) {
+        if (node.userData && node.userData.interactive) return node.userData.interactive;
+        node = node.parent;
+      }
+    }
+    return null;
+  }
+
   _onPointerMove = (event) => {
+    const canvas = this.renderer.domElement;
+    const rect = canvas.getBoundingClientRect();
+    const now = performance.now();
+    if (rect.width && rect.height && now - this._lastHoverCheck > 120) {
+      this._lastHoverCheck = now;
+      this._ndc.set(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1,
+      );
+      canvas.style.cursor = this._pickInteractive() ? 'pointer' : '';
+    }
+
     if (this.reducedMotion || event.pointerType === 'touch') return;
     const nx = (event.clientX / Math.max(window.innerWidth, 1)) * 2 - 1;
     const ny = (event.clientY / Math.max(window.innerHeight, 1)) * 2 - 1;
@@ -282,7 +312,7 @@ export class HeroScene {
   };
 
   _onPointerDown = (event) => {
-    if (this.reducedMotion || event.button !== 0) return;
+    if (event.button !== 0) return;
     if (event.target !== this.renderer.domElement) return;
     const rect = this.renderer.domElement.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
@@ -291,6 +321,24 @@ export class HeroScene {
       ((event.clientX - rect.left) / rect.width) * 2 - 1,
       -((event.clientY - rect.top) / rect.height) * 2 + 1,
     );
+
+    // Interactive props work even with reduced motion; only the ripple is skipped.
+    const part = this._pickInteractive();
+    if (part) {
+      const interact = this.workstation.interact;
+      if (part === 'orb') {
+        interact.ringClicks = Math.min(3, interact.ringClicks + 1);
+      } else if (part === 'mug') {
+        interact.steamClicks = Math.min(3, interact.steamClicks + 1);
+      } else if (part === 'laptop') {
+        interact.signature = !interact.signature;
+        this.workstation.terminal.signature = interact.signature;
+        this.workstation.terminal.lastDraw = -10;
+      }
+      return;
+    }
+
+    if (this.reducedMotion) return;
     this._raycaster.setFromCamera(this._ndc, this.camera);
     if (this._raycaster.ray.intersectPlane(this._waterPlane, this._hitPoint)) {
       const len = Math.hypot(this._hitPoint.x, this._hitPoint.z);
