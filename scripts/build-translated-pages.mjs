@@ -337,6 +337,16 @@ function localeBlock(lang) {
   return lines.join('\n    ');
 }
 
+// Replaces any locale lines already present instead of adding a second set: a page can
+// be regenerated from markup that already carries them.
+function withLocales(html, lang) {
+  const stripped = html.replace(/\n\s*<meta\s+property="og:locale(?::alternate)?"[^>]*\/>/g, '');
+  return stripped.replace(
+    /(<meta\s+property="og:url"\s+content="[^"]*"\s+\/>)/,
+    `$1\n    ${localeBlock(lang)}`
+  );
+}
+
 function imageAlt(html, title) {
   if (/og:image:alt/.test(html)) {
     return html.replace(/(<meta\s+property="og:image:alt"\s+content=")[^"]*(")/, `$1${escapeHtml(title)}$2`);
@@ -378,7 +388,7 @@ function localizeHead(html, { lang, path, title, description }) {
   html = html.replace(/(<meta\s+property="og:title"\s+content=")[^"]*(")/, `$1${escapeHtml(title)}$2`);
   html = html.replace(/(<meta\s+property="og:description"\s+content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
   html = html.replace(/(<meta\s+property="og:url"\s+content=")[^"]*(")/, `$1${localUrl}$2`);
-  html = html.replace(/(<meta\s+property="og:url"\s+content="[^"]*"\s+\/>)/, `$1\n    ${localeBlock(lang)}`);
+  html = withLocales(html, lang);
   html = imageAlt(html, title);
   html = html.replace(/(<meta\s+name="twitter:title"\s+content=")[^"]*(")/, `$1${escapeHtml(title)}$2`);
   html = html.replace(/(<meta\s+name="twitter:description"\s+content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
@@ -531,10 +541,7 @@ if (!check && !selftest) {
     let html = readFileSync(doc, 'utf8');
     html = html.replace(/\n\s*<link rel="alternate" hreflang="[^"]*"[^>]*>/g, '');
     html = html.replace(/(<link rel="canonical"[^>]*\/>)/, `$1\n    ${block}`);
-    html = html.replace(
-      /(<meta\s+property="og:url"\s+content="[^"]*"\s+\/>)/,
-      `$1\n    ${localeBlock('en')}`
-    );
+    html = withLocales(html, 'en');
     html = langSwitch(html, 'en', doc);
     writeFileSync(doc, html);
   }
