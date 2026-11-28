@@ -24,6 +24,10 @@ import {
 } from './workstation.js';
 import { createPromptParticles, createSteamParticles } from './particles.js';
 
+// The name on the screen and the open notebook are momentary reveals: both close
+// themselves again if the visitor does not.
+const MOMENT_HOLD = 5;
+
 export class HeroScene {
   constructor(container, { initialTime = 0 } = {}) {
     if (!container) throw new Error('HeroScene needs a container element.');
@@ -53,6 +57,8 @@ export class HeroScene {
     this._hitPoint = new THREE.Vector3();
 
     this.elapsed = 0;
+    this.signatureUntil = 0;
+    this.notebookUntil = 0;
     this.running = false;
     this._resizeRaf = 0;
     this.isVisible = true;
@@ -241,6 +247,7 @@ export class HeroScene {
       atm,
       this.reducedMotion ? null : this.pointerCurrent,
     );
+    this._closeMomentaryReveals();
     this.workstation.group.updateMatrixWorld(true);
     this.workstation.screenAnchor.getWorldPosition(this.screenWorld);
     this.workstation.core.coreAnchor.getWorldPosition(this.coreWorld);
@@ -263,6 +270,22 @@ export class HeroScene {
 
     this._publishTime(atm);
   };
+
+  _closeMomentaryReveals() {
+    const interact = this.workstation.interact;
+
+    if (this.signatureUntil && this.elapsed >= this.signatureUntil) {
+      this.signatureUntil = 0;
+      interact.signature = false;
+      this.workstation.terminal.signature = false;
+      this.workstation.terminal.lastDraw = -10;
+    }
+
+    if (this.notebookUntil && this.elapsed >= this.notebookUntil) {
+      this.notebookUntil = 0;
+      interact.notebookOpen = false;
+    }
+  }
 
   _publishTime(atm) {
     if (!this.onTimeChange) return;
@@ -335,8 +358,10 @@ export class HeroScene {
         interact.signature = !interact.signature;
         this.workstation.terminal.signature = interact.signature;
         this.workstation.terminal.lastDraw = -10;
+        this.signatureUntil = interact.signature ? this.elapsed + MOMENT_HOLD : 0;
       } else if (part === 'notebook') {
         interact.notebookOpen = !interact.notebookOpen;
+        this.notebookUntil = interact.notebookOpen ? this.elapsed + MOMENT_HOLD : 0;
       }
       return;
     }

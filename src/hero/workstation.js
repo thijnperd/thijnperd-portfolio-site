@@ -33,6 +33,29 @@ const COLORS = {
   penMetal: '#a7aaa4',
 };
 
+// The mug holds coffee until the light turns, then rooibos. Interpolated so the
+// drink changes over with the sky instead of switching in a single frame.
+const COFFEE_LIQUID = new THREE.Color('#2a1710');
+const COFFEE_SPECULAR = new THREE.Color('#7a5642');
+const ROOIBOS_LIQUID = new THREE.Color('#973715');
+const ROOIBOS_SPECULAR = new THREE.Color('#d9854e');
+
+const smoothUnit = (x) => {
+  const v = THREE.MathUtils.clamp(x, 0, 1);
+  return v * v * (3 - 2 * v);
+};
+
+// 0 = coffee, 1 = rooibos. Coffee from dawn through the afternoon, rooibos from
+// dusk until the early hours.
+function rooibosMix(t) {
+  if (!Number.isFinite(t)) return 0;
+  if (t < 0.13) return 1;
+  if (t < 0.27) return 1 - smoothUnit((t - 0.13) / 0.14);
+  if (t < 0.6) return 0;
+  if (t < 0.735) return smoothUnit((t - 0.6) / 0.135);
+  return 1;
+}
+
 // Scale: 1 unit is roughly 37 cm. Desk 1.2 m x 0.63 m, a 13" laptop, an A5
 // notebook and a 8 cm mug all follow the same ruler.
 const DESK = { w: 2.95, d: 1.7, t: 0.085 };
@@ -69,7 +92,7 @@ export function createTerminalTexture() {
     lastTier: -1,
   };
 
-  drawTerminal(terminal, 0, 0);
+  drawTerminal(terminal, 0, 'day');
   texture.needsUpdate = true;
 
   return terminal;
@@ -91,11 +114,15 @@ function hash2(x, y) {
   return s - Math.floor(s);
 }
 
-// The word is rasterised once into dots and then stamped every frame; walking
-// the dot grid on each redraw would cost more than the rest of the screen.
-let signatureStamp = null;
-function getSignatureStamp(w, h) {
-  if (signatureStamp) return signatureStamp;
+// The word is rasterised once into a dot mask; each redraw only tints that mask
+// with the hour's palette. Walking the dot grid every frame would cost more
+// than the rest of the screen.
+let signatureMask = null;
+let signatureMaskKey = '';
+
+function getSignatureMask(w, h) {
+  const key = `${w}x${h}`;
+  if (signatureMask && signatureMaskKey === key) return signatureMask;
 
   const mask = document.createElement('canvas');
   mask.width = w;
@@ -110,30 +137,84 @@ function getSignatureStamp(w, h) {
 
   const data = mctx.getImageData(0, 0, w, h).data;
 
-  const stamp = document.createElement('canvas');
-  stamp.width = w;
-  stamp.height = h;
-  const sctx = stamp.getContext('2d');
-  const gradient = sctx.createLinearGradient(0, h * 0.28, 0, h * 0.74);
-  gradient.addColorStop(0, '#eafff8');
-  gradient.addColorStop(0.4, '#7ef0c6');
-  gradient.addColorStop(1, '#2f9e77');
-  sctx.fillStyle = gradient;
+  const dots = document.createElement('canvas');
+  dots.width = w;
+  dots.height = h;
+  const dctx = dots.getContext('2d');
+  dctx.fillStyle = '#ffffff';
 
   const step = 6;
   for (let y = 0; y < h; y += step) {
     for (let x = 0; x < w; x += step) {
-      if (data[(y * w + x) * 4 + 3] > 150) sctx.fillRect(x, y, step - 2, step - 2);
+      if (data[(y * w + x) * 4 + 3] > 150) dctx.fillRect(x, y, step - 2, step - 2);
     }
   }
 
-  signatureStamp = stamp;
-  return signatureStamp;
+  signatureMask = dots;
+  signatureMaskKey = key;
+  return signatureMask;
 }
 
-function drawSignature(ctx, w, h, tier, elapsed) {
-  const { accent, dim } = tier;
-  ctx.fillStyle = '#020b07';
+const _sigSource = new THREE.Color();
+const _sigAccent = new THREE.Color();
+const _sigHead = new THREE.Color();
+const _sigTrail = new THREE.Color();
+const _sigDeep = new THREE.Color();
+const _sigWhite = new THREE.Color('#ffffff');
+
+const hexColor = (color) => `#${color.getHexString()}`;
+const hexAlpha = (color, alpha) => {
+  const a = Math.round(THREE.MathUtils.clamp(alpha, 0, 1) * 255).toString(16).padStart(2, '0');
+  return `#${color.getHexString()}${a}`;
+};
+
+// The name wears the hour: mint at noon, coral at dawn, ember after dusk. The
+// palette follows the atmosphere continuously, so the time slider moves it too.
+function signaturePalette(source) {
+  _sigSource.set(source);
+  _sigAccent.copy(_sigSource);
+  _sigHead.copy(_sigAccent).lerp(_sigWhite, 0.82);
+  _sigTrail.copy(_sigAccent).multiplyScalar(0.72);
+  _sigDeep.copy(_sigAccent).multiplyScalar(0.085);
+  return _sigAccent.getHexString() + _sigHead.getHexString();
+}
+
+function getTintedSignature(terminal, w, h, paletteKey) {
+  if (!terminal.signatureCanvas || terminal.signatureCanvas.width !== w) {
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    terminal.signatureCanvas = canvas;
+    terminal.signatureCtx = canvas.getContext('2d');
+    terminal.signatureKey = '';
+  }
+  if (terminal.signatureKey === paletteKey) return terminal.signatureCanvas;
+
+  terminal.signatureKey = paletteKey;
+  const ctx = terminal.signatureCtx;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.clearRect(0, 0, w, h);
+
+  const gradient = ctx.createLinearGradient(0, h * 0.28, 0, h * 0.74);
+  gradient.addColorStop(0, hexColor(_sigHead));
+  gradient.addColorStop(0.42, hexColor(_sigAccent));
+  gradient.addColorStop(1, hexColor(_sigTrail));
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'destination-in';
+  ctx.drawImage(getSignatureMask(w, h), 0, 0);
+  ctx.globalCompositeOperation = 'source-over';
+
+  return terminal.signatureCanvas;
+}
+
+function drawSignature(terminal, elapsed, paletteKey, tier) {
+  const { ctx, canvas } = terminal;
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.fillStyle = hexColor(_sigDeep);
   ctx.fillRect(0, 32, w, h - 32);
 
   // Falling columns; each head drags a short tail of glyphs behind it.
@@ -153,30 +234,30 @@ function drawSignature(ctx, w, h, tier, elapsed) {
       if (behind < 0) continue;
       const glyph = RAIN_GLYPHS[Math.floor(hash2(c * 5.3, r + tick) * 1000) % RAIN_GLYPHS.length];
       ctx.fillStyle = behind < 1
-        ? '#e6fff2'
-        : `rgba(86,216,152,${(0.5 * (1 - behind / 7)).toFixed(3)})`;
+        ? hexColor(_sigHead)
+        : hexAlpha(_sigTrail, 0.5 * (1 - behind / 7));
       ctx.fillText(glyph, c * cellW + cellW / 2, 40 + r * cellH);
     }
   }
 
   // Dot-matrix name: a soft bloom pass, then the crisp dots on top.
-  const stamp = getSignatureStamp(w, h);
+  const stamp = getTintedSignature(terminal, w, h, paletteKey);
   ctx.save();
-  ctx.shadowColor = '#4fe0ae';
+  ctx.shadowColor = hexColor(_sigAccent);
   ctx.shadowBlur = 18;
   ctx.globalAlpha = 0.55;
   ctx.drawImage(stamp, 0, 0);
   ctx.restore();
   ctx.drawImage(stamp, 0, 0);
 
-  ctx.fillStyle = accent;
+  ctx.fillStyle = hexColor(_sigAccent);
   ctx.globalAlpha = 0.8;
   ctx.fillRect(w / 2 - 58, h - 48, 116, 2);
   ctx.globalAlpha = 1;
 
   ctx.textAlign = 'center';
   ctx.font = `400 12px ${MONO}`;
-  ctx.fillStyle = dim;
+  ctx.fillStyle = tier.dim;
   ctx.fillText('local-first · 4 projects', w / 2, h - 26);
   ctx.textAlign = 'left';
 
@@ -184,13 +265,14 @@ function drawSignature(ctx, w, h, tier, elapsed) {
   for (let sy = 32; sy < h; sy += 4) ctx.fillRect(0, sy, w, 1);
 }
 
-function drawTerminal(terminal, elapsed, phaseKey = 'day') {
+function drawTerminal(terminal, elapsed, phaseKey = 'day', atm = null) {
   const { ctx, canvas } = terminal;
   const w = canvas.width;
   const h = canvas.height;
 
   const tier = TIERS[phaseKey] || TIERS.day;
   const { glow, accent, ink, dim, status } = tier;
+  const signatureKey = signaturePalette(atm ? atm.coreColor : accent);
   const dots = '.'.repeat(1 + (Math.floor(elapsed * 2) % 3));
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -198,10 +280,10 @@ function drawTerminal(terminal, elapsed, phaseKey = 'day') {
   ctx.shadowBlur = 0;
   ctx.textAlign = 'left';
 
-  // Phosphor-dark terminal body.
+  // Phosphor-dark terminal body; the signature screen is tinted with the hour.
   ctx.fillStyle = '#071712';
   ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = '#0c241d';
+  ctx.fillStyle = terminal.signature ? hexColor(_sigDeep) : '#0c241d';
   ctx.fillRect(0, 0, w, 32);
 
   // Window dots.
@@ -225,7 +307,7 @@ function drawTerminal(terminal, elapsed, phaseKey = 'day') {
 
   // The laptop answers a click with the name instead of the build log.
   if (terminal.signature) {
-    drawSignature(ctx, w, h, tier, elapsed);
+    drawSignature(terminal, elapsed, signatureKey, tier);
     return;
   }
 
@@ -309,19 +391,25 @@ function drawTerminal(terminal, elapsed, phaseKey = 'day') {
 }
 
 // Throttled to ~9 fps so cursor/progress feels live without 60 fps texture uploads.
-export function updateTerminalTexture(terminal, elapsed, phaseKey = 'day') {
+export function updateTerminalTexture(terminal, elapsed, atm = null) {
+  const phaseKey = (atm && atm.key) || 'day';
   const tier = (TIERS[phaseKey] || TIERS.day).idx;
   const signature = Boolean(terminal.signature);
+  const signatureKey = signature
+    ? signaturePalette(atm ? atm.coreColor : TIERS[phaseKey].accent)
+    : '';
   const due =
     elapsed - terminal.lastDraw > 1 / 9 ||
     tier !== terminal.lastTier ||
-    signature !== terminal.lastSignature;
+    signature !== terminal.lastSignature ||
+    signatureKey !== terminal.lastSignatureKey;
   if (!due) return;
 
   terminal.lastDraw = elapsed;
   terminal.lastTier = tier;
   terminal.lastSignature = signature;
-  drawTerminal(terminal, elapsed, phaseKey);
+  terminal.lastSignatureKey = signatureKey;
+  drawTerminal(terminal, elapsed, phaseKey, atm);
   terminal.texture.needsUpdate = true;
 }
 
@@ -396,6 +484,109 @@ function createPageTexture() {
   ctx.fillRect(0, 0, 32, 32);
   ctx.fillStyle = 'rgba(120,108,88,0.22)';
   for (let y = 3; y < 32; y += 6) ctx.fillRect(0, y, 32, 2);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+/* The notebook's first page: the Antigravity mark, drawn on the paper. */
+
+// The open "A" of the Antigravity mark, traced at 640 x 640.
+const ANTIGRAVITY_PATH = `
+  M 28 594
+  C 12 606 16 620 34 626
+  C 66 636 104 624 132 600
+  C 162 580 186 538 208 490
+  C 230 428 260 390 294 370
+  C 320 356 346 360 370 380
+  C 396 404 416 444 434 482
+  C 452 520 470 556 488 580
+  C 510 614 552 630 584 620
+  C 608 612 624 600 618 580
+  C 600 548 578 514 558 474
+  C 534 424 512 366 494 310
+  C 474 248 456 186 436 134
+  C 414 82 382 38 344 20
+  C 324 11 306 11 290 11
+  C 250 11 222 50 206 108
+  C 186 168 174 238 160 300
+  C 142 374 118 452 92 506
+  C 74 548 50 578 26 600
+  Z
+`;
+
+function drawAntigravityMark(ctx, cx, cy, size) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  // A hair off-square, like it was placed by hand.
+  ctx.rotate(-0.028);
+  ctx.scale(size / 640, size / 640);
+  ctx.translate(-320, -320);
+  ctx.clip(new Path2D(ANTIGRAVITY_PATH));
+
+  const wash = ctx.createLinearGradient(190, 0, 390, 640);
+  wash.addColorStop(0, '#a8c85c');
+  wash.addColorStop(0.34, '#7cc07a');
+  wash.addColorStop(0.62, '#5d9ad8');
+  wash.addColorStop(1, '#3f7dcb');
+  ctx.fillStyle = wash;
+  ctx.fillRect(0, 0, 640, 640);
+
+  const blobs = [
+    [226, 118, 170, '#cbd250', 0.95],
+    [372, 78, 150, '#e4643f', 0.95],
+    [452, 208, 150, '#b25a86', 0.72],
+    [330, 380, 210, '#3f7fd2', 0.85],
+    [54, 566, 100, '#d2e8f7', 0.85],
+    [586, 548, 105, '#d2e8f7', 0.8],
+  ];
+  for (const [x, y, r, color, alpha] of blobs) {
+    const blob = ctx.createRadialGradient(x, y, 0, x, y, r);
+    blob.addColorStop(0, color);
+    blob.addColorStop(1, `${color}00`);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = blob;
+    ctx.fillRect(0, 0, 640, 640);
+  }
+
+  ctx.restore();
+}
+
+function createNotebookPageTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 720;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#f2ebdb';
+  ctx.fillRect(0, 0, 512, 720);
+
+  // Gutter shadow along the spine, then a soft vignette: the page is not a plane.
+  const gutter = ctx.createLinearGradient(0, 0, 64, 0);
+  gutter.addColorStop(0, 'rgba(112,92,64,0.24)');
+  gutter.addColorStop(1, 'rgba(112,92,64,0)');
+  ctx.fillStyle = gutter;
+  ctx.fillRect(0, 0, 64, 720);
+
+  const vignette = ctx.createRadialGradient(250, 360, 130, 250, 360, 560);
+  vignette.addColorStop(0, 'rgba(255,255,255,0.12)');
+  vignette.addColorStop(1, 'rgba(104,84,58,0.16)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, 512, 720);
+
+  drawAntigravityMark(ctx, 236, 300, 318);
+
+  // Paper grain: sparse specks so the ink and the page share one surface.
+  const rand = seededRandom(23);
+  for (let i = 0; i < 2600; i += 1) {
+    const x = rand() * 512;
+    const y = rand() * 720;
+    ctx.fillStyle = rand() > 0.45
+      ? `rgba(255,255,255,${(0.05 + rand() * 0.1).toFixed(3)})`
+      : `rgba(104,88,62,${(0.03 + rand() * 0.06).toFixed(3)})`;
+    ctx.fillRect(x, y, 1 + rand() * 1.6, 1 + rand() * 1.4);
+  }
+
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
@@ -750,7 +941,7 @@ function createMug(hitMat) {
   steamAnchor.position.set(0, 0.205, 0);
   body.add(steamAnchor);
 
-  return { mug, steamAnchor };
+  return { mug, steamAnchor, coffeeMat };
 }
 
 function createNotebookAndPen(textures, detailMat, hitMat) {
@@ -789,6 +980,22 @@ function createNotebookAndPen(textures, detailMat, hitMat) {
   pages.position.set(0.006, 0.0215, 0);
   group.add(pages);
 
+  // The first page only exists once the cover is open. It fades in with the lid
+  // and carries the Antigravity mark, so a closed book shows nothing odd.
+  const pageMat = new THREE.MeshLambertMaterial({
+    map: textures.notebookPage,
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+  });
+  const pageGeometry = new THREE.PlaneGeometry(NW - 0.026, ND - 0.026);
+  pageGeometry.rotateX(-Math.PI / 2);
+  const page = new THREE.Mesh(pageGeometry, pageMat);
+  page.position.set(0.006, 0.0373, 0);
+  page.renderOrder = 1;
+  page.visible = false;
+  group.add(page);
+
   // Spine, elastic band and the ribbon marker hanging over the front edge.
   const details = new THREE.Mesh(
     merge([
@@ -803,10 +1010,11 @@ function createNotebookAndPen(textures, detailMat, hitMat) {
   );
   group.add(details);
 
-  // Pen resting diagonally across the cover, riding the same hinge.
+  // The pen hovers over the cover, belonging to the desk rather than the lid:
+  // it stays put while the book opens underneath it.
   const pen = new THREE.Group();
-  pen.position.set(NW / 2 - 0.014, 0.0088, 0.03);
-  pen.rotation.y = 0.68;
+  pen.position.set(-0.02, 0.108, -0.012);
+  pen.rotation.y = 0.62;
   const barrelMat = new THREE.MeshPhongMaterial({ color: COLORS.pen, specular: '#6c6455', shininess: 52 });
   const barrel = new THREE.Mesh(
     place(new THREE.CylinderGeometry(0.0085, 0.0085, 0.3, 14), 0, 0, 0, 0, 0, Math.PI / 2),
@@ -823,14 +1031,14 @@ function createNotebookAndPen(textures, detailMat, hitMat) {
     detailMat,
   );
   pen.add(penParts);
-  hinge.add(pen);
+  group.add(pen);
 
   // A generous, invisible target: the book is small and nearly flat on the desk.
   const hit = createHitProxy(new THREE.BoxGeometry(NW + 0.08, 0.16, ND + 0.08), hitMat);
   hit.position.set(0, 0.07, 0);
   group.add(hit);
 
-  return { notebook: group, hinge };
+  return { notebook: group, hinge, pen, page };
 }
 
 /* Orb: faceted core, fresnel glass shell, comet rings, satellites, halos */
@@ -1069,6 +1277,7 @@ export function createWorkstationGroup({ pixelRatio = 1 } = {}) {
     wood: createWoodTexture(),
     radial: createRadialTexture(),
     pages: createPageTexture(),
+    notebookPage: createNotebookPageTexture(),
   };
   const detailMat = new THREE.MeshLambertMaterial({ vertexColors: true });
   const hitMat = new THREE.MeshBasicMaterial({ visible: false });
@@ -1113,6 +1322,11 @@ export function createWorkstationGroup({ pixelRatio = 1 } = {}) {
     textures,
     notebook: notebookParts.notebook,
     notebookHinge: notebookParts.hinge,
+    notebookPage: notebookParts.page,
+    pen: notebookParts.pen,
+    penBase: notebookParts.pen.position.clone(),
+    penBaseRy: notebookParts.pen.rotation.y,
+    coffeeMat: mugParts.coffeeMat,
     interact: { ringClicks: 0, steamClicks: 0, signature: false, notebookOpen: false },
     screenAnchor: laptopParts.screenAnchor,
     screenMat: laptopParts.screenMat,
@@ -1131,6 +1345,8 @@ export function createWorkstationGroup({ pixelRatio = 1 } = {}) {
       innerAngle: 0,
       ringAngleA: 0.2,
       ringAngleB: 0.75,
+      ringOrbitA: 0.4,
+      ringOrbitB: 2.1,
       orbitAngle: 0,
       notebookOpen: 0,
     },
@@ -1139,6 +1355,15 @@ export function createWorkstationGroup({ pixelRatio = 1 } = {}) {
 
   return workstation;
 }
+
+// Satellites ride the ring paths, not loose curves, so the particles and their
+// paths move as one system.
+const RING_SATELLITES = [
+  { ring: 'a', radius: 0.3, offset: 0 },
+  { ring: 'b', radius: 0.385, offset: 1.15 },
+  { ring: 'a', radius: 0.3, offset: Math.PI * 1.06 },
+];
+const _sat = new THREE.Vector3();
 
 const MOTE_SEEDS = [
   [-0.62, 0.34, 0.34, 0.3],
@@ -1151,6 +1376,12 @@ export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, at
   const { group, core, terminal, screenMat, glowMat, anim, spill, glints } = workstation;
   const dt = Math.min(Math.max(deltaTime || 0, 0), 0.05);
   const night = timeOfDay;
+
+  // The mug changes with the hour: coffee in the morning and at midday,
+  // rooibos from dusk on. It blends with the sky instead of snapping.
+  const tea = rooibosMix(atm ? atm.t : 0.5);
+  workstation.coffeeMat.color.lerpColors(COFFEE_LIQUID, ROOIBOS_LIQUID, tea);
+  workstation.coffeeMat.specular.lerpColors(COFFEE_SPECULAR, ROOIBOS_SPECULAR, tea);
 
   // Smooth levitation coupled with subtle pointer-reactive tilt.
   const px = pointer ? pointer.x : 0;
@@ -1167,6 +1398,9 @@ export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, at
   const ringBoost = 2 ** clicks;
   anim.ringAngleA += dt * (0.48 + night * 0.34) * ringBoost;
   anim.ringAngleB += dt * (0.38 + night * 0.28) * ringBoost;
+  // The ring planes themselves revolve around the orb.
+  anim.ringOrbitA += dt * (0.19 + night * 0.09);
+  anim.ringOrbitB -= dt * (0.15 + night * 0.08);
   anim.orbitAngle += dt * (0.68 + night * 0.42);
 
   // The notebook lid eases open and shut; with reduced motion the delta is
@@ -1175,6 +1409,23 @@ export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, at
   const openK = dt > 0 ? 1 - Math.exp(-7 * dt) : 1;
   anim.notebookOpen += (openTarget - anim.notebookOpen) * openK;
   workstation.notebookHinge.rotation.z = anim.notebookOpen * 1.95;
+
+  const page = workstation.notebookPage;
+  page.visible = anim.notebookOpen > 0.02;
+  page.material.opacity = anim.notebookOpen;
+
+  // The pen floats just above the cover with a slow bob and drift of its own.
+  const pen = workstation.pen;
+  pen.position.set(
+    workstation.penBase.x + Math.sin(elapsed * 0.37) * 0.008,
+    workstation.penBase.y + Math.sin(elapsed * 1.15 + 0.7) * 0.011,
+    workstation.penBase.z + Math.cos(elapsed * 0.31) * 0.006,
+  );
+  pen.rotation.set(
+    Math.sin(elapsed * 0.41) * 0.05,
+    workstation.penBaseRy + Math.sin(elapsed * 0.26) * 0.22,
+    Math.cos(elapsed * 0.35) * 0.055,
+  );
 
   // Slow breathing that every glow shares.
   const breath = 0.5 + 0.5 * Math.sin(elapsed * 1.15);
@@ -1185,37 +1436,38 @@ export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, at
   core.shell.rotation.y = -anim.innerAngle * 0.3;
   core.shell.rotation.z = anim.coreAngle * 0.2;
 
-  // Ring planes precess gently; the comet heads spin along each ring.
+  // Ring planes revolve around the orb while the comet heads spin along them.
   core.ringA.rotation.set(
     RING_TILT_A[0] + Math.sin(elapsed * 0.34) * 0.08,
-    RING_TILT_A[1] + Math.sin(elapsed * 0.21) * 0.12,
-    RING_TILT_A[2],
+    RING_TILT_A[1] + anim.ringOrbitA,
+    RING_TILT_A[2] + Math.cos(elapsed * 0.23) * 0.05,
   );
   core.ringB.rotation.set(
     RING_TILT_B[0] + Math.cos(elapsed * 0.28) * 0.07,
-    RING_TILT_B[1],
+    RING_TILT_B[1] + anim.ringOrbitB,
     RING_TILT_B[2] + Math.sin(elapsed * 0.19) * 0.1,
   );
   core.ringSpinA.rotation.z = anim.ringAngleA * 2.2;
   core.ringSpinB.rotation.z = -anim.ringAngleB * 2.2;
 
-  // Satellites (instanced) and their glints (points, workstation space).
+  // Satellites (instanced) and their glints (points, workstation space). Each
+  // rides a ring path, so the particles travel the orbit they outline while
+  // that orbit revolves around the core.
   const orbit = anim.orbitAngle;
   const cx = core.group.position.x;
   const cy = core.group.position.y;
   const cz = core.group.position.z;
   const gp = glints.positions;
   for (let i = 0; i < 3; i += 1) {
-    let x;
-    let y;
-    let z;
-    if (i === 0) {
-      x = Math.cos(orbit) * 0.47; y = Math.sin(orbit * 1.4) * 0.22; z = Math.sin(orbit) * 0.47;
-    } else if (i === 1) {
-      x = Math.cos(orbit + Math.PI * 0.68) * 0.4; y = Math.sin(orbit * 1.1 + 2.1) * 0.27; z = Math.sin(orbit + Math.PI * 0.68) * 0.4;
-    } else {
-      x = Math.cos(-orbit * 0.85 + 4.1) * 0.35; y = Math.cos(orbit * 1.3 + 0.7) * 0.2; z = Math.sin(-orbit * 0.85 + 4.1) * 0.35;
-    }
+    const spec = RING_SATELLITES[i];
+    const onB = spec.ring === 'b';
+    const theta = (onB ? -anim.ringAngleB * 2.2 : anim.ringAngleA * 2.2) + spec.offset;
+    _sat
+      .set(Math.cos(theta) * spec.radius, Math.sin(theta) * spec.radius, 0)
+      .applyEuler((onB ? core.ringB : core.ringA).rotation);
+    const x = _sat.x;
+    const y = _sat.y;
+    const z = _sat.z;
     _dummy.position.set(x, y, z);
     _dummy.rotation.set(orbit * 1.7 + i, orbit * 2.3, 0);
     _dummy.scale.set(1, 1, 1);
@@ -1288,7 +1540,7 @@ export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, at
   spill.setColorAt(1, _color.copy(atm.coreTint).multiplyScalar((0.03 + night * 0.3) * (0.85 + breath * 0.15)));
   spill.instanceColor.needsUpdate = true;
 
-  updateTerminalTexture(terminal, elapsed, atm.key || 'day');
+  updateTerminalTexture(terminal, elapsed, atm);
 }
 
 /* Contact shadow decal */
