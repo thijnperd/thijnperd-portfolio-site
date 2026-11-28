@@ -124,7 +124,7 @@ export class HeroScene {
 
     this.steamParticles = createSteamParticles({
       origin: this.workstation.localPoints.steam,
-      count: 12,
+      count: 40,
       pixelRatio: dpr,
     });
     this.workstation.group.add(this.steamParticles.points);
@@ -273,7 +273,8 @@ export class HeroScene {
     this.onTimeChange(this.currentTimeOfDay);
   }
 
-  // The orb, the mug and the laptop answer clicks; everything else is water.
+  // The orb, the mug, the laptop and the notebook answer clicks; everything
+  // else is water.
   _pickInteractive() {
     this._raycaster.setFromCamera(this._ndc, this.camera);
     const hits = this._raycaster.intersectObject(this.workstation.group, true);
@@ -334,6 +335,8 @@ export class HeroScene {
         interact.signature = !interact.signature;
         this.workstation.terminal.signature = interact.signature;
         this.workstation.terminal.lastDraw = -10;
+      } else if (part === 'notebook') {
+        interact.notebookOpen = !interact.notebookOpen;
       }
       return;
     }
