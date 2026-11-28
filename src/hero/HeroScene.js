@@ -118,6 +118,11 @@ export class HeroScene {
     this._lastPhase = '';
 
     this.baseFov = 38;
+    // Phones and touch screens keep the scene at arm's length: see
+    // _syncZoomAllowed. A tall but wide-enough desktop window keeps the close-up.
+    this.coarsePointer = window.matchMedia('(pointer: coarse)');
+    this.narrow = window.innerWidth < 760;
+    this.zoomAllowed = !this.coarsePointer.matches && !this.narrow;
     this.zoom = { part: null, amount: 0, desired: 0 };
     this.hoverPart = null;
     this._hoverAt = 0;
@@ -341,7 +346,7 @@ export class HeroScene {
 
   _beginZoom(part, value) {
     const zoom = this.zoom;
-    if (!part) return;
+    if (!part || !this.zoomAllowed) return;
     if (zoom.part && zoom.part !== part && zoom.amount > 0.05) return;
 
     if (zoom.part !== part) {
@@ -418,7 +423,7 @@ export class HeroScene {
   }
 
   _onWheel = (event) => {
-    if (this.reducedMotion || event.ctrlKey || event.metaKey) return;
+    if (!this.zoomAllowed || this.reducedMotion || event.ctrlKey || event.metaKey) return;
 
     const now = performance.now();
     const delta = event.deltaMode === 1 ? event.deltaY * WHEEL_LINE_PX : event.deltaY;
@@ -467,7 +472,7 @@ export class HeroScene {
   };
 
   _onTouchStart = (event) => {
-    if (this.reducedMotion || event.touches.length !== 2) {
+    if (!this.zoomAllowed || this.reducedMotion || event.touches.length !== 2) {
       this._pinch = null;
       return;
     }
@@ -636,7 +641,10 @@ export class HeroScene {
       );
       const interactive = this._pickInteractive();
 
-      const part = this.reducedMotion ? null : this._zoomPartAt(event.clientX, event.clientY);
+      const part =
+        this.reducedMotion || !this.zoomAllowed
+          ? null
+          : this._zoomPartAt(event.clientX, event.clientY);
       if (!this.reducedMotion) {
         if (part !== this.hoverPart) {
           this.hoverPart = part;
@@ -665,7 +673,7 @@ export class HeroScene {
     // and lets go as soon as the camera starts in.
     const part = this.zoom.part ? null : this.hoverPart;
     let target = 0;
-    if (part && !this.reducedMotion) {
+    if (part && !this.reducedMotion && this.zoomAllowed) {
       target = 0.22 + Math.sin(this.elapsed * 2.2) * 0.035;
       if (part === 'orb') this.workstation.core.group.getWorldPosition(halo.position);
       else if (part === 'laptop') this.workstation.screenAnchor.getWorldPosition(halo.position);
@@ -788,6 +796,8 @@ export class HeroScene {
     const narrow = width < 760;
     const compact = narrow || height > width * 1.05;
     this.compact = compact;
+    this.narrow = narrow;
+    this._syncZoomAllowed();
 
     this.renderer.setPixelRatio(dpr);
     this.renderer.setSize(width, height, false);
@@ -842,7 +852,22 @@ export class HeroScene {
 
     this.exitButton = this.heroShell && this.heroShell.querySelector('[data-hero-exit]');
     if (this.exitButton) this.exitButton.addEventListener('click', this.exitZoom, { signal });
+    this.coarsePointer.addEventListener('change', this._syncZoomAllowed, { signal });
   }
+
+  _syncZoomAllowed = () => {
+    // A close-up needs a hover to aim it and room to read: touch pointers and
+    // phone-width viewports keep the wide shot, so a two-finger pinch stays a
+    // page zoom instead of being swallowed by the scene. A tall desktop window
+    // is still a desktop window and keeps the close-up.
+    const allowed = !this.narrow && !this.coarsePointer.matches;
+    if (allowed === this.zoomAllowed) return;
+    this.zoomAllowed = allowed;
+    if (!allowed) {
+      this.hoverPart = null;
+      this.exitZoom();
+    }
+  };
 
   _onVisibilityChange = () => {
     if (document.hidden) {

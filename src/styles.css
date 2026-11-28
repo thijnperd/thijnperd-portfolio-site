@@ -1371,6 +1371,10 @@ html[data-phase="dawn"] .ts__end--bottom {
   background: transparent;
   min-block-size: 2.125rem;
   padding: 0.375rem clamp(0.5rem, 0.3rem + 0.5vw, 0.875rem);
+  /* Touch pointers turn these into flex boxes; the label stays centered in the
+     pill, which stretches across its grid cell. */
+  justify-content: center;
+  text-align: center;
   font-family: var(--mono);
   font-size: 0.75rem;
   letter-spacing: 0.03em;
@@ -4035,8 +4039,18 @@ html[data-phase="dawn"] .ts__end--bottom {
     text-align: left;
   }
 
+  /* On a phone the spec labels stack above their value: "VERÖFFENTLICHT" and
+     "GEPUBLICEERD" are wider than the 4.75rem track and ran into the date. */
   .case-spec__row {
-    grid-template-columns: 4.75rem minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.125rem;
+  }
+
+  /* "Verteilungsproblem" and "verdelingsprobleem" are wider than a phone
+     column at the smallest size; break them rather than run past the edge. */
+  .case-hero__title {
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
 
   .page-nav a[data-hide-mobile] {
