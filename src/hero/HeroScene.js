@@ -42,6 +42,40 @@ const ZOOM_TARGETS = {
   moon: { distance: 0, fov: 18, lookBias: 0.92 },
 };
 
+// The hover clue lives in the scene, not the page: a soft additive halo that
+// goes through the dither pass like everything else on the desk.
+function createZoomHalo() {
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  gradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
+  gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.15)');
+  gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    color: new THREE.Color('#a93724'),
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.AdditiveBlending,
+  });
+
+  const sprite = new THREE.Sprite(material);
+  sprite.visible = false;
+  sprite.renderOrder = 3;
+  return sprite;
+}
+
 export class HeroScene {
   constructor(container, { initialTime = 0 } = {}) {
     if (!container) throw new Error('HeroScene needs a container element.');
@@ -95,6 +129,7 @@ export class HeroScene {
     this._camDir = new THREE.Vector3();
     this._camTarget = new THREE.Vector3();
     this._zoomFocus = new THREE.Vector3();
+    this._haloRadii = {};
 
     this.clock = new THREE.Clock();
     this._listeners = null;
@@ -147,6 +182,9 @@ export class HeroScene {
 
     this.contactShadow = createContactShadow();
     this.scene.add(this.contactShadow.mesh);
+
+    this.zoomHalo = createZoomHalo();
+    this.scene.add(this.zoomHalo);
 
     this.promptParticles = createPromptParticles({
       start: this.workstation.localPoints.keyboard,
@@ -461,7 +499,8 @@ export class HeroScene {
 
     pinch.engaged = true;
     event.preventDefault();
-    this._beginZoom(pinch.part, THREE.MathUtils.clamp((1 - ratio) * 2.6, 0, 1));
+    // Spreading the fingers pulls the camera in, as everywhere else that pinches.
+    this._beginZoom(pinch.part, THREE.MathUtils.clamp((ratio - 1) * 2.6, 0, 1));
   };
 
   _onTouchEnd = (event) => {
@@ -517,6 +556,7 @@ export class HeroScene {
     );
     this._closeMomentaryReveals();
     this.workstation.group.updateMatrixWorld(true);
+    this._updateZoomHalo(deltaTime);
     this.workstation.screenAnchor.getWorldPosition(this.screenWorld);
     this.workstation.core.coreAnchor.getWorldPosition(this.coreWorld);
 
@@ -596,8 +636,8 @@ export class HeroScene {
       );
       const interactive = this._pickInteractive();
 
+      const part = this.reducedMotion ? null : this._zoomPartAt(event.clientX, event.clientY);
       if (!this.reducedMotion) {
-        const part = this._zoomPartAt(event.clientX, event.clientY);
         if (part !== this.hoverPart) {
           this.hoverPart = part;
           this._hoverAt = now;
@@ -617,6 +657,49 @@ export class HeroScene {
     );
   };
 
+  _updateZoomHalo(deltaTime) {
+    const halo = this.zoomHalo;
+    if (!halo) return;
+
+    // The halo is the zoom hint: it fades in for a prop the pointer has found
+    // and lets go as soon as the camera starts in.
+    const part = this.zoom.part ? null : this.hoverPart;
+    let target = 0;
+    if (part && !this.reducedMotion) {
+      target = 0.22 + Math.sin(this.elapsed * 2.2) * 0.035;
+      if (part === 'orb') this.workstation.core.group.getWorldPosition(halo.position);
+      else if (part === 'laptop') this.workstation.screenAnchor.getWorldPosition(halo.position);
+      else if (part === 'notebook') this.workstation.notebookPage.getWorldPosition(halo.position);
+      else if (part === 'moon') this.celestial.moonMesh.getWorldPosition(halo.position);
+      const radius = this._haloRadius(part);
+      halo.scale.set(radius, radius, 1);
+    }
+
+    const k = 1 - Math.exp(-9 * Math.max(deltaTime, 0.0001));
+    halo.material.opacity += (target - halo.material.opacity) * k;
+    halo.visible = halo.material.opacity > 0.004;
+  }
+
+  _haloRadius(part) {
+    const cached = this._haloRadii[part];
+    if (cached) return cached;
+
+    let object = null;
+    if (part === 'orb') object = this.workstation.core.group;
+    else if (part === 'laptop') object = this.workstation.screenMesh;
+    else if (part === 'notebook') object = this.workstation.notebook;
+    else if (part === 'moon') object = this.celestial.moonMesh;
+
+    let radius = 0.45;
+    if (object) {
+      const sphere = new THREE.Sphere();
+      new THREE.Box3().setFromObject(object).getBoundingSphere(sphere);
+      radius = Math.max(sphere.radius * 2.1, 0.32);
+    }
+    this._haloRadii[part] = radius;
+    return radius;
+  }
+
   _onPointerDown = (event) => {
     if (event.button !== 0) return;
     if (event.target !== this.renderer.domElement) return;
@@ -627,6 +710,13 @@ export class HeroScene {
       ((event.clientX - rect.left) / rect.width) * 2 - 1,
       -((event.clientY - rect.top) / rect.height) * 2 + 1,
     );
+
+    // Up close a click or tap only ever pulls back: it must not toggle the prop
+    // the visitor is currently reading.
+    if (this.zoom.part && this.zoom.amount > 0.02) {
+      this.exitZoom();
+      return;
+    }
 
     // Interactive props work even with reduced motion; only the ripple is skipped.
     const part = this._pickInteractive();

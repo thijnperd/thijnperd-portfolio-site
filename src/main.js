@@ -3,6 +3,7 @@ import { createAdaptiveUI, getStoredTimeOfDay, getTimeOfDayFromClock, storeTimeO
 import { initSite } from './ui/site.js';
 import { initAnalytics, track } from './analytics.js';
 
+const root = document.documentElement;
 const PHASE_PRESETS = { dawn: 0.275, day: 0.5, dusk: 0.76, night: 0.96 };
 const INITIAL_TIME = getStoredTimeOfDay() ?? getTimeOfDayFromClock();
 
@@ -38,7 +39,8 @@ function setTime(next, { immediate = false, persist = true } = {}) {
 
 function showFallback(error, { warn = true } = {}) {
   if (warn) console.warn('[hero] Falling back to the static background:', error);
-  document.documentElement.classList.add('no-webgl');
+  root.classList.remove('is-booting');
+  root.classList.add('no-webgl');
   if (canvasHost) canvasHost.querySelectorAll('canvas').forEach((node) => node.remove());
   if (dialHost) dialHost.hidden = true;
   adaptiveUI.update(currentTarget);
@@ -57,7 +59,9 @@ async function loadHero() {
     hero.onTimeChange = (value) => adaptiveUI.update(value);
     hero.setTimeOfDay(currentTarget, { immediate: true });
     hero.start();
-    document.documentElement.classList.add('has-webgl');
+    root.classList.add('has-webgl');
+    // The page skeleton has done its job; the scene is on screen.
+    root.classList.remove('is-booting');
   } catch (error) {
     if (hero) {
       try {
@@ -92,7 +96,8 @@ try {
 const saveData = navigator.connection && navigator.connection.saveData === true;
 
 if (saveData) {
-  document.documentElement.classList.add('no-webgl');
+  root.classList.remove('is-booting');
+  root.classList.add('no-webgl');
   if (dialHost) dialHost.hidden = true;
 } else {
   // Start on the next frame rather than on idle: this module already runs after the

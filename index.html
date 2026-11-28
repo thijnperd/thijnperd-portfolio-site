@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-phase="day">
+<html lang="en" data-phase="day" class="is-booting">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -54,6 +54,23 @@
       href="/writing/feed.xml"
     />
     <link rel="stylesheet" href="/src/styles.css" />
+    <script>
+      // If the scene or the bundle never arrives, the skeleton must not hold the
+      // page hostage: it steps aside on its own.
+      window.setTimeout(function () {
+        document.documentElement.classList.remove('is-booting');
+      }, 8000);
+    </script>
+    <noscript>
+      <style>
+        .page-skeleton {
+          display: none !important;
+        }
+        html.is-booting {
+          overflow: auto !important;
+        }
+      </style>
+    </noscript>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -77,6 +94,45 @@
 
   <body data-i18n-page="home">
     <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
+
+    <div class="page-skeleton" aria-hidden="true">
+      <div class="page-skeleton__top">
+        <div class="page-skeleton__brand">
+          <span class="page-skeleton__block page-skeleton__mark"></span>
+          <span class="page-skeleton__block page-skeleton__name"></span>
+          <span class="page-skeleton__block page-skeleton__pill"></span>
+        </div>
+        <div class="page-skeleton__nav">
+          <span class="page-skeleton__block"></span>
+          <span class="page-skeleton__block"></span>
+          <span class="page-skeleton__block"></span>
+          <span class="page-skeleton__block"></span>
+          <span class="page-skeleton__block"></span>
+          <span class="page-skeleton__block page-skeleton__lang"></span>
+        </div>
+      </div>
+
+      <div class="page-skeleton__copy">
+        <span class="page-skeleton__block page-skeleton__title"></span>
+        <span class="page-skeleton__block page-skeleton__title page-skeleton__title--short"></span>
+        <span class="page-skeleton__block page-skeleton__line" style="--line: 44ch"></span>
+        <span class="page-skeleton__block page-skeleton__line" style="--line: 50ch"></span>
+        <span class="page-skeleton__block page-skeleton__line" style="--line: 36ch"></span>
+        <div class="page-skeleton__actions">
+          <span class="page-skeleton__block page-skeleton__btn"></span>
+          <span class="page-skeleton__block page-skeleton__btn page-skeleton__btn--ghost"></span>
+        </div>
+      </div>
+
+      <div class="page-skeleton__bottom">
+        <span class="page-skeleton__block page-skeleton__cue"></span>
+        <span class="page-skeleton__block page-skeleton__hint"></span>
+      </div>
+
+      <div class="page-skeleton__dial" aria-hidden="true">
+        <span class="page-skeleton__block"></span>
+      </div>
+    </div>
 
     <main id="main" tabindex="-1">
       <section class="hero" id="top">
