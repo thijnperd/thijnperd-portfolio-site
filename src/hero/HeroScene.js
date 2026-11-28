@@ -28,6 +28,18 @@ import { createPromptParticles, createSteamParticles } from './particles.js';
 // themselves again if the visitor does not.
 const MOMENT_HOLD = 5;
 
+// Dolly targets. Zoom only starts after a real dwell on the prop and a wheel
+// push well past a stray notch, so reading the page never grabs the camera.
+const ZOOM_HOVER_MS = 900;
+const ZOOM_WHEEL_INTENT = 260;
+const ZOOM_WHEEL_STEP = 1 / 420;
+const ZOOM_TARGETS = {
+  orb: { distance: 1.15, fov: 33, lookBias: 1 },
+  laptop: { distance: 1.05, fov: 32, lookBias: 1 },
+  notebook: { distance: 0.95, fov: 32, lookBias: 1 },
+  moon: { distance: 0, fov: 18, lookBias: 0.92 },
+};
+
 export class HeroScene {
   constructor(container, { initialTime = 0 } = {}) {
     if (!container) throw new Error('HeroScene needs a container element.');
@@ -69,6 +81,21 @@ export class HeroScene {
     this._lastHoverCheck = 0;
     this._lastPhase = '';
 
+    this.baseFov = 38;
+    this.zoom = { part: null, amount: 0, desired: 0 };
+    this.hoverPart = null;
+    this._hoverAt = 0;
+    this._wheelAccum = 0;
+    this._wheelSign = 0;
+    this._wheelAt = 0;
+    this._pinch = null;
+    this._zoomCooldownUntil = 0;
+    this._camPos = new THREE.Vector3();
+    this._camLook = new THREE.Vector3();
+    this._camDir = new THREE.Vector3();
+    this._camTarget = new THREE.Vector3();
+    this._zoomFocus = new THREE.Vector3();
+
     this.clock = new THREE.Clock();
     this._listeners = null;
 
@@ -80,6 +107,7 @@ export class HeroScene {
     this.width = width;
     this.height = height;
 
+    this.heroShell = this.container.closest('.hero');
     this.renderer = initRenderer(this.container);
     this.scene = new THREE.Scene();
     this.camera = initCamera(width / height);
@@ -199,13 +227,231 @@ export class HeroScene {
     const ease = 1 - Math.pow(1 - this.entrance, 3);
     const introOffset = 1 - ease;
 
-    this.camera.position.set(
-      this.cameraBase.x + this.pointerCurrent.x * this.parallaxStrength,
-      this.cameraBase.y - this.pointerCurrent.y * this.parallaxStrength * 0.5 + introOffset * 0.12,
+    this._updateZoom(deltaTime);
+    const zoom = this.zoom.amount;
+    // The pointer sway belongs to the wide shot; up close it would smear the prop.
+    const sway = 1 - Math.min(zoom, 1) * 0.85;
+
+    this._camPos.set(
+      this.cameraBase.x + this.pointerCurrent.x * this.parallaxStrength * sway,
+      this.cameraBase.y - this.pointerCurrent.y * this.parallaxStrength * 0.5 * sway + introOffset * 0.12,
       this.cameraBase.z + introOffset * 0.45,
     );
-    this.camera.lookAt(this.cameraLook);
+    this._camLook.copy(this.cameraLook);
+    let fov = this.baseFov;
+
+    if (zoom > 0.0005 && this.zoom.part) {
+      const target = ZOOM_TARGETS[this.zoom.part];
+      const focus = this._zoomFocus;
+      if (target.distance > 0) {
+        this._camDir.copy(focus).sub(this._camPos).normalize();
+        this._camTarget.copy(focus).addScaledVector(this._camDir, -target.distance);
+        this._camPos.lerp(this._camTarget, zoom);
+      }
+      this._camLook.lerp(focus, target.lookBias * zoom);
+      fov = THREE.MathUtils.lerp(this.baseFov, target.fov, zoom);
+    }
+
+    this.camera.position.copy(this._camPos);
+    this.camera.lookAt(this._camLook);
+    if (Math.abs(this.camera.fov - fov) > 0.01) {
+      this.camera.fov = fov;
+      this.camera.updateProjectionMatrix();
+    }
   }
+
+  _updateZoom(deltaTime) {
+    const zoom = this.zoom;
+    if (!zoom.part) return;
+
+    if (deltaTime > 0) {
+      const speed = zoom.desired > zoom.amount ? 5.2 : 4.2;
+      zoom.amount += (zoom.desired - zoom.amount) * (1 - Math.exp(-speed * deltaTime));
+      if (Math.abs(zoom.desired - zoom.amount) < 0.0015) zoom.amount = zoom.desired;
+    } else {
+      zoom.amount = zoom.desired;
+    }
+
+    if (zoom.amount < 0.002 && zoom.desired === 0) {
+      const part = zoom.part;
+      zoom.amount = 0;
+      zoom.part = null;
+      this._onZoomEnd(part);
+      return;
+    }
+
+    const isZoomed = zoom.amount > 0.02;
+    if (this.heroShell && this._uiZoomed !== isZoomed) {
+      this._uiZoomed = isZoomed;
+      this.heroShell.classList.toggle('is-zoomed', isZoomed);
+    }
+
+    const focus = this._zoomFocus;
+    if (zoom.part === 'orb') this.workstation.core.group.getWorldPosition(focus);
+    else if (zoom.part === 'laptop') this.workstation.screenAnchor.getWorldPosition(focus);
+    else if (zoom.part === 'notebook') this.workstation.notebookPage.getWorldPosition(focus);
+    else if (zoom.part === 'moon') {
+      if (this.celestial.moonVisibility < 0.05) zoom.desired = 0;
+      this.celestial.moonMesh.getWorldPosition(focus);
+    }
+  }
+
+  _beginZoom(part, value) {
+    const zoom = this.zoom;
+    if (!part) return;
+    if (zoom.part && zoom.part !== part && zoom.amount > 0.05) return;
+
+    if (zoom.part !== part) {
+      if (zoom.part) this._onZoomEnd(zoom.part);
+      zoom.part = part;
+      zoom.amount = 0;
+      this._onZoomStart(part);
+    }
+    zoom.desired = THREE.MathUtils.clamp(value, 0, 1);
+  }
+
+  _onZoomStart(part) {
+    // A close look should show what it was pointed at: the screen's name, the
+    // notebook's first page. Both stay open until the camera pulls back.
+    if (part === 'laptop') {
+      this.signatureUntil = 0;
+      const interact = this.workstation.interact;
+      if (!interact.signature) {
+        interact.signature = true;
+        this.workstation.terminal.signature = true;
+        this.workstation.terminal.lastDraw = -10;
+      }
+    } else if (part === 'notebook') {
+      this.notebookUntil = 0;
+      this.workstation.interact.notebookOpen = true;
+    }
+  }
+
+  _onZoomEnd(part) {
+    // Pulling back is not an invitation to dive straight in again on the next notch.
+    this._zoomCooldownUntil = performance.now() + 800;
+    const hold = this.elapsed + MOMENT_HOLD;
+    if (part === 'laptop' && this.workstation.interact.signature) this.signatureUntil = hold;
+    if (part === 'notebook' && this.workstation.interact.notebookOpen) this.notebookUntil = hold;
+  }
+
+  _zoomPartAt(clientX, clientY) {
+    const canvas = this.renderer.domElement;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    if (x < 0 || y < 0 || x > rect.width || y > rect.height) return null;
+
+    this._ndc.set((x / rect.width) * 2 - 1, -(y / rect.height) * 2 + 1);
+    this._raycaster.setFromCamera(this._ndc, this.camera);
+
+    const hits = this._raycaster.intersectObject(this.workstation.group, true);
+    for (const hit of hits) {
+      if (hit.object.isPoints || hit.object.isSprite || hit.object.isLine) continue;
+      let node = hit.object;
+      while (node) {
+        const id = node.userData && node.userData.interactive;
+        if (id === 'orb' || id === 'laptop' || id === 'notebook') return id;
+        node = node.parent;
+      }
+    }
+
+    if (this.celestial.moonVisibility > 0.3) {
+      const moonHits = this._raycaster.intersectObject(this.celestial.moonMesh, false);
+      if (moonHits.length) return 'moon';
+    }
+    return null;
+  }
+
+  _onWheel = (event) => {
+    if (this.reducedMotion || event.ctrlKey || event.metaKey) return;
+
+    const zooming = Boolean(this.zoom.part) && (this.zoom.desired > 0.001 || this.zoom.amount > 0.02);
+    // The props drift with the desk, so a pointer resting on one can fall off its
+    // silhouette between the hover check and the wheel: keep the dwelled prop.
+    const part = zooming
+      ? this.zoom.part
+      : this._zoomPartAt(event.clientX, event.clientY) || this.hoverPart;
+    if (!part) {
+      this._wheelSign = 0;
+      this._wheelAccum = 0;
+      return;
+    }
+
+    const now = performance.now();
+    const sign = Math.sign(event.deltaY) || 1;
+    if (sign !== this._wheelSign || now - this._wheelAt > 480) this._wheelAccum = 0;
+    this._wheelSign = sign;
+    this._wheelAt = now;
+    this._wheelAccum += event.deltaY;
+
+    if (!zooming) {
+      // A page scroll that happens to cross the orb is not an inspection: the
+      // pointer has to rest on the prop and the wheel has to keep pushing.
+      if (now < this._zoomCooldownUntil) return;
+      const dwelled = this.hoverPart === part && now - this._hoverAt >= ZOOM_HOVER_MS;
+      if (!dwelled || Math.abs(this._wheelAccum) < ZOOM_WHEEL_INTENT) return;
+    }
+
+    // Scrolling down goes in, scrolling back up comes out; past zero the page
+    // scrolls again.
+    const next = THREE.MathUtils.clamp(this.zoom.desired + event.deltaY * ZOOM_WHEEL_STEP, 0, 1);
+    if (next <= 0 && this.zoom.amount <= 0.02) {
+      this._beginZoom(part, 0);
+      return;
+    }
+
+    event.preventDefault();
+    this._beginZoom(part, next);
+  };
+
+  _onTouchStart = (event) => {
+    if (this.reducedMotion || event.touches.length !== 2) {
+      this._pinch = null;
+      return;
+    }
+    const [a, b] = event.touches;
+    const part = this.zoom.part
+      || this._zoomPartAt((a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2);
+    if (!part) {
+      this._pinch = null;
+      return;
+    }
+
+    // Two fingers on a prop are a close look, not a page pinch.
+    event.preventDefault();
+    this._pinch = {
+      part,
+      base: Math.max(Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), 1),
+      engaged: false,
+    };
+  };
+
+  _onTouchMove = (event) => {
+    const pinch = this._pinch;
+    if (!pinch || event.touches.length !== 2) return;
+
+    const [a, b] = event.touches;
+    const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    const ratio = distance / pinch.base;
+    if (!pinch.engaged && Math.abs(1 - ratio) < 0.16) return;
+
+    pinch.engaged = true;
+    event.preventDefault();
+    this._beginZoom(pinch.part, THREE.MathUtils.clamp((1 - ratio) * 2.6, 0, 1));
+  };
+
+  _onTouchEnd = (event) => {
+    if (!this._pinch || event.touches.length >= 2) return;
+    this._pinch = null;
+    if (this.zoom.desired < 0.25) this.zoom.desired = 0;
+  };
+
+  _onKeyDown = (event) => {
+    if (event.key === 'Escape' && this.zoom.part) this.zoom.desired = 0;
+  };
 
   _tick = () => {
     if (!this.running) return;
@@ -235,6 +481,7 @@ export class HeroScene {
       timeOfDay,
       motionTime,
       this.compact,
+      this.zoom.part === 'moon' ? 1 + this.zoom.amount * 1.2 : 1,
     );
     updateSkyDome(this.skyDome, atm, this.celestial, motionTime);
     updateStarfield(this.starfield, atm, motionTime, atm.night, this.reducedMotion);
@@ -273,6 +520,9 @@ export class HeroScene {
 
   _closeMomentaryReveals() {
     const interact = this.workstation.interact;
+
+    // Closing a reveal while the visitor is zoomed in on it would undo the look.
+    if (this.zoom.amount > 0.02) return;
 
     if (this.signatureUntil && this.elapsed >= this.signatureUntil) {
       this.signatureUntil = 0;
@@ -323,7 +573,18 @@ export class HeroScene {
         ((event.clientX - rect.left) / rect.width) * 2 - 1,
         -((event.clientY - rect.top) / rect.height) * 2 + 1,
       );
-      canvas.style.cursor = this._pickInteractive() ? 'pointer' : '';
+      const interactive = this._pickInteractive();
+
+      if (!this.reducedMotion) {
+        const part = this._zoomPartAt(event.clientX, event.clientY);
+        if (part !== this.hoverPart) {
+          this.hoverPart = part;
+          this._hoverAt = now;
+        }
+        canvas.style.cursor = part ? (this.zoom.part ? 'zoom-out' : 'zoom-in') : interactive ? 'pointer' : '';
+      } else {
+        canvas.style.cursor = interactive ? 'pointer' : '';
+      }
     }
 
     if (this.reducedMotion || event.pointerType === 'touch') return;
@@ -366,6 +627,12 @@ export class HeroScene {
       return;
     }
 
+    // A click on open water pulls the camera back out before it ripples.
+    if (this.zoom.part) {
+      this.zoom.desired = 0;
+      return;
+    }
+
     if (this.reducedMotion) return;
     this._raycaster.setFromCamera(this._ndc, this.camera);
     if (this._raycaster.ray.intersectPlane(this._waterPlane, this._hitPoint)) {
@@ -378,6 +645,8 @@ export class HeroScene {
 
   _resetPointer = () => {
     this.pointerTarget.set(0, 0);
+    this.hoverPart = null;
+    if (this.zoom.part) this.zoom.desired = 0;
   };
 
   handleResize = () => {
@@ -415,7 +684,8 @@ export class HeroScene {
     this.composer.setSize(width, height);
 
     this.camera.aspect = width / height;
-    this.camera.fov = compact ? 42 : 38;
+    this.baseFov = compact ? 42 : 38;
+    this.camera.fov = this.baseFov;
     this.camera.updateProjectionMatrix();
 
     if (compact) {
@@ -450,6 +720,12 @@ export class HeroScene {
 
     const canvas = this.renderer.domElement;
     canvas.addEventListener('pointerdown', this._onPointerDown, { passive: true, signal });
+    canvas.addEventListener('wheel', this._onWheel, { passive: false, signal });
+    canvas.addEventListener('touchstart', this._onTouchStart, { passive: false, signal });
+    canvas.addEventListener('touchmove', this._onTouchMove, { passive: false, signal });
+    canvas.addEventListener('touchend', this._onTouchEnd, { passive: true, signal });
+    canvas.addEventListener('touchcancel', this._onTouchEnd, { passive: true, signal });
+    window.addEventListener('keydown', this._onKeyDown, { signal });
     canvas.addEventListener('webglcontextlost', this._onContextLost, { signal });
     canvas.addEventListener('webglcontextrestored', this._onContextRestored, { signal });
   }
@@ -549,6 +825,8 @@ export class HeroScene {
     for (const geometry of geometries) geometry.dispose();
     for (const material of materials) material.dispose();
     for (const texture of textures) texture.dispose();
+
+    if (this.heroShell) this.heroShell.classList.remove('is-zoomed');
 
     this.composer.dispose();
     this.renderer.dispose();

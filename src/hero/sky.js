@@ -215,12 +215,27 @@ const MOON_FRAGMENT = /* glsl */ `
     vec2 sp = p / moonRadius;
     float z = sqrt(max(0.0, 1.0 - dot(sp, sp)));
     vec3 normal = normalize(vec3(sp.x, sp.y, z));
-    vec3 sunLight = normalize(vec3(-0.72, 0.32, 0.61));
+    vec3 sunLight = normalize(vec3(-0.55, 0.3, 0.78));
     float phase = smoothstep(-0.08, 0.28, dot(normal, sunLight));
 
-    // Procedural lunar maria & crater texture.
-    float maria = noise2(sp * 3.1 + vec2(2.4, 5.1)) * 0.65 + noise2(sp * 6.8 + vec2(1.1, 3.7)) * 0.35;
-    float surface = 0.78 + 0.22 * smoothstep(0.32, 0.72, maria);
+    // Layered lunar surface: basins, maria and regolith grain, plus small pits
+    // with bright rims, so the disc reads as rock rather than a flat sticker.
+    // The octaves stop at the disc's on-screen resolution: anything finer than
+    // a pixel only crawls and shimmers as the moon moves.
+    float basins = noise2(sp * 2.7 + vec2(2.4, 5.1));
+    float maria = noise2(sp * 4.9 + vec2(1.1, 3.7));
+    float grain = noise2(sp * 9.5 + vec2(6.3, 1.9));
+
+    float field = basins * 0.48 + maria * 0.34 + grain * 0.18;
+    float surface = 0.48 + 0.48 * smoothstep(0.3, 0.72, field);
+
+    float crater = noise2(sp * 7.0 + vec2(4.1, 7.7)) * 0.6 + noise2(sp * 13.0 + vec2(2.2, 5.5)) * 0.4;
+    float pits = smoothstep(0.55, 0.59, crater) * (1.0 - smoothstep(0.59, 0.66, crater));
+    float rims = smoothstep(0.69, 0.75, crater) * (1.0 - smoothstep(0.79, 0.87, crater));
+    surface += rims * 0.2 - pits * 0.16;
+
+    // Limb darkening keeps the disc spherical instead of sticker-flat.
+    surface *= mix(1.0, 0.74, smoothstep(0.5, 1.0, length(sp)));
 
     vec3 moonBody = mix(uShadowColor, uLitColor * surface, 0.12 + 0.88 * phase);
 
@@ -311,7 +326,7 @@ export function createCelestialSystem() {
   return state;
 }
 
-export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook, t, elapsed, compact) {
+export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook, t, elapsed, compact, moonBoost = 1) {
   const forward = celestial._forward
     .set(cameraLook.x - cameraBase.x, 0, cameraLook.z - cameraBase.z)
     .normalize();
@@ -377,7 +392,7 @@ export function updateCelestialSystem(celestial, camera, cameraBase, cameraLook,
     .addScaledVector(right, moonRight);
   celestial.moonMesh.position.set(celestial._anchor.x, moonY, celestial._anchor.z);
   celestial.moonMesh.quaternion.copy(camera.quaternion);
-  celestial.moonMesh.scale.setScalar((compact ? 5.6 : 6.8) * distRatio);
+  celestial.moonMesh.scale.setScalar((compact ? 5.6 : 6.8) * distRatio * moonBoost);
 
   const moonVis = inMoonSpan
     ? smoothstep(0.03, 0.16, moonT) * (1.0 - smoothstep(0.84, 0.97, moonT))

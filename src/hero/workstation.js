@@ -960,8 +960,8 @@ function createNotebookAndPen(textures, detailMat, hitMat) {
   );
   group.add(back);
 
-  // The lid, its elastic and the pen share a hinge on the spine, so a click can
-  // swing the whole cover open instead of sliding a flat panel sideways.
+  // The lid and its elastic share a hinge on the spine, so a click can swing
+  // the whole cover open instead of sliding a flat panel sideways.
   const hinge = new THREE.Group();
   hinge.position.set(-NW / 2 + 0.004, 0.042, 0);
   group.add(hinge);
@@ -1010,11 +1010,29 @@ function createNotebookAndPen(textures, detailMat, hitMat) {
   );
   group.add(details);
 
-  // The pen hovers over the cover, belonging to the desk rather than the lid:
-  // it stays put while the book opens underneath it.
+  // The pen lies on the desk just beside the book's long edge, flat and still,
+  // aligned with the cover, the way it was set down after the last note.
   const pen = new THREE.Group();
-  pen.position.set(-0.02, 0.108, -0.012);
-  pen.rotation.y = 0.62;
+  pen.position.set(NW / 2 + 0.19, 0.0086, 0.09);
+  pen.rotation.y = 0.25;
+
+  // A soft contact shadow grounds the pen the same way the prop decals do.
+  const penShadow = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.4, 0.1),
+    new THREE.MeshBasicMaterial({
+      color: '#000000',
+      map: textures.radial,
+      transparent: true,
+      opacity: 0.3,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2,
+    }),
+  );
+  penShadow.rotation.x = -Math.PI / 2;
+  penShadow.position.y = -0.0068;
+  pen.add(penShadow);
   const barrelMat = new THREE.MeshPhongMaterial({ color: COLORS.pen, specular: '#6c6455', shininess: 52 });
   const barrel = new THREE.Mesh(
     place(new THREE.CylinderGeometry(0.0085, 0.0085, 0.3, 14), 0, 0, 0, 0, 0, Math.PI / 2),
@@ -1038,7 +1056,7 @@ function createNotebookAndPen(textures, detailMat, hitMat) {
   hit.position.set(0, 0.07, 0);
   group.add(hit);
 
-  return { notebook: group, hinge, pen, page };
+  return { notebook: group, hinge, page };
 }
 
 /* Orb: faceted core, fresnel glass shell, comet rings, satellites, halos */
@@ -1323,9 +1341,6 @@ export function createWorkstationGroup({ pixelRatio = 1 } = {}) {
     notebook: notebookParts.notebook,
     notebookHinge: notebookParts.hinge,
     notebookPage: notebookParts.page,
-    pen: notebookParts.pen,
-    penBase: notebookParts.pen.position.clone(),
-    penBaseRy: notebookParts.pen.rotation.y,
     coffeeMat: mugParts.coffeeMat,
     interact: { ringClicks: 0, steamClicks: 0, signature: false, notebookOpen: false },
     screenAnchor: laptopParts.screenAnchor,
@@ -1413,19 +1428,6 @@ export function updateWorkstation(workstation, elapsed, deltaTime, timeOfDay, at
   const page = workstation.notebookPage;
   page.visible = anim.notebookOpen > 0.02;
   page.material.opacity = anim.notebookOpen;
-
-  // The pen floats just above the cover with a slow bob and drift of its own.
-  const pen = workstation.pen;
-  pen.position.set(
-    workstation.penBase.x + Math.sin(elapsed * 0.37) * 0.008,
-    workstation.penBase.y + Math.sin(elapsed * 1.15 + 0.7) * 0.011,
-    workstation.penBase.z + Math.cos(elapsed * 0.31) * 0.006,
-  );
-  pen.rotation.set(
-    Math.sin(elapsed * 0.41) * 0.05,
-    workstation.penBaseRy + Math.sin(elapsed * 0.26) * 0.22,
-    Math.cos(elapsed * 0.35) * 0.055,
-  );
 
   // Slow breathing that every glow shares.
   const breath = 0.5 + 0.5 * Math.sin(elapsed * 1.15);

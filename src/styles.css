@@ -846,6 +846,22 @@ html[data-scheme="night"] .phase-btn__label {
   text-align: right;
 }
 
+/* Zooming into the scene moves the copy aside, but never the controls. */
+.hero__copy,
+.hero__bottom {
+  transition: opacity 0.4s ease;
+}
+
+.hero.is-zoomed .hero__copy,
+.hero.is-zoomed .hero__bottom {
+  opacity: 0;
+}
+
+.hero.is-zoomed .hero__copy,
+.hero.is-zoomed .hero__copy * {
+  pointer-events: none;
+}
+
 /* Vertical day/night dial */
 
 .hero__dial {
