@@ -858,8 +858,72 @@ html[data-scheme="night"] .phase-btn__label {
 }
 
 .hero.is-zoomed .hero__copy,
-.hero.is-zoomed .hero__copy * {
+.hero.is-zoomed .hero__copy *,
+.hero.is-zoomed .hero__bottom,
+.hero.is-zoomed .hero__bottom * {
   pointer-events: none;
+}
+
+/* The one control that stays in the close-up: a visible way back out. */
+.hero__exit {
+  position: absolute;
+  bottom: calc(clamp(1.125rem, 3.4vh, 2rem) + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-high) 84%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 0.5rem);
+  transition: opacity 240ms var(--ease-out), transform 320ms var(--ease-out),
+    visibility 0s linear 240ms;
+}
+
+.hero.is-zoomed .hero__exit {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  transition: opacity 240ms var(--ease-out), transform 320ms var(--ease-out),
+    visibility 0s;
+}
+
+.hero__exit:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.hero__exit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.hero__exit-arrow {
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.hero__exit-key {
+  padding: 0.0625rem 0.3125rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font: inherit;
+  font-size: 0.6875rem;
+  opacity: 0.7;
 }
 
 /* Vertical day/night dial */

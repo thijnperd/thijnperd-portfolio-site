@@ -34,6 +34,7 @@ const MOMENT_HOLD = 5;
 const ZOOM_HOVER_MS = 900;
 const ZOOM_WHEEL_STEP = 1 / 420;
 const WHEEL_LINE_PX = 33;
+const ZOOM_RELEASE_MS = 700;
 const ZOOM_TARGETS = {
   orb: { distance: 1.15, fov: 33, lookBias: 1 },
   laptop: { distance: 1.05, fov: 32, lookBias: 1 },
@@ -88,6 +89,7 @@ export class HeroScene {
     this._hoverAt = 0;
     this._pinch = null;
     this._zoomCooldownUntil = 0;
+    this._zoomReleaseAt = 0;
     this._camPos = new THREE.Vector3();
     this._camLook = new THREE.Vector3();
     this._camDir = new THREE.Vector3();
@@ -274,15 +276,14 @@ export class HeroScene {
       const part = zoom.part;
       zoom.amount = 0;
       zoom.part = null;
+      // A resize can finish the pull-back in a zero-delta frame, which skips the
+      // threshold below; the copy and the exit chip must still come back.
+      this._syncZoomUi(false);
       this._onZoomEnd(part);
       return;
     }
 
-    const isZoomed = zoom.amount > 0.02;
-    if (this.heroShell && this._uiZoomed !== isZoomed) {
-      this._uiZoomed = isZoomed;
-      this.heroShell.classList.toggle('is-zoomed', isZoomed);
-    }
+    this._syncZoomUi(zoom.amount > 0.02);
 
     const focus = this._zoomFocus;
     if (zoom.part === 'orb') this.workstation.core.group.getWorldPosition(focus);
@@ -292,6 +293,12 @@ export class HeroScene {
       if (this.celestial.moonVisibility < 0.05) zoom.desired = 0;
       this.celestial.moonMesh.getWorldPosition(focus);
     }
+  }
+
+  _syncZoomUi(isZoomed) {
+    if (!this.heroShell || this._uiZoomed === isZoomed) return;
+    this._uiZoomed = isZoomed;
+    this.heroShell.classList.toggle('is-zoomed', isZoomed);
   }
 
   _beginZoom(part, value) {
@@ -335,6 +342,13 @@ export class HeroScene {
     if (part === 'notebook' && this.workstation.interact.notebookOpen) this.notebookUntil = hold;
   }
 
+  exitZoom = () => {
+    // The single way back out, shared by the visible chip, Escape, a click on the
+    // water, and leaving the hero.
+    this._pinch = null;
+    if (this.zoom.part) this.zoom.desired = 0;
+  };
+
   _zoomPartAt(clientX, clientY) {
     const canvas = this.renderer.domElement;
     const rect = canvas.getBoundingClientRect();
@@ -368,6 +382,12 @@ export class HeroScene {
   _onWheel = (event) => {
     if (this.reducedMotion || event.ctrlKey || event.metaKey) return;
 
+    const now = performance.now();
+    const delta = event.deltaMode === 1 ? event.deltaY * WHEEL_LINE_PX : event.deltaY;
+    // Once the dolly bottoms out, a fling that keeps pushing belongs to the page,
+    // not to a second dive into the same prop.
+    if (delta > 0 && now < this._zoomReleaseAt + ZOOM_RELEASE_MS) return;
+
     const zooming = Boolean(this.zoom.part) && (this.zoom.desired > 0.001 || this.zoom.amount > 0.02);
     // The props drift with the desk, so a pointer resting on one can fall off its
     // silhouette between the hover check and the wheel: keep the dwelled prop.
@@ -380,17 +400,27 @@ export class HeroScene {
       // A page scroll that merely crosses a prop stays a page scroll: the
       // pointer has to have come to rest on it first. Past that point the first
       // notch is captured before it can move the page.
-      if (performance.now() < this._zoomCooldownUntil) return;
-      const rested = this.hoverPart === part && performance.now() - this._hoverAt >= ZOOM_HOVER_MS;
-      if (!rested || event.deltaY <= 0) return;
+      if (now < this._zoomCooldownUntil) return;
+      const rested = this.hoverPart === part && now - this._hoverAt >= ZOOM_HOVER_MS;
+      if (!rested || delta <= 0) return;
     }
 
-    const delta = event.deltaMode === 1 ? event.deltaY * WHEEL_LINE_PX : event.deltaY;
     // Scrolling down goes in, scrolling back up comes out; past zero the page
     // scrolls again.
     const next = THREE.MathUtils.clamp(this.zoom.desired + delta * ZOOM_WHEEL_STEP, 0, 1);
     if (next <= 0 && this.zoom.amount <= 0.02) {
       this._beginZoom(part, 0);
+      return;
+    }
+
+    if (next === this.zoom.desired) {
+      // Fully in and still pushing down: nothing left to give, so stop swallowing
+      // the wheel and let the close-up go with the page.
+      if (next >= 1 && delta > 0) {
+        this._zoomReleaseAt = now;
+        this.hoverPart = null;
+        this.exitZoom();
+      }
       return;
     }
 
@@ -441,7 +471,7 @@ export class HeroScene {
   };
 
   _onKeyDown = (event) => {
-    if (event.key === 'Escape' && this.zoom.part) this.zoom.desired = 0;
+    if (event.key === 'Escape') this.exitZoom();
   };
 
   _tick = () => {
@@ -620,7 +650,7 @@ export class HeroScene {
 
     // A click on open water pulls the camera back out before it ripples.
     if (this.zoom.part) {
-      this.zoom.desired = 0;
+      this.exitZoom();
       return;
     }
 
@@ -637,7 +667,7 @@ export class HeroScene {
   _resetPointer = () => {
     this.pointerTarget.set(0, 0);
     this.hoverPart = null;
-    if (this.zoom.part) this.zoom.desired = 0;
+    this.exitZoom();
   };
 
   handleResize = () => {
@@ -719,6 +749,9 @@ export class HeroScene {
     window.addEventListener('keydown', this._onKeyDown, { signal });
     canvas.addEventListener('webglcontextlost', this._onContextLost, { signal });
     canvas.addEventListener('webglcontextrestored', this._onContextRestored, { signal });
+
+    this.exitButton = this.heroShell && this.heroShell.querySelector('[data-hero-exit]');
+    if (this.exitButton) this.exitButton.addEventListener('click', this.exitZoom, { signal });
   }
 
   _onVisibilityChange = () => {
@@ -770,8 +803,14 @@ export class HeroScene {
         const entry = entries[0];
         if (!entry) return;
         this.isVisible = entry.isIntersecting;
-        if (this.isVisible && !document.hidden) this._resume();
-        else this._pause();
+        if (this.isVisible && !document.hidden) {
+          this._resume();
+        } else {
+          this._pause();
+          // Coming back to a hero still stuck up close, without its copy, would
+          // read as a broken page.
+          if (!this.isVisible) this.exitZoom();
+        }
       }, { threshold: 0, rootMargin: '80px' });
       this._observer.observe(this.container);
     }
