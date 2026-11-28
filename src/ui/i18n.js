@@ -116,6 +116,10 @@ function applyTranslations() {
   for (const note of doc.querySelectorAll('[data-en-only-note]')) {
     note.hidden = currentLang === 'en';
   }
+
+  // Anything layered on top of the strings (localised links and titles) has to run
+  // again after every pass, including a click on the language that is already active.
+  window.dispatchEvent(new CustomEvent('thijnperd:translations', { detail: { lang: currentLang } }));
 }
 
 export function setLanguage(next, { persist = true } = {}) {

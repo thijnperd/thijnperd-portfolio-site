@@ -44,5 +44,6 @@ export function initLocalizedLinks() {
   };
 
   apply();
+  window.addEventListener('thijnperd:translations', apply);
   window.addEventListener('thijnperd:langchange', apply);
 }
