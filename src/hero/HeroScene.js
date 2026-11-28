@@ -28,11 +28,12 @@ import { createPromptParticles, createSteamParticles } from './particles.js';
 // themselves again if the visitor does not.
 const MOMENT_HOLD = 5;
 
-// Dolly targets. Zoom only starts after a real dwell on the prop and a wheel
-// push well past a stray notch, so reading the page never grabs the camera.
+// Dolly targets. Zoom only starts after a real dwell on the prop, and then the
+// wheel gesture is captured on its first notch: the page must not creep while
+// the camera leans in.
 const ZOOM_HOVER_MS = 900;
-const ZOOM_WHEEL_INTENT = 260;
 const ZOOM_WHEEL_STEP = 1 / 420;
+const WHEEL_LINE_PX = 33;
 const ZOOM_TARGETS = {
   orb: { distance: 1.15, fov: 33, lookBias: 1 },
   laptop: { distance: 1.05, fov: 32, lookBias: 1 },
@@ -85,9 +86,6 @@ export class HeroScene {
     this.zoom = { part: null, amount: 0, desired: 0 };
     this.hoverPart = null;
     this._hoverAt = 0;
-    this._wheelAccum = 0;
-    this._wheelSign = 0;
-    this._wheelAt = 0;
     this._pinch = null;
     this._zoomCooldownUntil = 0;
     this._camPos = new THREE.Vector3();
@@ -328,8 +326,10 @@ export class HeroScene {
   }
 
   _onZoomEnd(part) {
-    // Pulling back is not an invitation to dive straight in again on the next notch.
+    // Pulling back is not an invitation to dive straight in again on the next
+    // notch: the pointer has to find the prop and rest on it anew.
     this._zoomCooldownUntil = performance.now() + 800;
+    this.hoverPart = null;
     const hold = this.elapsed + MOMENT_HOLD;
     if (part === 'laptop' && this.workstation.interact.signature) this.signatureUntil = hold;
     if (part === 'notebook' && this.workstation.interact.notebookOpen) this.notebookUntil = hold;
@@ -374,30 +374,21 @@ export class HeroScene {
     const part = zooming
       ? this.zoom.part
       : this._zoomPartAt(event.clientX, event.clientY) || this.hoverPart;
-    if (!part) {
-      this._wheelSign = 0;
-      this._wheelAccum = 0;
-      return;
-    }
-
-    const now = performance.now();
-    const sign = Math.sign(event.deltaY) || 1;
-    if (sign !== this._wheelSign || now - this._wheelAt > 480) this._wheelAccum = 0;
-    this._wheelSign = sign;
-    this._wheelAt = now;
-    this._wheelAccum += event.deltaY;
+    if (!part) return;
 
     if (!zooming) {
-      // A page scroll that happens to cross the orb is not an inspection: the
-      // pointer has to rest on the prop and the wheel has to keep pushing.
-      if (now < this._zoomCooldownUntil) return;
-      const dwelled = this.hoverPart === part && now - this._hoverAt >= ZOOM_HOVER_MS;
-      if (!dwelled || Math.abs(this._wheelAccum) < ZOOM_WHEEL_INTENT) return;
+      // A page scroll that merely crosses a prop stays a page scroll: the
+      // pointer has to have come to rest on it first. Past that point the first
+      // notch is captured before it can move the page.
+      if (performance.now() < this._zoomCooldownUntil) return;
+      const rested = this.hoverPart === part && performance.now() - this._hoverAt >= ZOOM_HOVER_MS;
+      if (!rested || event.deltaY <= 0) return;
     }
 
+    const delta = event.deltaMode === 1 ? event.deltaY * WHEEL_LINE_PX : event.deltaY;
     // Scrolling down goes in, scrolling back up comes out; past zero the page
     // scrolls again.
-    const next = THREE.MathUtils.clamp(this.zoom.desired + event.deltaY * ZOOM_WHEEL_STEP, 0, 1);
+    const next = THREE.MathUtils.clamp(this.zoom.desired + delta * ZOOM_WHEEL_STEP, 0, 1);
     if (next <= 0 && this.zoom.amount <= 0.02) {
       this._beginZoom(part, 0);
       return;
