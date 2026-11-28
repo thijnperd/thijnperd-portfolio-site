@@ -477,7 +477,8 @@ html[data-scheme="night"] .phase-btn__label {
   pointer-events: auto;
 }
 
-.lang-switch button {
+.lang-switch button,
+.lang-switch a {
   appearance: none;
   border: 0;
   border-bottom: 1px solid transparent;
@@ -488,13 +489,29 @@ html[data-scheme="night"] .phase-btn__label {
   letter-spacing: 0.06em;
   color: rgba(var(--ink-rgb), 0.85);
   cursor: pointer;
+  text-decoration: none;
   transition: color 160ms var(--ease-out), border-color 160ms var(--ease-out);
 }
 
-.lang-switch button:hover {
+/* The label is two letters wide; without this the tap target is the glyph itself. */
+.lang-switch button::after,
+.lang-switch a::after {
+  content: '';
+  position: absolute;
+  inset: -0.55rem -0.25rem;
+}
+
+.lang-switch button,
+.lang-switch a {
+  position: relative;
+}
+
+.lang-switch button:hover,
+.lang-switch a:hover {
   color: var(--ink);
 }
 
+.lang-switch a[aria-current="page"],
 .lang-switch button[aria-pressed="true"] {
   color: var(--ink);
   font-weight: 500;

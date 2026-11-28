@@ -1,4 +1,5 @@
 import { TRANSLATIONS } from './translations.js';
+import { track } from '../analytics.js';
 
 export const SUPPORTED_LANGS = ['en', 'nl', 'de'];
 const STORAGE_KEY = 'thijnperd-lang';
@@ -68,6 +69,12 @@ function applyTranslations() {
   doc.documentElement.lang = currentLang;
 
   for (const btn of doc.querySelectorAll('[data-lang-pick]')) {
+    if (btn.tagName === 'A') {
+      // The switch is a real link on translated pages, so it is navigated, not toggled.
+      if (btn.dataset.langPick === currentLang) btn.setAttribute('aria-current', 'page');
+      else btn.removeAttribute('aria-current');
+      continue;
+    }
     btn.setAttribute('aria-pressed', String(btn.dataset.langPick === currentLang));
   }
 
@@ -141,6 +148,10 @@ export function initI18n() {
     if (!btn) return;
     const next = btn.dataset.langPick;
     setLanguage(next, { persist: true });
+    track(`lang-${next}`);
+
+    // A link carries its own destination and the browser follows it.
+    if (btn.tagName === 'A' && btn.getAttribute('href')) return;
 
     // Pages that exist in another language link to it with hreflang; follow that
     // instead of swapping text on a page whose body is written in one language.

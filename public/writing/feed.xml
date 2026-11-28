@@ -5,28 +5,28 @@
     <link>https://thijnperd.github.io/writing/</link>
     <description>Notes on rendering, local-first software and how the projects are built.</description>
     <language>en</language>
-    <lastBuildDate>Fri, 27 Nov 2026 13:14:10 +0100</lastBuildDate>
+    <lastBuildDate>Fri, 27 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://thijnperd.github.io/writing/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>A school planner is a distribution problem</title>
       <link>https://thijnperd.github.io/writing/school-planner-distribution/</link>
       <guid isPermaLink="true">https://thijnperd.github.io/writing/school-planner-distribution/</guid>
-      <pubDate>Fri, 27 Nov 2026 13:14:10 +0100</pubDate>
-      <description>The calendar is the visible part; the import, the installer and the local data boundary are what made W3Plan usable.</description>
+      <pubDate>Fri, 27 Nov 2026 00:00:00 +0000</pubDate>
+      <description>W3Plan starts with the school's PTA export, but the import, the installer and the decision to keep student schedules local are what made it usable.</description>
     </item>
     <item>
       <title>The hero is dithered, not blurred</title>
       <link>https://thijnperd.github.io/writing/dithering-the-hero/</link>
       <guid isPermaLink="true">https://thijnperd.github.io/writing/dithering-the-hero/</guid>
-      <pubDate>Fri, 27 Nov 2026 12:03:42 +0100</pubDate>
-      <description>A full-screen 8×8 Bayer dither in one GLSL pass, and why the blocks stay two CSS pixels wide.</description>
+      <pubDate>Fri, 27 Nov 2026 00:00:00 +0000</pubDate>
+      <description>How a full-screen 8×8 Bayer dither is built in one GLSL pass: recursive thresholds, two-CSS-pixel blocks, twelve levels and a palette that follows the time of day.</description>
     </item>
     <item>
       <title>Plain files, no accounts</title>
       <link>https://thijnperd.github.io/writing/plain-files/</link>
       <guid isPermaLink="true">https://thijnperd.github.io/writing/plain-files/</guid>
-      <pubDate>Fri, 27 Nov 2026 12:03:42 +0100</pubDate>
-      <description>What local-first software buys, what it costs, and the one place a database still earns its keep.</description>
+      <pubDate>Fri, 27 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Four local-first projects, one rule: the data belongs in a folder the person can inspect. What that buys, what it costs, and where a database still earns its keep.</description>
     </item>
   </channel>
 </rss>

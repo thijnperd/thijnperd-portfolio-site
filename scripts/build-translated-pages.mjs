@@ -299,24 +299,72 @@ function renderText(text, englishInner, kind, lang) {
   }
 
   const anchors = LINK_TEXT[lang] || {};
-  const hrefs = [...englishInner.matchAll(/<a\s[^>]*href="([^"]+)"/g)].map((match) => match[1]);
+  // Keep the English anchor's other attributes (rel, target, aria-label): a translated
+  // external link still opens the way the original does.
+  const anchorAttrs = new Map();
+  for (const match of englishInner.matchAll(/<a\s([^>]*href="([^"]+)"[^>]*)>/g)) {
+    anchorAttrs.set(match[2], match[1].trim());
+  }
+  const hrefs = [...anchorAttrs.keys()];
   let placed = 0;
   for (const href of hrefs) {
     const phrase = anchors[href];
     if (!phrase) continue;
     const index = html.indexOf(phrase);
     if (index === -1) continue;
-    html = `${html.slice(0, index)}<a href="${href}">${phrase}</a>${html.slice(index + phrase.length)}`;
+    html = `${html.slice(0, index)}<a ${anchorAttrs.get(href)}>${phrase}</a>${html.slice(index + phrase.length)}`;
     placed += 1;
   }
 
   // A spec value that is itself a link (the project name) keeps its anchor around
   // the whole value; those are single links, so wrapping the text is exact.
   if (placed === 0 && hrefs.length === 1) {
-    html = `<a href="${hrefs[0]}">${html}</a>`;
+    html = `<a ${anchorAttrs.get(hrefs[0])}>${html}</a>`;
   }
 
   return html;
+}
+
+const OG_LOCALES = { en: 'en_GB', nl: 'nl_NL', de: 'de_DE' };
+
+// Social metadata has to say which language the card is in, or a shared Dutch page is
+// read as the English one.
+function localeBlock(lang) {
+  const lines = [`<meta property="og:locale" content="${OG_LOCALES[lang]}" />`];
+  for (const code of ['en', 'nl', 'de']) {
+    if (code !== lang) lines.push(`<meta property="og:locale:alternate" content="${OG_LOCALES[code]}" />`);
+  }
+  return lines.join('\n    ');
+}
+
+function imageAlt(html, title) {
+  if (/og:image:alt/.test(html)) {
+    return html.replace(/(<meta\s+property="og:image:alt"\s+content=")[^"]*(")/, `$1${escapeHtml(title)}$2`);
+  }
+  return html.replace(
+    /(<meta\s+property="og:image:height"[^>]*\/>)/,
+    `$1\n    <meta property="og:image:alt" content="${escapeHtml(title)}" />`
+  );
+}
+
+// The language switch becomes markup instead of script on every page that has a
+// translation: real links work without JavaScript, are crawlable, and give each
+// option a tap target wider than a two-letter label.
+function langSwitch(html, currentLang, path) {
+  const dir = path.replace(/index\.html$/, '');
+  // Matches the button form and the link form: a page can be regenerated from markup
+  // that already carries links.
+  return html.replace(/(<div class="lang-switch"[^>]*>)([\s\S]*?)(<\/div>)/, (block, open, inner) => {
+    if (!/data-lang-pick/.test(inner)) return block;
+    const options = ['en', 'nl', 'de']
+      .map((code) => {
+        const href = code === 'en' ? `/${dir}` : `/${code}/${dir}`;
+        const current = code === currentLang ? ' aria-current="page"' : '';
+        return `<a class="lang-switch__option" href="${href}" hreflang="${code}" lang="${code}" data-lang-pick="${code}"${current}>${code.toUpperCase()}</a>`;
+      })
+      .join('\n              ');
+    return `${open}\n              ${options}\n            </div>`;
+  });
 }
 
 function localizeHead(html, { lang, path, title, description }) {
@@ -330,6 +378,8 @@ function localizeHead(html, { lang, path, title, description }) {
   html = html.replace(/(<meta\s+property="og:title"\s+content=")[^"]*(")/, `$1${escapeHtml(title)}$2`);
   html = html.replace(/(<meta\s+property="og:description"\s+content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
   html = html.replace(/(<meta\s+property="og:url"\s+content=")[^"]*(")/, `$1${localUrl}$2`);
+  html = html.replace(/(<meta\s+property="og:url"\s+content="[^"]*"\s+\/>)/, `$1\n    ${localeBlock(lang)}`);
+  html = imageAlt(html, title);
   html = html.replace(/(<meta\s+name="twitter:title"\s+content=")[^"]*(")/, `$1${escapeHtml(title)}$2`);
   html = html.replace(/(<meta\s+name="twitter:description"\s+content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
   html = html.replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${localUrl}" />`);
@@ -443,6 +493,9 @@ for (const [lang, mdFile] of Object.entries(LANGS)) {
       html = html.split(`href="${url}"`).join(`href="/${lang}${url}"`);
     }
 
+    // After the link rewrite, so the switch keeps pointing at the original pages.
+    html = langSwitch(html, lang, doc);
+
     // An image tag must survive substitution with its src and a single alt.
     let brokenImages = 0;
     for (const tag of html.matchAll(/<img\b[^>]*>/g)) {
@@ -478,6 +531,11 @@ if (!check && !selftest) {
     let html = readFileSync(doc, 'utf8');
     html = html.replace(/\n\s*<link rel="alternate" hreflang="[^"]*"[^>]*>/g, '');
     html = html.replace(/(<link rel="canonical"[^>]*\/>)/, `$1\n    ${block}`);
+    html = html.replace(
+      /(<meta\s+property="og:url"\s+content="[^"]*"\s+\/>)/,
+      `$1\n    ${localeBlock('en')}`
+    );
+    html = langSwitch(html, 'en', doc);
     writeFileSync(doc, html);
   }
 
