@@ -24,12 +24,13 @@ export function initLocalizedLinks() {
         continue;
       }
       if (url.origin !== window.location.origin) continue;
-      // Already localised (a translated page's own body) or the switch itself.
-      if (/^\/(nl|de)\//.test(url.pathname) || link.closest('.lang-switch')) continue;
+      if (link.closest('.lang-switch')) continue;
 
       if (!originals.has(link)) originals.set(link, raw);
       const english = originals.get(link);
       const englishPath = new URL(english, window.location.href).pathname;
+      // A translated page links to its own body in its own language; leave those alone.
+      if (/^\/(nl|de)\//.test(englishPath)) continue;
       if (!pages || !(englishPath in pages)) {
         link.setAttribute('href', english);
         continue;
