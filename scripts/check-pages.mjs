@@ -68,7 +68,7 @@ function compare(lang, doc) {
 // 1. The generator runs cleanly and every page it writes is already committed.
 execFileSync(process.execPath, ['scripts/build-translated-pages.mjs'], { stdio: 'inherit' });
 try {
-  execFileSync('git', ['diff', '--exit-code', '--quiet', '--', 'nl', 'de', 'work', 'writing', 'public/sitemap.xml'], {
+  execFileSync('git', ['diff', '--exit-code', '--quiet', '--', 'nl', 'de', 'work', 'writing', 'src/ui/translatedPages.js', 'public/sitemap.xml'], {
     stdio: 'inherit',
   });
   ok('generated pages match the translation files');
